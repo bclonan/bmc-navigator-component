@@ -13,6 +13,9 @@ A lightweight, reusable Vue 3 component with Pinia integration for navigating hi
 - 🔌 **Simple Integration**: Easy to integrate into existing Vue applications
 - 🔄 **Pinia State Management**: Lightweight state management
 - 🌙 **Light/Dark Themes**: Support for light and dark modes
+- 📋 **Metadata Support**: Attach custom data to items with extensible processors
+- 🔗 **External Resources**: Connect to external resources like XML source files
+- 🎯 **Render Targets**: Specify rendering locations for content display
 
 ## Installation
 
@@ -321,10 +324,11 @@ You can expose these controls to your users through the component's UI or set th
 
 The component emits the following events:
 
-- `item-selected`: Fired when an item is selected, with the item and path
+- `item-selected`: Fired when an item is selected, with the item, path, and associated metadata
 - `path-changed`: Fired when the navigation path changes
 - `search-completed`: Fired when a search is completed, with query info and results count
 - `update:options`: Fired when options are updated internally (for v-model support)
+- `metadata-changed`: Fired when metadata for an item is added or removed
 
 ## Configuration Options
 
@@ -433,6 +437,141 @@ export default {
 ```
 
 Users can also adjust search sensitivity in real-time using the slider control in the search results panel, allowing them to fine-tune between exact matching and more flexible fuzzy matching based on their needs.
+
+## Metadata Support
+
+The component includes a powerful metadata system that allows attaching arbitrary data to any item in the navigator. This can be used for a variety of purposes, such as:
+
+- Adding links to external resources (e.g., XML source files)
+- Specifying render targets for displaying content
+- Including additional information not shown in the UI
+- Adding custom behavior through metadata processors
+
+### Basic Metadata Usage
+
+```vue
+<template>
+  <ECFRNavigator 
+    ref="navigator"
+    :items="ecfrData" 
+    @item-selected="onItemSelected"
+    @metadata-changed="onMetadataChanged"
+  />
+  
+  <button @click="addMetadata">Add XML Link</button>
+</template>
+
+<script>
+export default {
+  methods: {
+    onItemSelected(event) {
+      console.log('Selected item:', event.item);
+      
+      // Access the item's metadata
+      if (event.metadata) {
+        console.log('Item metadata:', event.metadata);
+      }
+      
+      // Access processed metadata
+      if (event.processedMetadata) {
+        console.log('Processed metadata:', event.processedMetadata);
+      }
+    },
+    
+    onMetadataChanged(event) {
+      console.log(`Metadata ${event.action}:`, {
+        itemId: event.itemId,
+        metadataType: event.metadataType,
+        data: event.action === 'add' ? event.metadata : event.oldMetadata
+      });
+    },
+    
+    addMetadata() {
+      if (!this.$refs.navigator.selectedItem) return;
+      
+      const item = this.$refs.navigator.selectedItem;
+      
+      // Add metadata to the selected item
+      this.$refs.navigator.addMetadata(item.id, {
+        xmlLink: {
+          url: `https://example.com/api/xml/${item.id}.xml`,
+          version: '1.0'
+        }
+      });
+    }
+  }
+}
+</script>
+```
+
+### Metadata Processors
+
+The component allows registering metadata processors that can transform raw metadata into more useful formats:
+
+```javascript
+// Register a processor for XML links
+this.$refs.navigator.registerMetadataProcessor('xmlLink', (metadata, itemId) => {
+  // Transform the raw metadata into a more useful format
+  return {
+    url: metadata.url,
+    label: `XML for ${itemId}`,
+    downloadUrl: `${metadata.url}?download=true`
+  };
+});
+
+// Later, when metadata is accessed, it will be automatically processed
+const processedMetadata = this.$refs.navigator.processMetadata('item-123', 'xmlLink');
+console.log(processedMetadata); // The transformed data
+```
+
+### Metadata Methods
+
+The ECFRNavigator component provides these metadata-related methods:
+
+- **addMetadata(itemId, metadata, metadataType)**: Add metadata to an item
+- **removeMetadata(itemId, metadataType)**: Remove metadata from an item
+- **getMetadata(itemId, metadataType)**: Get metadata for an item
+- **processMetadata(itemId, metadataType)**: Process metadata with registered processors
+- **registerMetadataProcessor(metadataType, processorFn)**: Register a metadata processor
+- **unregisterMetadataProcessor(metadataType)**: Remove a metadata processor
+
+### Using the Composable for Metadata
+
+The `useECFRNavigator` composable provides access to all metadata functionality:
+
+```javascript
+import { useECFRNavigator } from 'ecfr-navigator';
+
+export default {
+  setup() {
+    const navigator = useECFRNavigator();
+    
+    // Set up a metadata processor
+    navigator.registerMetadataProcessor('xmlLink', (metadata) => {
+      return {
+        url: metadata.url,
+        label: `XML Source (v${metadata.version})`,
+      };
+    });
+    
+    // Add metadata to an item
+    navigator.setItemMetadata('section-1-1', {
+      xmlLink: { url: 'https://example.com/xml/section-1-1.xml', version: '1.0' }
+    });
+    
+    // Process the metadata
+    const processedMetadata = navigator.processItemMetadata('section-1-1');
+    console.log(processedMetadata);
+    
+    return { 
+      // Expose methods if needed
+      addMetadata: navigator.setItemMetadata,
+      getMetadata: navigator.getItemMetadata,
+      processMetadata: navigator.processItemMetadata
+    };
+  }
+}
+```
 
 ## Browser Support
 
