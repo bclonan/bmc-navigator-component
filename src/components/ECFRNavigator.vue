@@ -407,6 +407,34 @@ export default {
       handler(newPath) {
         this.$emit('path-changed', newPath);
       }
+    },
+    
+    /**
+     * Watch for changes in item metadata prop
+     */
+    itemMetadata: {
+      handler(newMetadata) {
+        // Import all metadata to the store
+        if (newMetadata && typeof newMetadata === 'object') {
+          Object.entries(newMetadata).forEach(([itemId, metadata]) => {
+            this.ecfrStore.setItemMetadata(itemId, metadata);
+          });
+        }
+      },
+      deep: true
+    },
+    
+    /**
+     * Watch for initial selected item ID changes
+     */
+    initialSelectedItemId: {
+      handler(newItemId) {
+        if (newItemId) {
+          this.$nextTick(() => {
+            this.navigateTo(newItemId);
+          });
+        }
+      }
     }
   },
   
@@ -417,6 +445,20 @@ export default {
       // If the expandAll option is true, expand all items
       if (this.mergedOptions.expandAll) {
         this.ecfrStore.expandAll();
+      }
+      
+      // Initialize any provided metadata
+      if (this.itemMetadata && typeof this.itemMetadata === 'object') {
+        Object.entries(this.itemMetadata).forEach(([itemId, metadata]) => {
+          this.ecfrStore.setItemMetadata(itemId, metadata);
+        });
+      }
+      
+      // Navigate to initial item if provided
+      if (this.initialSelectedItemId) {
+        this.$nextTick(() => {
+          this.navigateTo(this.initialSelectedItemId);
+        });
       }
     }
   },
