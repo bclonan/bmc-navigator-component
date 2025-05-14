@@ -225,6 +225,7 @@
           :index="index"
           :level="0"
           :dark-mode="options.theme === 'dark'"
+          :options="mergedOptions"
         />
       </div>
     </div>
@@ -284,6 +285,27 @@ export default {
           enabled: true,
           threshold: 0.4, // 0 is exact, 1 is very loose
           distance: 100
+        },
+        display: {
+          showTypeIcon: true,
+          showItemNumbers: true,
+          indentItems: true,
+          compactMode: false,
+          hideEmptyItems: false
+        },
+        pagination: {
+          enabled: false,
+          itemsPerPage: 20
+        },
+        navigation: {
+          preserveState: true,
+          scrollToSelected: true,
+          autoExpandParents: true,
+          autoCollapseOthers: false
+        },
+        printing: {
+          enablePrintView: true,
+          includeChildrenWhenPrinting: true
         }
       }
     };

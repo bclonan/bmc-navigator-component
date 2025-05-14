@@ -134,6 +134,14 @@ export default {
     darkMode: {
       type: Boolean,
       default: false
+    },
+    
+    /**
+     * Configuration options for the section
+     */
+    options: {
+      type: Object,
+      default: () => ({})
     }
   },
   
