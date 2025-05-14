@@ -261,6 +261,23 @@ export default {
     options: {
       type: Object,
       default: () => ({})
+    },
+    
+    /**
+     * Initial metadata for items, keyed by item ID
+     * Example: { 'item-1': { xmlLink: { url: '...' } } }
+     */
+    itemMetadata: {
+      type: Object,
+      default: () => ({})
+    },
+    
+    /**
+     * ID of the item to initially select
+     */
+    initialSelectedItemId: {
+      type: String,
+      default: null
     }
   },
   
