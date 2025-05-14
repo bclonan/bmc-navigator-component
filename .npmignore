@@ -1,0 +1,20 @@
+# Development files
+.cache/
+.local/
+.replit
+.upm/
+.gitignore
+vite.config.js
+postcss.config.js
+tailwind.config.js
+generated-icon.png
+index.html
+PACKAGING.md
+
+# Source files (not needed for production)
+src/App.vue
+src/main.js
+
+# Exclude logs and temporary files
+*.log
+*.tmp

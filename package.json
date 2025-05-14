@@ -33,5 +33,5 @@
     "vite": "^6.3.5",
     "vue-tsc": "^2.2.10"
   },
-  "files": "[\"dist\", \"src/components\", \"src/stores\", \"src/composables\", \"src/types\"]"
+  "files": "[\"dist\", \"src/components\", \"src/stores\", \"src/composables\", \"src/types\", \"src/index.js\"]"
 }
