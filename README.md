@@ -573,6 +573,1263 @@ export default {
 }
 ```
 
+## Database Integration
+
+The ECFR Navigator can be integrated with various backend data sources including REST APIs, GraphQL endpoints, and databases. Here are patterns for some common integration scenarios:
+
+### REST API Integration
+
+```javascript
+// Component setup with API data
+export default {
+  data() {
+    return {
+      ecfrData: [],
+      isLoading: false,
+      error: null
+    };
+  },
+  
+  methods: {
+    async fetchData() {
+      this.isLoading = true;
+      try {
+        const response = await fetch('https://api.example.com/ecfr-data');
+        const data = await response.json();
+        
+        // Transform API data to match component structure if needed
+        this.ecfrData = this.transformData(data);
+      } catch (err) {
+        this.error = 'Failed to load data: ' + err.message;
+        console.error(err);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    
+    transformData(apiData) {
+      // Example transformation from API format to component format
+      return apiData.map(item => ({
+        id: item.identifier,
+        title: item.title,
+        type: item.documentType,
+        number: item.sectionNumber,
+        children: this.transformData(item.subSections || []),
+        content: item.htmlContent
+      }));
+    },
+    
+    handleItemSelected(event) {
+      // Store selection in local storage for persistence
+      localStorage.setItem('lastSelectedItem', event.item.id);
+      
+      // You can also send selection to backend
+      this.updateSelectionInDatabase(event.item.id);
+    },
+    
+    async updateSelectionInDatabase(itemId) {
+      try {
+        await fetch('https://api.example.com/user-selections', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ itemId, timestamp: new Date().toISOString() })
+        });
+      } catch (err) {
+        console.error('Failed to update selection in database', err);
+      }
+    }
+  },
+  
+  mounted() {
+    this.fetchData();
+    
+    // Restore last selection if available
+    const lastItemId = localStorage.getItem('lastSelectedItem');
+    if (lastItemId && this.$refs.navigator) {
+      this.$refs.navigator.navigateTo(lastItemId);
+    }
+  }
+};
+```
+
+### Real-time Updates with WebSockets
+
+```javascript
+export default {
+  data() {
+    return {
+      ecfrData: [],
+      socket: null
+    };
+  },
+  
+  methods: {
+    setupWebSocket() {
+      this.socket = new WebSocket('wss://api.example.com/ecfr-updates');
+      
+      this.socket.onmessage = (event) => {
+        const update = JSON.parse(event.data);
+        
+        // Handle different types of updates
+        switch (update.type) {
+          case 'itemAdded':
+            this.handleItemAdded(update.item);
+            break;
+          case 'itemUpdated':
+            this.handleItemUpdated(update.item);
+            break;
+          case 'itemRemoved':
+            this.handleItemRemoved(update.itemId);
+            break;
+        }
+      };
+      
+      this.socket.onclose = () => {
+        // Reconnect logic
+        setTimeout(() => this.setupWebSocket(), 5000);
+      };
+    },
+    
+    handleItemAdded(newItem) {
+      // Find the right place in the hierarchy to add the item
+      this.updateECFRData(this.ecfrData, newItem);
+    },
+    
+    handleItemUpdated(updatedItem) {
+      // Find and update the item in the hierarchy
+      this.updateECFRData(this.ecfrData, updatedItem, true);
+    },
+    
+    handleItemRemoved(itemId) {
+      // Remove the item from the hierarchy
+      this.removeItemById(this.ecfrData, itemId);
+    },
+    
+    updateECFRData(items, newItem, isUpdate = false) {
+      // Recursively find where to insert/update the item
+      // Implementation depends on your data structure
+    },
+    
+    removeItemById(items, itemId) {
+      // Recursively find and remove the item
+      // Implementation depends on your data structure
+    }
+  },
+  
+  mounted() {
+    this.setupWebSocket();
+  },
+  
+  beforeUnmount() {
+    if (this.socket) {
+      this.socket.close();
+    }
+  }
+};
+```
+
+### SQL Database Integration (Node.js Backend Example)
+
+```javascript
+// Backend (Node.js with Express and MySQL)
+const express = require('express');
+const mysql = require('mysql2/promise');
+const app = express();
+
+// Database connection
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'user',
+  password: 'password',
+  database: 'ecfr_db'
+});
+
+// API endpoint to fetch hierarchical data
+app.get('/api/ecfr-data', async (req, res) => {
+  try {
+    // Query to fetch titles (top level)
+    const [titles] = await pool.query(`
+      SELECT id, title, type, number 
+      FROM ecfr_items 
+      WHERE parent_id IS NULL
+      ORDER BY number
+    `);
+    
+    // For each title, recursively fetch children
+    const result = await Promise.all(titles.map(async (title) => {
+      const children = await fetchChildren(title.id);
+      return { ...title, children };
+    }));
+    
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
+// Recursive function to fetch all children
+async function fetchChildren(parentId) {
+  const [items] = await pool.query(`
+    SELECT id, title, type, number, content 
+    FROM ecfr_items 
+    WHERE parent_id = ?
+    ORDER BY number
+  `, [parentId]);
+  
+  return await Promise.all(items.map(async (item) => {
+    const children = await fetchChildren(item.id);
+    return { ...item, children: children.length ? children : undefined };
+  }));
+}
+
+// Track user selections
+app.post('/api/track-selection', express.json(), async (req, res) => {
+  const { userId, itemId } = req.body;
+  
+  try {
+    await pool.query(`
+      INSERT INTO user_selections (user_id, item_id, timestamp)
+      VALUES (?, ?, NOW())
+      ON DUPLICATE KEY UPDATE timestamp = NOW()
+    `, [userId, itemId]);
+    
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
+app.listen(3000, () => {
+  console.log('Server running on port 3000');
+});
+```
+
+```javascript
+// Frontend (Vue component with Axios)
+import axios from 'axios';
+
+export default {
+  data() {
+    return {
+      ecfrData: [],
+      isLoading: true,
+      error: null
+    };
+  },
+  
+  methods: {
+    async fetchData() {
+      try {
+        const response = await axios.get('/api/ecfr-data');
+        this.ecfrData = response.data;
+        this.isLoading = false;
+      } catch (err) {
+        this.error = 'Failed to load data';
+        this.isLoading = false;
+        console.error(err);
+      }
+    },
+    
+    async trackSelection(item) {
+      try {
+        await axios.post('/api/track-selection', {
+          userId: this.$store.state.user.id, // Assuming you have user state
+          itemId: item.id
+        });
+      } catch (err) {
+        console.error('Failed to track selection', err);
+      }
+    },
+    
+    handleItemSelected(event) {
+      this.trackSelection(event.item);
+    }
+  },
+  
+  mounted() {
+    this.fetchData();
+  }
+};
+```
+
+### Integrating with Pinia State Management
+
+```javascript
+// ecfr.js - Store definition
+import { defineStore } from 'pinia';
+import axios from 'axios';
+
+export const useECFRStore = defineStore('ecfr', {
+  state: () => ({
+    rootItems: [],
+    currentPath: [],
+    currentItem: null,
+    expandedItems: new Set(),
+    metadataRegistry: new Map(),
+    metadataProcessors: new Map(),
+    isLoading: false,
+    error: null,
+    lastUpdated: null
+  }),
+  
+  getters: {
+    // ... existing getters
+    
+    // New getters for database integration
+    itemsById() {
+      const map = new Map();
+      
+      const addToMap = (items) => {
+        for (const item of items) {
+          map.set(item.id, item);
+          if (item.children) {
+            addToMap(item.children);
+          }
+        }
+      };
+      
+      addToMap(this.rootItems);
+      return map;
+    }
+  },
+  
+  actions: {
+    // ... existing actions
+    
+    // New database-related actions
+    async fetchFromDatabase() {
+      this.isLoading = true;
+      this.error = null;
+      
+      try {
+        const response = await axios.get('/api/ecfr-data');
+        this.rootItems = response.data;
+        this.lastUpdated = new Date();
+      } catch (err) {
+        this.error = 'Failed to load data: ' + err.message;
+        console.error(err);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    
+    async saveUserState() {
+      if (!this.currentItem) return;
+      
+      try {
+        await axios.post('/api/user-state', {
+          currentItemId: this.currentItem.id,
+          expandedItems: Array.from(this.expandedItems),
+          timestamp: new Date().toISOString()
+        });
+      } catch (err) {
+        console.error('Failed to save user state', err);
+      }
+    },
+    
+    async loadUserState() {
+      try {
+        const response = await axios.get('/api/user-state');
+        const state = response.data;
+        
+        // Restore expanded items
+        this.expandedItems = new Set(state.expandedItems);
+        
+        // Navigate to last selected item
+        if (state.currentItemId) {
+          this.navigateToItemById(state.currentItemId);
+        }
+      } catch (err) {
+        console.error('Failed to load user state', err);
+      }
+    },
+    
+    async saveItemMetadata(itemId, metadata) {
+      try {
+        await axios.post('/api/item-metadata', {
+          itemId,
+          metadata: JSON.stringify(metadata)
+        });
+        
+        // Update local state
+        this.setItemMetadata(itemId, metadata);
+      } catch (err) {
+        console.error('Failed to save metadata', err);
+        throw err; // Allow caller to handle the error
+      }
+    }
+  }
+});
+```
+
+## Integration with Other Vue Components
+
+The ECFR Navigator is designed to work well with other Vue components through various integration patterns.
+
+### Combining with Content Viewers
+
+```vue
+<template>
+  <div class="flex h-screen">
+    <!-- Navigation panel -->
+    <div class="w-1/3 h-full overflow-auto border-r">
+      <ECFRNavigator 
+        ref="navigator"
+        :items="ecfrData" 
+        @item-selected="handleItemSelected"
+      />
+    </div>
+    
+    <!-- Content viewer panel -->
+    <div class="w-2/3 h-full overflow-auto p-6">
+      <ContentViewer 
+        v-if="selectedItem" 
+        :item="selectedItem"
+        :metadata="selectedItemMetadata"
+        @content-loaded="handleContentLoaded"
+        @annotation-added="handleAnnotationAdded"
+      />
+      <div v-else class="flex items-center justify-center h-full text-gray-400">
+        Select an item to view content
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { ECFRNavigator } from 'ecfr-navigator';
+import ContentViewer from './components/ContentViewer.vue';
+
+export default {
+  components: {
+    ECFRNavigator,
+    ContentViewer
+  },
+  
+  data() {
+    return {
+      ecfrData: [], // Your hierarchical data
+      selectedItem: null,
+      selectedItemMetadata: null
+    };
+  },
+  
+  methods: {
+    handleItemSelected(event) {
+      this.selectedItem = event.item;
+      this.selectedItemMetadata = event.metadata;
+      
+      // Update URL with selected item for deep linking
+      this.updateUrl(event.item.id);
+    },
+    
+    updateUrl(itemId) {
+      history.pushState(
+        { itemId },
+        '',
+        `${window.location.pathname}?item=${itemId}`
+      );
+    },
+    
+    handleContentLoaded(content) {
+      // Process content if needed
+      console.log('Content loaded', content);
+      
+      // Example: Track page view
+      this.$analytics.trackPageView({
+        documentId: this.selectedItem.id,
+        title: this.selectedItem.title
+      });
+    },
+    
+    handleAnnotationAdded(annotation) {
+      // Store annotation in the navigator's metadata system
+      this.$refs.navigator.addMetadata(
+        this.selectedItem.id,
+        { annotation },
+        'userAnnotations'
+      );
+    },
+    
+    // Handle browser back/forward navigation
+    handlePopState(event) {
+      if (event.state && event.state.itemId) {
+        this.$refs.navigator.navigateTo(event.state.itemId);
+      }
+    }
+  },
+  
+  mounted() {
+    // Handle deep linking on initial load
+    const params = new URLSearchParams(window.location.search);
+    const initialItemId = params.get('item');
+    
+    if (initialItemId && this.$refs.navigator) {
+      this.$refs.navigator.navigateTo(initialItemId);
+    }
+    
+    // Listen for browser navigation events
+    window.addEventListener('popstate', this.handlePopState);
+  },
+  
+  beforeUnmount() {
+    window.removeEventListener('popstate', this.handlePopState);
+  }
+};
+</script>
+```
+
+### Combining with Search Components
+
+```vue
+<template>
+  <div>
+    <!-- Global search bar -->
+    <GlobalSearch 
+      @search="handleGlobalSearch"
+      :search-options="searchOptions"
+    />
+    
+    <div class="flex mt-4">
+      <!-- Filters panel -->
+      <div class="w-1/4 pr-4">
+        <FilterPanel 
+          :filters="filters"
+          @filter-changed="handleFilterChanged"
+        />
+      </div>
+      
+      <!-- Navigator and content -->
+      <div class="w-3/4">
+        <ECFRNavigator 
+          ref="navigator"
+          :items="filteredData" 
+          @item-selected="handleItemSelected"
+          @search-completed="handleNavigatorSearch"
+        />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { ECFRNavigator } from 'ecfr-navigator';
+import GlobalSearch from './components/GlobalSearch.vue';
+import FilterPanel from './components/FilterPanel.vue';
+import { useSearchStore } from './stores/search';
+
+export default {
+  components: {
+    ECFRNavigator,
+    GlobalSearch,
+    FilterPanel
+  },
+  
+  data() {
+    return {
+      ecfrData: [], // Original unfiltered data
+      filteredData: [], // Data after filters applied
+      searchOptions: {
+        fuzzy: true,
+        fields: ['title', 'content'],
+        threshold: 0.4
+      },
+      filters: {
+        documentTypes: [
+          { id: 'title', label: 'Titles', checked: true },
+          { id: 'part', label: 'Parts', checked: true },
+          { id: 'section', label: 'Sections', checked: true }
+        ],
+        dateRange: {
+          start: null,
+          end: null
+        }
+      }
+    };
+  },
+  
+  methods: {
+    handleGlobalSearch(query) {
+      // Global search logic
+      const searchStore = useSearchStore();
+      searchStore.performGlobalSearch(query, this.searchOptions)
+        .then(results => {
+          // Transform search results to navigator-compatible format
+          this.filteredData = this.transformSearchResults(results);
+          
+          // Automatically expand search results
+          this.$nextTick(() => {
+            if (this.$refs.navigator) {
+              this.$refs.navigator.expandAll();
+            }
+          });
+        });
+    },
+    
+    handleNavigatorSearch(event) {
+      // Handle internal navigator search
+      console.log(`Found ${event.results} results for "${event.query}"`);
+    },
+    
+    handleFilterChanged() {
+      // Apply filters to the data
+      this.filteredData = this.applyFilters(this.ecfrData, this.filters);
+    },
+    
+    applyFilters(data, filters) {
+      // Implementation of filtering logic
+      // ...filtering implementation...
+      
+      return filteredData;
+    },
+    
+    transformSearchResults(results) {
+      // Transform search API results to navigator-compatible format
+      // ...transformation implementation...
+      
+      return transformedData;
+    }
+  }
+};
+</script>
+```
+
+### Integrating with Print and Export Functionality
+
+```vue
+<template>
+  <div>
+    <div class="controls mb-4">
+      <button @click="printContent" class="btn btn-primary mr-2">
+        Print Current Selection
+      </button>
+      <button @click="exportPDF" class="btn btn-outline mr-2">
+        Export as PDF
+      </button>
+      <button @click="exportWord" class="btn btn-outline">
+        Export to Word
+      </button>
+    </div>
+    
+    <ECFRNavigator 
+      ref="navigator"
+      :items="ecfrData" 
+      :options="navigatorOptions"
+      @item-selected="handleItemSelected"
+    />
+    
+    <!-- Hidden printable view -->
+    <div ref="printableContent" class="hidden">
+      <h1>{{ printTitle }}</h1>
+      <div v-html="printContent"></div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { ECFRNavigator } from 'ecfr-navigator';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
+import { Document, Packer, Paragraph } from 'docx';
+import { saveAs } from 'file-saver';
+
+export default {
+  components: {
+    ECFRNavigator
+  },
+  
+  data() {
+    return {
+      ecfrData: [],
+      selectedItem: null,
+      printTitle: '',
+      printContent: '',
+      navigatorOptions: {
+        printing: {
+          enablePrintView: true,
+          includeChildrenWhenPrinting: true
+        }
+      }
+    };
+  },
+  
+  methods: {
+    handleItemSelected(event) {
+      this.selectedItem = event.item;
+      
+      // Prepare print content when an item is selected
+      this.printTitle = event.item.title;
+      this.printContent = this.preparePrintContent(event.item);
+    },
+    
+    preparePrintContent(item) {
+      let content = item.content || '';
+      
+      // Optionally include content from children
+      if (this.navigatorOptions.printing.includeChildrenWhenPrinting && item.children) {
+        for (const child of item.children) {
+          content += `<h2>${child.title}</h2>`;
+          content += child.content || '';
+          
+          // Recursively add nested children if needed
+          if (child.children) {
+            content += this.getChildrenContent(child.children, 3);
+          }
+        }
+      }
+      
+      return content;
+    },
+    
+    getChildrenContent(children, headerLevel) {
+      let content = '';
+      const headerTag = `h${headerLevel}`;
+      
+      for (const child of children) {
+        content += `<${headerTag}>${child.title}</${headerTag}>`;
+        content += child.content || '';
+        
+        if (child.children) {
+          content += this.getChildrenContent(child.children, Math.min(headerLevel + 1, 6));
+        }
+      }
+      
+      return content;
+    },
+    
+    printContent() {
+      // Use the navigator's print function if available
+      if (this.$refs.navigator && this.$refs.navigator.printCurrentItem) {
+        this.$refs.navigator.printCurrentItem();
+        return;
+      }
+      
+      // Fallback print method
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>${this.printTitle}</title>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; }
+              h1 { border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+            </style>
+          </head>
+          <body>
+            <h1>${this.printTitle}</h1>
+            ${this.printContent}
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+    },
+    
+    async exportPDF() {
+      // Make sure we have content to export
+      if (!this.selectedItem) return;
+      
+      // Update the print div with current content
+      this.$refs.printableContent.innerHTML = `
+        <h1>${this.printTitle}</h1>
+        ${this.printContent}
+      `;
+      
+      try {
+        // Convert the div to a canvas
+        const canvas = await html2canvas(this.$refs.printableContent);
+        
+        // Initialize PDF with proper dimensions
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgData = canvas.toDataURL('image/png');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const ratio = canvas.width / canvas.height;
+        const imgWidth = pdfWidth;
+        const imgHeight = imgWidth / ratio;
+        
+        // Add the image to the PDF
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        
+        // Save the PDF
+        pdf.save(`${this.selectedItem.id}.pdf`);
+      } catch (err) {
+        console.error('PDF export failed', err);
+      }
+    },
+    
+    async exportWord() {
+      // Make sure we have content to export
+      if (!this.selectedItem) return;
+      
+      // Create a simple DOCX document
+      const doc = new Document({
+        sections: [{
+          properties: {},
+          children: [
+            new Paragraph({
+              text: this.printTitle,
+              heading: 'Heading1'
+            }),
+            // Additional paragraphs would be created from HTML content
+            // This would require parsing HTML to DOCX format
+          ]
+        }]
+      });
+      
+      // Generate and save the document
+      const buffer = await Packer.toBuffer(doc);
+      saveAs(new Blob([buffer]), `${this.selectedItem.id}.docx`);
+    }
+  }
+};
+</script>
+```
+
+## Complete Configuration Schema
+
+The ECFR Navigator accepts a comprehensive configuration object with the following schema:
+
+```javascript
+/**
+ * @typedef {Object} ECFRNavigatorConfiguration - Complete configuration schema
+ */
+const configSchema = {
+  // UI Theme
+  theme: 'light', // 'light' or 'dark'
+  
+  // Breadcrumb Options
+  showBreadcrumb: true,
+  breadcrumb: {
+    maxItems: 5, // Max number of items to show before truncating
+    truncationSymbol: '...', // Symbol to show when truncated
+    separator: '>', // Separator between breadcrumb items
+    clickable: true, // Whether breadcrumb items are clickable
+    includeHome: true, // Whether to include a home item
+    homeLabel: 'Home', // Label for the home item
+    homeIcon: 'home' // Icon for the home item (if using icon library)
+  },
+  
+  // Expansion Options
+  expandAll: false, // Initially expand all items
+  collapseOthers: false, // Collapse other items when one is expanded
+  
+  // Display Options
+  display: {
+    showTypeIcon: true, // Show icons for item types
+    showItemNumbers: true, // Show number identifiers
+    indentItems: true, // Indent nested items
+    indentSize: 20, // Size of each indentation level in pixels
+    compactMode: false, // Use more compact display
+    hideEmptyItems: false, // Hide items with no children or content
+    showItemCount: true, // Show count of children
+    lineNumbers: false, // Show line numbers for content
+    maxTitleLength: null, // Max length for titles before truncating
+    highlightCurrent: true, // Highlight the currently selected item
+    highlightColor: '#e3f2fd', // Color to use for highlighting
+    animateTransitions: true // Animate expand/collapse
+  },
+  
+  // Navigation Options
+  navigation: {
+    preserveState: true, // Preserve expansion state
+    scrollToSelected: true, // Auto-scroll to selected items
+    autoExpandParents: true, // Auto-expand parent items when selecting a child
+    autoCollapseOthers: false, // Auto-collapse siblings when expanding an item
+    allowKeyboardNavigation: true, // Allow keyboard navigation
+    keyboardShortcuts: {
+      up: 'ArrowUp',
+      down: 'ArrowDown',
+      expand: 'ArrowRight',
+      collapse: 'ArrowLeft',
+      select: 'Enter',
+      home: 'Home',
+      end: 'End'
+    },
+    rememberLastPosition: true, // Remember last selected position
+    confirmBeforeNavigatingAway: false // Confirm before navigating away from current item
+  },
+  
+  // Search Options
+  search: {
+    enabled: true, // Enable search functionality
+    placeholder: 'Search...', // Placeholder text for search input
+    minLength: 2, // Minimum characters before search is performed
+    maxResults: 100, // Maximum number of results to show
+    highlightResults: true, // Highlight matching text in results
+    preserveHierarchy: true, // Preserve hierarchy in search results
+    searchDelay: 300, // Debounce delay in milliseconds
+    autofocus: false, // Autofocus the search input on component mount
+    fuzzySearch: {
+      enabled: true, // Enable fuzzy matching
+      threshold: 0.4, // Matching threshold (0 = exact, 1 = loose)
+      distance: 100, // Maximum edit distance
+      includeScore: true, // Include match score in results
+      includeMatches: true, // Include matched indices
+      ignoreLocation: false, // Ignore location in string matching
+      sortResults: true // Sort results by relevance
+    },
+    searchFields: ['title', 'content'], // Fields to search in
+    fieldWeights: { // Relative importance of each field
+      title: 2,
+      content: 1
+    }
+  },
+  
+  // Pagination Options
+  pagination: {
+    enabled: false, // Enable pagination for large datasets
+    itemsPerPage: 50, // Number of items per page
+    showPageNumbers: true, // Show page numbers
+    showFirstLastButtons: true, // Show first/last page buttons
+    dynamicLoading: false // Dynamically load items as needed
+  },
+  
+  // Printing Options
+  printing: {
+    enablePrintView: true, // Enable print-friendly view
+    includeChildrenWhenPrinting: true, // Include child items
+    includeBreadcrumbsWhenPrinting: true, // Include breadcrumbs
+    printTitle: true, // Include title when printing
+    customPrintStyles: '', // Custom CSS for print view
+    pageBreakBetweenItems: true // Add page breaks between major items
+  },
+  
+  // Filter Options
+  filter: {
+    enabled: false, // Enable built-in filtering
+    filterFields: ['type', 'title'], // Fields that can be filtered
+    showFilterControls: true, // Show filter UI controls
+    persistFilters: true, // Remember filter state
+    customFilterFn: null // Custom filtering function
+  },
+  
+  // Content Rendering Options
+  content: {
+    sanitizeHtml: true, // Sanitize HTML content for security
+    allowedTags: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'strong', 'em'], 
+    allowedAttributes: { // Allowed HTML attributes
+      a: ['href', 'target', 'rel'],
+      '*': ['class', 'id', 'style']
+    },
+    syntaxHighlighting: false, // Enable syntax highlighting
+    renderMarkdown: false, // Treat content as Markdown
+    lazyLoadImages: true, // Lazy load images in content
+    enableFootnotes: true, // Enable footnote handling
+    contentFallbackMessage: 'No content available', // Message when no content
+    externalLinkBehavior: 'open-new-tab' // How to handle external links
+  },
+  
+  // Accessibility Options
+  accessibility: {
+    enableKeyboardNavigation: true, // Enable keyboard navigation
+    ariaLabels: { // Custom ARIA labels for elements
+      navigator: 'Document navigator',
+      searchInput: 'Search documents',
+      breadcrumb: 'Navigation breadcrumb',
+      expandButton: 'Expand item',
+      collapseButton: 'Collapse item'
+    }
+  },
+  
+  // Performance Options
+  performance: {
+    lazyLoading: false, // Lazy load items on demand
+    loadingBatchSize: 50, // Number of items to load in each batch
+    enableVirtualScrolling: false, // Use virtual scrolling for large lists
+    cacheItems: true, // Cache items for better performance
+    maxCachedItems: 1000, // Maximum number of cached items
+    debounceRendering: true, // Debounce rendering for better performance
+    debounceDelay: 50 // Debounce delay in milliseconds
+  },
+  
+  // Integration Options
+  integration: {
+    storePersistence: true, // Persist state to localStorage
+    storeModule: 'ecfrNavigator', // Vuex/Pinia store module name
+    trackItemViews: false, // Track item views (analytics)
+    trackingEventName: 'ecfr-item-viewed', // Event name for tracking
+    externalContentRenderer: null, // External renderer function for content
+    useBrowserHistory: true, // Use browser history API for navigation
+    urlPattern: '/ecfr/:itemId' // URL pattern for deep linking
+  },
+  
+  // Customization Options
+  customization: {
+    itemComponent: null, // Custom component for rendering items
+    breadcrumbComponent: null, // Custom breadcrumb component
+    searchComponent: null, // Custom search component
+    contentComponent: null, // Custom content component
+    customClasses: {}, // Custom CSS classes for components
+    slots: {} // Configuration for named slots
+  },
+  
+  // Experimental Features
+  experimental: {
+    enableAnnotations: false, // Enable annotations on content
+    enableBookmarks: false, // Enable bookmarking items
+    enableCollaborationFeatures: false, // Enable collaboration features
+    enableOfflineSupport: false // Enable offline support
+  }
+};
+```
+
+### Key Configuration Sections
+
+This comprehensive schema allows for extensive customization of the ECFR Navigator. Here are some key sections explained in more detail:
+
+#### Display Options
+
+Controls how items are displayed in the navigator:
+
+- **showTypeIcon**: Show icons to indicate item types (title, part, section)
+- **showItemNumbers**: Display item numbers/identifiers
+- **indentItems**: Indent nested items to reflect hierarchy
+- **compactMode**: Use compact display for denser view
+
+#### Search Options
+
+Configure the powerful search functionality:
+
+- **enabled**: Toggle search feature on/off
+- **fuzzySearch.threshold**: Control match sensitivity (0-1 scale)
+- **fuzzySearch.includeMatches**: Include details about which parts matched
+- **fieldWeights**: Give more importance to matches in titles vs. content
+
+#### Content Rendering Options
+
+Control how content is rendered and sanitized:
+
+- **sanitizeHtml**: Enable HTML sanitization for security
+- **allowedTags/allowedAttributes**: Specify allowed HTML elements and attributes
+- **renderMarkdown**: Treat content as Markdown instead of HTML
+- **syntaxHighlighting**: Enable code syntax highlighting in content
+
+#### Integration Options
+
+Configure how the navigator integrates with external systems:
+
+- **storePersistence**: Save state to localStorage
+- **useBrowserHistory**: Use browser history API for navigation
+- **urlPattern**: Define URL pattern for deep linking
+- **externalContentRenderer**: Custom function for rendering content
+
+## Extensible Schemas
+
+The navigator supports several extensible schemas that can be used to define custom data structures and behaviors.
+
+### Custom Item Schema
+
+You can extend the basic item schema with additional properties:
+
+```javascript
+/**
+ * @typedef {Object} CustomECFRItem
+ * @extends {ECFRItem}
+ * @property {string} [status] - Publication status (e.g., 'draft', 'published')
+ * @property {string} [effectiveDate] - When the item becomes effective
+ * @property {string[]} [tags] - Tags or categories for the item
+ * @property {Object} [permissions] - User permissions for this item
+ * @property {Object} [history] - Version history information
+ * @property {Object} [relationships] - Relationships to other items
+ */
+
+// Example usage
+const extendedItems = [
+  {
+    id: 'custom-title-1',
+    type: 'title',
+    number: '1',
+    title: 'Extended Title',
+    
+    // Standard properties
+    children: [ /* ... */ ],
+    content: '<p>Standard content</p>',
+    
+    // Extended properties
+    status: 'published',
+    effectiveDate: '2023-01-01',
+    tags: ['important', 'regulatory'],
+    permissions: {
+      read: ['public'],
+      edit: ['admin']
+    },
+    history: {
+      createdAt: '2022-06-15',
+      lastModified: '2022-12-10',
+      versions: [
+        { version: '1.0', date: '2022-06-15' },
+        { version: '1.1', date: '2022-12-10' }
+      ]
+    },
+    relationships: {
+      supersedes: ['old-title-1'],
+      relatedTo: ['title-2', 'title-3']
+    }
+  }
+];
+```
+
+### Custom Metadata Schema
+
+Define structured metadata schemas for different types of metadata:
+
+```javascript
+/**
+ * @typedef {Object} XMLSourceMetadata
+ * @property {string} url - URL to the XML source
+ * @property {string} [version] - Version of the XML
+ * @property {string} [lastUpdated] - When the XML was last updated
+ * @property {string} [format] - Format of the XML (e.g., 'eCFR', 'GPO')
+ */
+
+/**
+ * @typedef {Object} RenderTargetMetadata
+ * @property {string} elementId - ID of the element to render into
+ * @property {string} [mode] - Rendering mode ('replace', 'append', etc.)
+ * @property {boolean} [sync] - Whether to sync scrolling with navigator
+ */
+
+/**
+ * @typedef {Object} AnnotationsMetadata
+ * @property {Array} annotations - Array of annotations
+ * @property {string} annotations[].id - Unique ID for the annotation
+ * @property {string} annotations[].text - Annotation text
+ * @property {string} annotations[].user - User who created the annotation
+ * @property {string} annotations[].timestamp - When the annotation was created
+ * @property {Object} annotations[].position - Position information
+ */
+
+// Example usage
+navigator.addMetadata('section-1-1', {
+  xmlSource: {
+    url: 'https://www.ecfr.gov/api/xml/section-1-1.xml',
+    version: '1.0',
+    lastUpdated: '2023-04-15',
+    format: 'eCFR'
+  },
+  renderTarget: {
+    elementId: 'content-viewer',
+    mode: 'replace',
+    sync: true
+  },
+  annotations: {
+    annotations: [
+      {
+        id: 'anno-1',
+        text: 'This is an important section',
+        user: 'jsmith',
+        timestamp: '2023-05-20T14:30:00Z',
+        position: { startOffset: 10, endOffset: 25 }
+      }
+    ]
+  }
+});
+```
+
+### Custom Event Schema
+
+Define custom events with structured data:
+
+```javascript
+/**
+ * @typedef {Object} NavigationEventData
+ * @property {string} source - Source of the navigation ('user', 'api', 'history')
+ * @property {string} timestamp - When the navigation occurred
+ * @property {Object} from - Information about the previous item
+ * @property {Object} to - Information about the new item
+ */
+
+/**
+ * @typedef {Object} SearchEventData
+ * @property {string} query - The search query
+ * @property {number} results - Number of results found
+ * @property {boolean} fuzzy - Whether fuzzy search was used
+ * @property {number} threshold - Fuzzy search threshold used
+ * @property {Array} matches - Detailed match information
+ */
+
+// Example component usage with custom events
+<ECFRNavigator
+  @item-selected="(event) => {
+    // Standard event data
+    console.log(event.item, event.path);
+    
+    // Extended event data
+    const extendedData = {
+      source: 'user',
+      timestamp: new Date().toISOString(),
+      from: this.previousItem,
+      to: event.item
+    };
+    
+    // Track the event
+    this.$analytics.trackEvent('item-navigation', extendedData);
+    
+    // Update state
+    this.previousItem = event.item;
+  }"
+  
+  @search-completed="(event) => {
+    // Track search analytics
+    this.$analytics.trackEvent('search', {
+      query: event.query,
+      results: event.results,
+      fuzzy: event.fuzzy,
+      threshold: event.threshold,
+      timestamp: new Date().toISOString()
+    });
+  }"
+/>
+```
+
+### Custom Processor Schema
+
+Define custom metadata processors with type definitions:
+
+```javascript
+/**
+ * @typedef {Function} MetadataProcessor
+ * @param {Object} metadata - Raw metadata to process
+ * @param {string} itemId - ID of the item
+ * @returns {Object} Processed metadata
+ */
+
+/**
+ * @typedef {Object} ProcessorRegistry
+ * @property {Map<string, MetadataProcessor>} processors - Map of processor functions
+ * @property {Function} register - Function to register a processor
+ * @property {Function} unregister - Function to unregister a processor
+ * @property {Function} process - Function to process metadata
+ */
+
+// Example processor implementation
+const xmlSourceProcessor = (metadata, itemId) => {
+  // Validate metadata
+  if (!metadata.url) {
+    console.warn(`Invalid XML source metadata for ${itemId}: missing URL`);
+    return null;
+  }
+  
+  // Process the metadata
+  return {
+    url: metadata.url,
+    label: `XML for ${itemId} (v${metadata.version || '1.0'})`,
+    downloadUrl: `${metadata.url}?download=true`,
+    isValid: true,
+    formattedDate: metadata.lastUpdated ? 
+      new Date(metadata.lastUpdated).toLocaleDateString() : 'Unknown'
+  };
+};
+
+// Register the processor
+navigator.registerMetadataProcessor('xmlSource', xmlSourceProcessor);
+```
+
 ## Browser Support
 
 This component supports all modern browsers and IE 11 with appropriate polyfills.
