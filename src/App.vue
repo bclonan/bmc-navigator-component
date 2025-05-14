@@ -2,6 +2,7 @@
   <div class="container mx-auto p-4">
     <h1 class="text-2xl font-bold mb-4">eCFR Navigator Demo</h1>
     
+    <!-- Top controls row -->
     <div class="flex space-x-2 mb-4">
       <button 
         @click="toggleTheme" 
@@ -23,6 +24,113 @@
       >
         Register XML Processor
       </button>
+    </div>
+    
+    <!-- View Mode Controls -->
+    <div class="flex flex-wrap gap-2 mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+      <div>
+        <span class="text-sm font-medium mr-2">View Mode:</span>
+        <div class="flex space-x-1 mt-1">
+          <button 
+            @click="setViewMode('compact')" 
+            class="px-3 py-1 text-sm rounded transition-colors duration-200"
+            :class="[
+              navigatorOptions.display.viewMode === 'compact' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            ]"
+          >
+            Compact
+          </button>
+          <button 
+            @click="setViewMode('standard')" 
+            class="px-3 py-1 text-sm rounded transition-colors duration-200"
+            :class="[
+              navigatorOptions.display.viewMode === 'standard' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            ]"
+          >
+            Standard
+          </button>
+          <button 
+            @click="setViewMode('detailed')" 
+            class="px-3 py-1 text-sm rounded transition-colors duration-200"
+            :class="[
+              navigatorOptions.display.viewMode === 'detailed' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            ]"
+          >
+            Detailed
+          </button>
+        </div>
+      </div>
+      
+      <div>
+        <span class="text-sm font-medium mr-2">Spacing:</span>
+        <div class="flex space-x-1 mt-1">
+          <button 
+            @click="setItemSpacing('tight')" 
+            class="px-3 py-1 text-sm rounded transition-colors duration-200"
+            :class="[
+              navigatorOptions.display.itemSpacing === 'tight' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            ]"
+          >
+            Tight
+          </button>
+          <button 
+            @click="setItemSpacing('medium')" 
+            class="px-3 py-1 text-sm rounded transition-colors duration-200"
+            :class="[
+              navigatorOptions.display.itemSpacing === 'medium' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            ]"
+          >
+            Medium
+          </button>
+          <button 
+            @click="setItemSpacing('loose')" 
+            class="px-3 py-1 text-sm rounded transition-colors duration-200"
+            :class="[
+              navigatorOptions.display.itemSpacing === 'loose' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            ]"
+          >
+            Loose
+          </button>
+        </div>
+      </div>
+      
+      <div class="flex items-center">
+        <label class="inline-flex items-center cursor-pointer">
+          <input 
+            type="checkbox" 
+            v-model="navigatorOptions.display.showMetadataBadges"
+            @change="updateOptions"
+            class="sr-only peer"
+          >
+          <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+          <span class="ml-2 text-sm font-medium">Show Metadata Badges</span>
+        </label>
+      </div>
+      
+      <div class="flex items-center">
+        <label class="inline-flex items-center cursor-pointer">
+          <input 
+            type="checkbox" 
+            v-model="navigatorOptions.display.showDescription"
+            @change="updateOptions"
+            class="sr-only peer"
+          >
+          <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+          <span class="ml-2 text-sm font-medium">Show Content Preview</span>
+        </label>
+      </div>
     </div>
     
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -90,7 +198,14 @@ export default {
       navigatorOptions: {
         showBreadcrumb: true,
         expandAll: false,
-        theme: 'light'
+        theme: 'light',
+        display: {
+          viewMode: 'standard',
+          showDescription: true,
+          showMetadataBadges: true, 
+          itemSpacing: 'medium',
+          maxTitleLength: 40
+        }
       },
       ecfrData: [
         {
@@ -278,6 +393,52 @@ export default {
         ...this.navigatorOptions,
         theme: this.navigatorOptions.theme === 'light' ? 'dark' : 'light'
       };
+    },
+    
+    setViewMode(mode) {
+      // Create a copy of the current options
+      const newOptions = { ...this.navigatorOptions };
+      
+      // Update view mode
+      if (!newOptions.display) {
+        newOptions.display = {};
+      }
+      
+      newOptions.display.viewMode = mode;
+      
+      // Apply mode-specific settings
+      if (mode === 'detailed') {
+        // Detailed mode - show descriptions and metadata badges
+        newOptions.display.showDescription = true;
+      } else if (mode === 'compact') {
+        // Compact mode - hide descriptions for better density
+        newOptions.display.showDescription = false;
+      }
+      
+      // Update options
+      this.navigatorOptions = newOptions;
+    },
+    
+    setItemSpacing(spacing) {
+      // Create a copy of the current options
+      const newOptions = { ...this.navigatorOptions };
+      
+      // Update item spacing
+      if (!newOptions.display) {
+        newOptions.display = {};
+      }
+      
+      newOptions.display.itemSpacing = spacing;
+      
+      // Update options
+      this.navigatorOptions = newOptions;
+    },
+    
+    updateOptions() {
+      // This method is called when checkboxes change
+      // The v-model already updates navigatorOptions directly,
+      // so we don't need to do anything here except trigger a UI update
+      this.navigatorOptions = { ...this.navigatorOptions };
     }
   }
 };

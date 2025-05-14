@@ -170,7 +170,16 @@ export default {
       navigatorOptions: {
         showBreadcrumb: true,
         expandAll: false,
-        theme: 'light' // 'light' or 'dark'
+        theme: 'light', // 'light' or 'dark'
+        
+        // View mode configuration
+        display: {
+          viewMode: 'standard', // 'compact', 'standard', or 'detailed'
+          showDescription: true, // Show content preview in detailed mode
+          showMetadataBadges: true, // Show badges indicating items with metadata
+          itemSpacing: 'medium', // 'tight', 'medium', 'loose'
+          maxTitleLength: 40 // Truncate titles longer than this
+        }
       },
       
       // Hierarchical content data
@@ -475,7 +484,11 @@ The ECFRNavigator component can be extensively customized through its options pr
 - **display.showTypeIcon**: Show icons to indicate item types (title, part, section)
 - **display.showItemNumbers**: Display item numbers/identifiers
 - **display.indentItems**: Indent nested items to reflect hierarchy
-- **display.compactMode**: Use compact display for denser view
+- **display.viewMode**: Display mode ('compact', 'standard', or 'detailed')
+- **display.showDescription**: Show content preview in detailed mode
+- **display.showMetadataBadges**: Show badges for items with metadata
+- **display.itemSpacing**: Control item spacing ('tight', 'medium', 'loose')
+- **display.maxTitleLength**: Truncate titles longer than specified length
 - **display.hideEmptyItems**: Hide items with no children or content
 
 ### Navigation Options
@@ -491,6 +504,52 @@ The ECFRNavigator component can be extensively customized through its options pr
 ### Printing Options
 - **printing.enablePrintView**: Enable print-friendly view
 - **printing.includeChildrenWhenPrinting**: Include child items when printing
+
+## View Modes and Display Options
+
+The component supports three distinct view modes to suit different use cases:
+
+### Compact Mode
+
+Optimized for dense navigation of large document structures:
+- Smaller text and reduced spacing
+- Hidden type icons for more compact display
+- Displays only essential information
+- Perfect for navigation through large hierarchies when screen space is limited
+
+### Standard Mode
+
+The default balanced view:
+- Clear, readable typography with moderate spacing
+- Shows item type icons and identifiers
+- Optional metadata badges
+- Ideal for everyday document navigation
+
+### Detailed Mode
+
+Enhanced view with comprehensive information:
+- Larger item cards with additional spacing
+- Content previews showing excerpts from the item's content
+- Detailed metadata badges showing all metadata types
+- Perfect for deeper exploration of document structure and metadata
+
+### Configuring View Modes
+
+You can configure these view modes through the component options:
+
+```javascript
+options: {
+  display: {
+    viewMode: 'standard', // 'compact', 'standard', or 'detailed'
+    showDescription: true, // Show content preview in detailed mode
+    showMetadataBadges: true, // Show badges for items with metadata
+    itemSpacing: 'medium', // 'tight', 'medium', 'loose'
+    maxTitleLength: 50 // Truncate titles longer than this length
+  }
+}
+```
+
+The component provides UI controls to switch between these modes during runtime, allowing users to customize their viewing experience.
 
 ## Advanced Search Functionality
 
