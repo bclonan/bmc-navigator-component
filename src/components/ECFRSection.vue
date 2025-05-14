@@ -1,13 +1,21 @@
 <template>
   <div 
     v-if="!shouldHideItem"
-    class="ecfr-section mb-1" 
+    class="ecfr-section" 
     :class="[
+      // Common classes
       darkMode ? 'border-gray-600' : 'border-gray-200',
+      
+      // Indentation
       level > 0 && mergedOptions.display.indentItems ? 
         `pl-${Math.min(level * 4, 12)}` : '',
-      mergedOptions.display.compactMode ? 'compact-mode' : '',
-      !mergedOptions.display.indentItems ? '' : 'border-l-2'
+      !mergedOptions.display.indentItems ? '' : 'border-l-2',
+      
+      // View mode specific classes
+      viewModeClasses,
+      
+      // Spacing
+      spacingClasses
     ]"
   >
     <div 
@@ -40,54 +48,150 @@
 
       <!-- Item content -->
       <div class="flex-1">
-        <div class="flex items-baseline">
-          <!-- Identifier (if available) -->
-          <span 
-            v-if="item.number && mergedOptions.display.showItemNumbers" 
-            class="font-semibold mr-2"
-            :class="[darkMode ? 'text-blue-300' : 'text-blue-600']"
-          >
-            {{ item.citationPrefix || item.type }} {{ item.number }}
-          </span>
+        <!-- Standard and Compact Modes -->
+        <template v-if="!isDetailedMode">
+          <div class="flex items-baseline">
+            <!-- Identifier (if available) -->
+            <span 
+              v-if="item.number && mergedOptions.display.showItemNumbers" 
+              class="font-semibold mr-2"
+              :class="[
+                darkMode ? 'text-blue-300' : 'text-blue-600',
+                isCompactMode ? 'text-xs' : ''
+              ]"
+            >
+              {{ item.citationPrefix || item.type }} {{ item.number }}
+            </span>
+            
+            <!-- Type icon (if enabled and not in compact mode) -->
+            <span 
+              v-if="mergedOptions.display.showTypeIcon && item.type && !isCompactMode"
+              class="mr-2"
+            >
+              <template v-if="item.type === 'title'">
+                <svg class="h-4 w-4 inline-block" viewBox="0 0 24 24" :class="[darkMode ? 'text-blue-300' : 'text-blue-600']">
+                  <path fill="currentColor" d="M5 4v3h5.5v12h3V7H19V4z"/>
+                </svg>
+              </template>
+              <template v-else-if="item.type === 'part'">
+                <svg class="h-4 w-4 inline-block" viewBox="0 0 24 24" :class="[darkMode ? 'text-green-300' : 'text-green-600']">
+                  <path fill="currentColor" d="M14,10H2V12H14V10M14,6H2V8H14V6M2,16H10V14H2V16M21.5,11.5L23,13L16,20L11.5,15.5L13,14L16,17L21.5,11.5Z"/>
+                </svg>
+              </template>
+              <template v-else-if="item.type === 'section'">
+                <svg class="h-4 w-4 inline-block" viewBox="0 0 24 24" :class="[darkMode ? 'text-amber-300' : 'text-amber-600']">
+                  <path fill="currentColor" d="M3,4H7V8H3V4M9,5V7H21V5H9M3,10H7V14H3V10M9,11V13H21V11H9M3,16H7V20H3V16M9,17V19H21V17H9"/>
+                </svg>
+              </template>
+            </span>
+            
+            <!-- Title -->
+            <span 
+              class="font-medium truncate"
+              :class="[
+                darkMode ? 'text-gray-200' : 'text-gray-800',
+                isCompactMode ? 'text-sm' : ''
+              ]"
+            >
+              {{ displayTitle }}
+            </span>
+            
+            <!-- Metadata Badge (if applicable) -->
+            <span 
+              v-if="hasMetadata && mergedOptions.display.showMetadataBadges"
+              class="ml-2 px-1.5 py-0.5 rounded text-xs"
+              :class="[darkMode ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-700']"
+            >
+              {{ metadataTypes.length }}
+            </span>
+          </div>
           
-          <!-- Type icon (if enabled) -->
-          <span 
-            v-if="mergedOptions.display.showTypeIcon && item.type"
-            class="mr-2"
+          <!-- Subtitle (if available and not in compact mode) -->
+          <div 
+            v-if="item.subtitle && !isCompactMode" 
+            class="text-sm mt-1"
+            :class="[darkMode ? 'text-gray-400' : 'text-gray-600']"
           >
-            <template v-if="item.type === 'title'">
-              <svg class="h-4 w-4 inline-block" viewBox="0 0 24 24" :class="[darkMode ? 'text-blue-300' : 'text-blue-600']">
-                <path fill="currentColor" d="M5 4v3h5.5v12h3V7H19V4z"/>
-              </svg>
-            </template>
-            <template v-else-if="item.type === 'part'">
-              <svg class="h-4 w-4 inline-block" viewBox="0 0 24 24" :class="[darkMode ? 'text-green-300' : 'text-green-600']">
-                <path fill="currentColor" d="M14,10H2V12H14V10M14,6H2V8H14V6M2,16H10V14H2V16M21.5,11.5L23,13L16,20L11.5,15.5L13,14L16,17L21.5,11.5Z"/>
-              </svg>
-            </template>
-            <template v-else-if="item.type === 'section'">
-              <svg class="h-4 w-4 inline-block" viewBox="0 0 24 24" :class="[darkMode ? 'text-amber-300' : 'text-amber-600']">
-                <path fill="currentColor" d="M3,4H7V8H3V4M9,5V7H21V5H9M3,10H7V14H3V10M9,11V13H21V11H9M3,16H7V20H3V16M9,17V19H21V17H9"/>
-              </svg>
-            </template>
-          </span>
-          <!-- Title -->
-          <span 
-            class="font-medium"
-            :class="[darkMode ? 'text-gray-200' : 'text-gray-800']"
-          >
-            {{ item.title }}
-          </span>
-        </div>
+            {{ item.subtitle }}
+          </div>
+        </template>
         
-        <!-- Subtitle (if available) -->
-        <div 
-          v-if="item.subtitle" 
-          class="text-sm mt-1"
-          :class="[darkMode ? 'text-gray-400' : 'text-gray-600']"
-        >
-          {{ item.subtitle }}
-        </div>
+        <!-- Detailed Mode -->
+        <template v-else>
+          <div class="flex items-start">
+            <div class="flex-1">
+              <div class="flex items-baseline flex-wrap">
+                <!-- Identifier (if available) -->
+                <span 
+                  v-if="item.number && mergedOptions.display.showItemNumbers" 
+                  class="font-semibold mr-2"
+                  :class="[darkMode ? 'text-blue-300' : 'text-blue-600']"
+                >
+                  {{ item.citationPrefix || item.type }} {{ item.number }}
+                </span>
+                
+                <!-- Type icon (if enabled) -->
+                <span 
+                  v-if="mergedOptions.display.showTypeIcon && item.type"
+                  class="mr-2"
+                >
+                  <template v-if="item.type === 'title'">
+                    <svg class="h-4 w-4 inline-block" viewBox="0 0 24 24" :class="[darkMode ? 'text-blue-300' : 'text-blue-600']">
+                      <path fill="currentColor" d="M5 4v3h5.5v12h3V7H19V4z"/>
+                    </svg>
+                  </template>
+                  <template v-else-if="item.type === 'part'">
+                    <svg class="h-4 w-4 inline-block" viewBox="0 0 24 24" :class="[darkMode ? 'text-green-300' : 'text-green-600']">
+                      <path fill="currentColor" d="M14,10H2V12H14V10M14,6H2V8H14V6M2,16H10V14H2V16M21.5,11.5L23,13L16,20L11.5,15.5L13,14L16,17L21.5,11.5Z"/>
+                    </svg>
+                  </template>
+                  <template v-else-if="item.type === 'section'">
+                    <svg class="h-4 w-4 inline-block" viewBox="0 0 24 24" :class="[darkMode ? 'text-amber-300' : 'text-amber-600']">
+                      <path fill="currentColor" d="M3,4H7V8H3V4M9,5V7H21V5H9M3,10H7V14H3V10M9,11V13H21V11H9M3,16H7V20H3V16M9,17V19H21V17H9"/>
+                    </svg>
+                  </template>
+                </span>
+                
+                <!-- Title -->
+                <span 
+                  class="font-medium"
+                  :class="[darkMode ? 'text-gray-200' : 'text-gray-800']"
+                >
+                  {{ item.title }}
+                </span>
+                
+                <!-- Metadata Badges -->
+                <div v-if="hasMetadata && mergedOptions.display.showMetadataBadges" class="ml-2 flex flex-wrap gap-1">
+                  <span 
+                    v-for="type in metadataTypes" 
+                    :key="type"
+                    class="px-1.5 py-0.5 rounded text-xs"
+                    :class="[darkMode ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-700']"
+                  >
+                    {{ type }}
+                  </span>
+                </div>
+              </div>
+              
+              <!-- Subtitle -->
+              <div 
+                v-if="item.subtitle" 
+                class="text-sm mt-1"
+                :class="[darkMode ? 'text-gray-400' : 'text-gray-600']"
+              >
+                {{ item.subtitle }}
+              </div>
+              
+              <!-- Content Preview -->
+              <div 
+                v-if="mergedOptions.display.showDescription && contentPreview" 
+                class="text-sm mt-2 text-gray-600 dark:text-gray-400 max-w-prose"
+              >
+                {{ contentPreview }}
+              </div>
+            </div>
+          </div>
+        </template>
       </div>
     </div>
 
@@ -188,8 +292,12 @@ export default {
           showTypeIcon: true,
           showItemNumbers: true,
           indentItems: true,
-          compactMode: false,
-          hideEmptyItems: false
+          hideEmptyItems: false,
+          viewMode: 'standard', // 'compact', 'standard', or 'detailed'
+          showDescription: false, // Show content excerpt in detailed mode
+          showMetadataBadges: false, // Show badges for items with metadata
+          itemSpacing: 'medium', // 'tight', 'medium', 'loose'
+          maxTitleLength: null // Truncate titles longer than this
         },
         navigation: {
           preserveState: true,

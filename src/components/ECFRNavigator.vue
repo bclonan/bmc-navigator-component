@@ -307,8 +307,12 @@ export default {
           showTypeIcon: true,
           showItemNumbers: true,
           indentItems: true,
-          compactMode: false,
-          hideEmptyItems: false
+          hideEmptyItems: false,
+          viewMode: 'standard', // 'compact', 'standard', or 'detailed'
+          showDescription: false, // Only relevant in detailed mode
+          showMetadataBadges: false, // Show badges for items with metadata
+          itemSpacing: 'medium', // 'tight', 'medium', 'loose'
+          maxTitleLength: null // Truncate titles longer than this
         },
         pagination: {
           enabled: false,
