@@ -72,7 +72,7 @@
         </div>
         
         <!-- Spacing Selector -->
-        <div class="flex items-center">
+        <div class="flex items-center mr-2">
           <label 
             for="itemSpacing" 
             class="sr-only">Item Spacing</label>
@@ -96,6 +96,30 @@
               <option value="medium">Medium</option>
               <option value="loose">Loose</option>
             </select>
+          </div>
+        </div>
+        
+        <!-- Metadata Toggle -->
+        <div class="flex items-center">
+          <div class="inline-flex items-center">
+            <span 
+              class="text-xs mr-2"
+              :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-600']"
+            >Metadata:</span>
+            <button
+              @click="toggleMetadataBadges"
+              class="relative inline-flex h-4 w-8 items-center rounded-full transition-colors focus:outline-none"
+              :class="[
+                showMetadataBadges 
+                  ? (options.theme === 'dark' ? 'bg-blue-600' : 'bg-blue-500') 
+                  : (options.theme === 'dark' ? 'bg-gray-700' : 'bg-gray-300')
+              ]"
+            >
+              <span
+                class="inline-block h-3 w-3 rounded-full bg-white transform transition-transform"
+                :class="showMetadataBadges ? 'translate-x-4' : 'translate-x-1'"
+              ></span>
+            </button>
           </div>
         </div>
       </div>
@@ -501,6 +525,32 @@ export default {
           });
         }
       }
+    },
+    
+    /**
+     * Watch for changes in options to sync the view mode state
+     */
+    options: {
+      handler(newOptions) {
+        if (newOptions.display) {
+          // Sync view mode from options
+          if (newOptions.display.viewMode) {
+            this.currentViewMode = newOptions.display.viewMode;
+          }
+          
+          // Sync item spacing from options
+          if (newOptions.display.itemSpacing) {
+            this.currentItemSpacing = newOptions.display.itemSpacing;
+          }
+          
+          // Sync metadata badges from options
+          if (newOptions.display.showMetadataBadges !== undefined) {
+            this.showMetadataBadges = newOptions.display.showMetadataBadges;
+          }
+        }
+      },
+      deep: true,
+      immediate: true
     }
   },
   
@@ -995,6 +1045,71 @@ export default {
      */
     processMetadata(itemId, metadataType) {
       return this.ecfrStore.processItemMetadata(itemId, metadataType);
+    },
+    
+    /**
+     * Change the view mode
+     * @param {Event} event - Change event
+     */
+    changeViewMode() {
+      // Create a new options object
+      const newOptions = JSON.parse(JSON.stringify(this.mergedOptions));
+      newOptions.display.viewMode = this.currentViewMode;
+      
+      // If in detailed mode, enable metadata badges and content preview by default
+      if (this.currentViewMode === 'detailed') {
+        newOptions.display.showDescription = true;
+        newOptions.display.showMetadataBadges = true;
+      } else if (this.currentViewMode === 'compact') {
+        // In compact mode, disable details for better density
+        newOptions.display.showDescription = false;
+        newOptions.display.showMetadataBadges = false;
+      } else {
+        // Standard mode - default settings
+        newOptions.display.showDescription = false;
+        // Keep metadata badges as is
+      }
+      
+      // Update local options
+      this.$emit('update:options', newOptions);
+      
+      // Force a local update
+      this.defaultOptions.display.viewMode = this.currentViewMode;
+      this.defaultOptions.display.showDescription = newOptions.display.showDescription;
+      this.defaultOptions.display.showMetadataBadges = newOptions.display.showMetadataBadges;
+    },
+    
+    /**
+     * Change the item spacing
+     * @param {Event} event - Change event
+     */
+    changeItemSpacing() {
+      // Create a new options object
+      const newOptions = JSON.parse(JSON.stringify(this.mergedOptions));
+      newOptions.display.itemSpacing = this.currentItemSpacing;
+      
+      // Update local options
+      this.$emit('update:options', newOptions);
+      
+      // Force a local update
+      this.defaultOptions.display.itemSpacing = this.currentItemSpacing;
+    },
+    
+    /**
+     * Toggle metadata badges display
+     */
+    toggleMetadataBadges() {
+      this.showMetadataBadges = !this.showMetadataBadges;
+      
+      // Create a new options object
+      const newOptions = JSON.parse(JSON.stringify(this.mergedOptions));
+      newOptions.display.showMetadataBadges = this.showMetadataBadges;
+      
+      // Update local options
+      this.$emit('update:options', newOptions);
+      
+      // Force a local update
+      this.defaultOptions.display.showMetadataBadges = this.showMetadataBadges;
     }
   }
 };
