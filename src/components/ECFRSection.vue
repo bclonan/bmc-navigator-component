@@ -367,6 +367,107 @@ export default {
      */
     isSelected() {
       return this.ecfrStore.currentItem?.id === this.item.id;
+    },
+    
+    /**
+     * CSS classes based on view mode
+     * @returns {string} CSS classes for view mode
+     */
+    viewModeClasses() {
+      const mode = this.mergedOptions.display.viewMode;
+      
+      if (mode === 'compact') {
+        return 'compact-mode py-0.5';
+      } else if (mode === 'detailed') {
+        return 'detailed-mode py-2';
+      }
+      
+      return 'standard-mode py-1';
+    },
+    
+    /**
+     * CSS classes for item spacing
+     * @returns {string} CSS classes for spacing
+     */
+    spacingClasses() {
+      const spacing = this.mergedOptions.display.itemSpacing;
+      
+      if (spacing === 'tight') {
+        return 'mb-0.5';
+      } else if (spacing === 'loose') {
+        return 'mb-2';
+      }
+      
+      return 'mb-1'; // medium spacing (default)
+    },
+    
+    /**
+     * Whether we're in compact mode
+     * @returns {boolean} True if in compact mode
+     */
+    isCompactMode() {
+      return this.mergedOptions.display.viewMode === 'compact';
+    },
+    
+    /**
+     * Whether we're in detailed mode
+     * @returns {boolean} True if in detailed mode
+     */
+    isDetailedMode() {
+      return this.mergedOptions.display.viewMode === 'detailed';
+    },
+    
+    /**
+     * Process the title for display, handling truncation
+     * @returns {string} The processed title for display
+     */
+    displayTitle() {
+      const maxLength = this.mergedOptions.display.maxTitleLength;
+      
+      // If no max length or the title is already shorter, return as is
+      if (!maxLength || !this.item.title || this.item.title.length <= maxLength) {
+        return this.item.title;
+      }
+      
+      // Truncate and add ellipsis
+      return this.item.title.substring(0, maxLength) + '...';
+    },
+    
+    /**
+     * Whether the item has metadata
+     * @returns {boolean} True if the item has metadata
+     */
+    hasMetadata() {
+      const metadata = this.ecfrStore.getItemMetadata(this.item.id);
+      return !!metadata;
+    },
+    
+    /**
+     * Get metadata types for this item
+     * @returns {string[]} Array of metadata type names
+     */
+    metadataTypes() {
+      const metadata = this.ecfrStore.getItemMetadata(this.item.id);
+      if (!metadata) return [];
+      
+      return Object.keys(metadata);
+    },
+    
+    /**
+     * Content preview for detailed mode
+     * @returns {string} Preview of content with HTML removed
+     */
+    contentPreview() {
+      if (!this.item.content) return '';
+      
+      // Strip HTML tags and get plain text
+      const textContent = this.item.content.replace(/<[^>]*>/g, '');
+      
+      // Truncate to a reasonable size for a preview
+      const maxLength = 150;
+      if (textContent.length <= maxLength) return textContent;
+      
+      return textContent.substring(0, maxLength) + '...';
     }
   },
   
@@ -438,18 +539,60 @@ export default {
 </script>
 
 <style>
+/* Compact mode styles */
 .ecfr-section.compact-mode {
   margin-bottom: 0.25rem;
+}
+
+.ecfr-section.compact-mode > div {
+  padding: 0.5rem;
 }
 
 .compact-mode .ecfr-section {
   margin-bottom: 0.25rem;
 }
 
-.compact-mode > div > div {
-  padding: 0.5rem 0.5rem;
+/* Standard mode styles */
+.ecfr-section.standard-mode > div:first-child {
+  padding: 0.75rem 0.5rem;
 }
 
+/* Detailed mode styles */
+.ecfr-section.detailed-mode {
+  margin-bottom: 0.75rem;
+}
+
+.ecfr-section.detailed-mode > div:first-child {
+  padding: 1rem 0.75rem;
+}
+
+/* Dark mode adjustments */
+.detailed-mode .text-gray-600.dark\:text-gray-400 {
+  color: rgb(156 163 175 / 1); /* text-gray-400 in dark mode */
+}
+
+/* View-mode specific spacing */
+.tight-spacing > div {
+  margin-bottom: 0.25rem;
+}
+
+.medium-spacing > div {
+  margin-bottom: 0.5rem;
+}
+
+.loose-spacing > div {
+  margin-bottom: 1rem;
+}
+
+/* Truncation helpers */
+.truncate-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Print styles */
 @media print {
   .ecfr-section {
     break-inside: avoid;
