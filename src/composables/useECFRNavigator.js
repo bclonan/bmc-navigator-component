@@ -127,6 +127,75 @@ export function useECFRNavigator() {
      */
     getBreadcrumbPath() {
       return ecfrStore.breadcrumbPath;
+    },
+    
+    /**
+     * Set metadata for an item
+     * @param {string} itemId - ID of the item to attach metadata to
+     * @param {Object} metadata - Metadata object to attach
+     * @param {string} [metadataType] - Optional type identifier if adding a specific type
+     */
+    setItemMetadata(itemId, metadata, metadataType) {
+      ecfrStore.setItemMetadata(itemId, metadata, metadataType);
+    },
+    
+    /**
+     * Get metadata for an item
+     * @param {string} itemId - ID of the item
+     * @param {string} [metadataType] - Optional type of metadata to retrieve
+     * @returns {Object|null} The metadata object or null if not found
+     */
+    getItemMetadata(itemId, metadataType) {
+      return ecfrStore.getItemMetadata(itemId, metadataType);
+    },
+    
+    /**
+     * Get the metadata for the current item
+     * @param {string} [metadataType] - Optional type of metadata to retrieve
+     * @returns {Object|null} The metadata object or null if not found
+     */
+    getCurrentItemMetadata(metadataType) {
+      if (!ecfrStore.currentItem || !ecfrStore.currentItem.id) {
+        return null;
+      }
+      
+      return ecfrStore.getItemMetadata(ecfrStore.currentItem.id, metadataType);
+    },
+    
+    /**
+     * Process the metadata for an item with registered processor functions
+     * @param {string} itemId - ID of the item to process metadata for
+     * @param {string} [metadataType] - Optional type of metadata to process
+     * @returns {any} The processed metadata or null if processing failed
+     */
+    processItemMetadata(itemId, metadataType) {
+      return ecfrStore.processItemMetadata(itemId, metadataType);
+    },
+    
+    /**
+     * Remove metadata from an item
+     * @param {string} itemId - ID of the item to remove metadata from
+     * @param {string} [metadataType] - Optional type of metadata to remove (if not specified, removes all)
+     */
+    removeItemMetadata(itemId, metadataType) {
+      ecfrStore.removeItemMetadata(itemId, metadataType);
+    },
+    
+    /**
+     * Register a metadata processor function for a specific metadata type
+     * @param {string} metadataType - Type identifier for the metadata
+     * @param {Function} processorFn - Function to process this type of metadata
+     */
+    registerMetadataProcessor(metadataType, processorFn) {
+      ecfrStore.registerMetadataProcessor(metadataType, processorFn);
+    },
+    
+    /**
+     * Remove a metadata processor
+     * @param {string} metadataType - Type identifier for the metadata to remove
+     */
+    unregisterMetadataProcessor(metadataType) {
+      ecfrStore.unregisterMetadataProcessor(metadataType);
     }
   };
 }

@@ -264,7 +264,7 @@ export default {
     }
   },
   
-  emits: ['item-selected', 'path-changed', 'search-completed', 'update:options'],
+  emits: ['item-selected', 'path-changed', 'search-completed', 'update:options', 'metadata-changed'],
   
   data() {
     return {
@@ -368,9 +368,16 @@ export default {
     'ecfrStore.currentItem': {
       handler(newItem) {
         if (newItem) {
+          // Get any metadata for this item
+          const metadata = this.ecfrStore.getItemMetadata(newItem.id);
+          const processedMetadata = metadata ? 
+            this.ecfrStore.processItemMetadata(newItem.id) : null;
+          
           this.$emit('item-selected', {
             item: newItem,
-            path: this.ecfrStore.breadcrumbPath
+            path: this.ecfrStore.breadcrumbPath,
+            metadata: metadata,
+            processedMetadata: processedMetadata
           });
         }
       }
@@ -762,6 +769,107 @@ export default {
       if (this.searchQuery.trim()) {
         this.performSearch();
       }
+    },
+    
+    /**
+     * Add metadata to an item
+     * @param {string} itemId - ID of the item to attach metadata to
+     * @param {Object} metadata - Metadata object to attach
+     * @param {string} [metadataType] - Optional type identifier if adding a specific type
+     */
+    addMetadata(itemId, metadata, metadataType) {
+      this.ecfrStore.setItemMetadata(itemId, metadata, metadataType);
+      
+      // Emit event with metadata info
+      this.$emit('metadata-changed', {
+        action: 'add',
+        itemId,
+        metadataType: metadataType || 'all',
+        metadata
+      });
+      
+      // If this is for the current item, update the item-selected event
+      if (this.ecfrStore.currentItem && this.ecfrStore.currentItem.id === itemId) {
+        const processedMetadata = this.ecfrStore.processItemMetadata(itemId);
+        
+        this.$emit('item-selected', {
+          item: this.ecfrStore.currentItem,
+          path: this.ecfrStore.breadcrumbPath,
+          metadata: this.ecfrStore.getItemMetadata(itemId),
+          processedMetadata
+        });
+      }
+    },
+    
+    /**
+     * Remove metadata from an item
+     * @param {string} itemId - ID of the item to remove metadata from
+     * @param {string} [metadataType] - Optional type of metadata to remove (if not specified, removes all)
+     */
+    removeMetadata(itemId, metadataType) {
+      // Store a copy of the metadata before removal for the event
+      const oldMetadata = this.ecfrStore.getItemMetadata(itemId, metadataType);
+      
+      this.ecfrStore.removeItemMetadata(itemId, metadataType);
+      
+      // Emit event with removed metadata info
+      this.$emit('metadata-changed', {
+        action: 'remove',
+        itemId,
+        metadataType: metadataType || 'all',
+        oldMetadata
+      });
+      
+      // If this is for the current item, update the item-selected event
+      if (this.ecfrStore.currentItem && this.ecfrStore.currentItem.id === itemId) {
+        const metadata = this.ecfrStore.getItemMetadata(itemId);
+        const processedMetadata = metadata ? 
+          this.ecfrStore.processItemMetadata(itemId) : null;
+        
+        this.$emit('item-selected', {
+          item: this.ecfrStore.currentItem,
+          path: this.ecfrStore.breadcrumbPath,
+          metadata: metadata,
+          processedMetadata: processedMetadata
+        });
+      }
+    },
+    
+    /**
+     * Register a metadata processor function
+     * @param {string} metadataType - Type identifier for the metadata
+     * @param {Function} processorFn - Function to process this type of metadata
+     */
+    registerMetadataProcessor(metadataType, processorFn) {
+      this.ecfrStore.registerMetadataProcessor(metadataType, processorFn);
+    },
+    
+    /**
+     * Remove a metadata processor
+     * @param {string} metadataType - Type identifier for the metadata processor to remove
+     */
+    unregisterMetadataProcessor(metadataType) {
+      this.ecfrStore.unregisterMetadataProcessor(metadataType);
+    },
+    
+    /**
+     * Get metadata for a specific item
+     * @param {string} itemId - ID of the item
+     * @param {string} [metadataType] - Optional specific metadata type to retrieve
+     * @returns {Object|null} The metadata or null if not found
+     */
+    getMetadata(itemId, metadataType) {
+      return this.ecfrStore.getItemMetadata(itemId, metadataType);
+    },
+    
+    /**
+     * Process metadata for an item with registered processors
+     * @param {string} itemId - ID of the item
+     * @param {string} [metadataType] - Optional specific metadata type to process
+     * @returns {Object|null} The processed metadata or null
+     */
+    processMetadata(itemId, metadataType) {
+      return this.ecfrStore.processItemMetadata(itemId, metadataType);
     }
   }
 };
