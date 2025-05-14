@@ -6,7 +6,7 @@ A lightweight, reusable Vue 3 component with Pinia integration for navigating hi
 
 - 📚 **Hierarchical Navigation**: Navigate complex nested document structures
 - 🔖 **Breadcrumb Trail**: Always see your current location in the hierarchy
-- 🔍 **Search Functionality**: Find content across the entire document structure
+- 🔍 **Advanced Search**: Find content with fuzzy matching and adjustable sensitivity
 - 🎨 **Tailwind CSS Styling**: Clean, minimal interface with Tailwind CSS
 - 🧩 **Expandable Sections**: Collapsible sections for better content organization
 - 📱 **Responsive Design**: Works on all screen sizes
@@ -193,12 +193,33 @@ The `options` prop accepts the following configuration:
 
 ```javascript
 {
+  // UI Options
   showBreadcrumb: true,           // Whether to show breadcrumb navigation
   expandAll: false,               // Whether to expand all items initially
   hideContentOnNavigation: false, // Whether to hide content when navigating
-  theme: 'light'                  // Theme: 'light' or 'dark'
+  theme: 'light',                 // Theme: 'light' or 'dark'
+  
+  // Fuzzy Search Options
+  fuzzySearch: {
+    enabled: true,                // Whether to use fuzzy matching for search
+    threshold: 0.4,               // Match sensitivity (0 = exact, 1 = loose)
+    distance: 100                 // Maximum edit distance for fuzzy matching
+  }
 }
 ```
+
+### Fuzzy Search Configuration
+
+The fuzzy search feature can be fine-tuned with the following options:
+
+- **enabled**: When `true`, enables fuzzy matching for more flexible search results. When `false`, uses exact substring matching.
+- **threshold**: Controls how strict the matching is (range 0-1):
+  - Lower values (0.1-0.3): Stricter matching, fewer results, higher precision
+  - Medium values (0.4-0.6): Balanced matching, good for most use cases
+  - Higher values (0.7-0.9): Looser matching, more results, may include false positives
+- **distance**: Maximum edit distance (Levenshtein distance) allowed between query and match. Higher values allow more character differences.
+
+You can expose these controls to your users through the component's UI or set them programmatically.
 
 ## Events
 
@@ -206,36 +227,58 @@ The component emits the following events:
 
 - `item-selected`: Fired when an item is selected, with the item and path
 - `path-changed`: Fired when the navigation path changes
+- `search-completed`: Fired when a search is completed, with query info and results count
+- `update:options`: Fired when options are updated internally (for v-model support)
 
-## Search Functionality
+## Advanced Search Functionality
 
-The component includes a built-in search feature that allows users to find content across the entire document structure:
+The component includes a powerful search feature with fuzzy matching capabilities:
 
-- Search across titles, subtitles, and content of all items
-- Results show context of where the match was found
-- Click on search results to navigate directly to that item
-- Results are displayed with contextual snippets to help identify relevant matches
-- Responsive design works on mobile and desktop
+- **Fuzzy Matching**: Find content even with typos or approximate matches
+- **Adjustable Sensitivity**: Control the balance between exact and loose matching
+- **Toggle Feature**: Switch between exact and fuzzy search modes
+- **Context Highlighting**: See where and how the search terms matched
+- **Relevance Ranking**: Results are sorted by match quality
+- **Smart Context Extraction**: Shows the relevant portion of content around matches
 
-The search engine automatically:
+The advanced search engine provides:
 
-1. Strips HTML tags from content for text-only searching
-2. Provides context around matched content
-3. Expands parent items when navigating to a search result
-4. Groups results by type (title, subtitle, content)
+1. **Fuzzy Search**: Tolerates typos, plurals, and word variations
+2. **Field Weighting**: Prioritizes matches in titles over content
+3. **Performance Optimization**: Uses an indexed approach for fast results
+4. **Context-Aware Results**: Shows where in the document the match occurred
 
-Example usage with search:
+Example usage with advanced search options:
 
 ```vue
 <template>
   <ECFRNavigator 
     :items="ecfrData" 
-    :options="{ theme: 'light' }"
+    :options="{
+      theme: 'light',
+      fuzzySearch: {
+        enabled: true,       // Enable/disable fuzzy search
+        threshold: 0.4,      // 0 = exact matches only, 1 = very loose matching
+        distance: 100        // Edit distance for fuzzy matching
+      }
+    }"
+    @search-completed="onSearchCompleted"
   />
 </template>
+
+<script>
+export default {
+  methods: {
+    onSearchCompleted(event) {
+      console.log(`Found ${event.results} results for "${event.query}"`);
+      console.log(`Fuzzy search: ${event.fuzzy ? 'Enabled' : 'Disabled'}`);
+    }
+  }
+}
+</script>
 ```
 
-Users can then use the search box in the component to find content across all items.
+Users can also adjust search sensitivity in real-time using the slider control in the search results panel, allowing them to fine-tune between exact matching and more flexible fuzzy matching based on their needs.
 
 ## Browser Support
 

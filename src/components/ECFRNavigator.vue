@@ -89,18 +89,73 @@
       </div>
       
       <!-- Results header -->
-      <div v-else class="flex justify-between items-center mb-2">
-        <div class="text-sm font-medium"
-          :class="[options.theme === 'dark' ? 'text-gray-300' : 'text-gray-700']"
-        >
-          Found {{ searchResults.length }} result{{ searchResults.length !== 1 ? 's' : '' }}
+      <div v-else>
+        <div class="flex justify-between items-center mb-2">
+          <div class="flex items-center">
+            <div class="text-sm font-medium mr-2"
+              :class="[options.theme === 'dark' ? 'text-gray-300' : 'text-gray-700']"
+            >
+              Found {{ searchResults.length }} result{{ searchResults.length !== 1 ? 's' : '' }}
+            </div>
+            
+            <!-- Fuzzy search badge -->
+            <div v-if="mergedOptions.fuzzySearch.enabled" 
+              class="text-xs px-2 py-0.5 rounded-full"
+              :class="[options.theme === 'dark' ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800']"
+            >
+              Fuzzy
+            </div>
+          </div>
+          
+          <div class="flex items-center">
+            <!-- Fuzzy search toggle -->
+            <div class="flex items-center mr-2">
+              <label class="text-xs mr-1" :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-600']">
+                Fuzzy:
+              </label>
+              <button
+                @click="toggleFuzzySearch"
+                class="relative inline-flex h-4 w-8 items-center rounded-full transition-colors focus:outline-none"
+                :class="[
+                  mergedOptions.fuzzySearch.enabled 
+                    ? (options.theme === 'dark' ? 'bg-blue-600' : 'bg-blue-500') 
+                    : (options.theme === 'dark' ? 'bg-gray-700' : 'bg-gray-300')
+                ]"
+              >
+                <span
+                  class="inline-block h-3 w-3 rounded-full bg-white transform transition-transform"
+                  :class="mergedOptions.fuzzySearch.enabled ? 'translate-x-4' : 'translate-x-1'"
+                ></span>
+              </button>
+            </div>
+            
+            <!-- Clear button -->
+            <button 
+              class="text-sm text-blue-500 hover:text-blue-700"
+              @click="clearSearch"
+            >
+              Clear
+            </button>
+          </div>
         </div>
-        <button 
-          class="text-sm text-blue-500 hover:text-blue-700"
-          @click="clearSearch"
-        >
-          Clear
-        </button>
+        
+        <!-- Search sensitivity slider when fuzzy is enabled -->
+        <div v-if="mergedOptions.fuzzySearch.enabled" class="mb-2 px-1">
+          <div class="flex justify-between items-center text-xs mb-1">
+            <span :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-600']">Exact</span>
+            <span :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-600']">Flexible</span>
+          </div>
+          <input 
+            type="range" 
+            min="0" 
+            max="8" 
+            step="1" 
+            v-model="fuzzyThresholdStep" 
+            @change="updateFuzzyThreshold"
+            class="w-full h-1 rounded-lg appearance-none cursor-pointer"
+            :class="[options.theme === 'dark' ? 'bg-gray-700' : 'bg-gray-300']"
+          />
+        </div>
       </div>
       
       <!-- Results list -->
@@ -180,6 +235,7 @@
 import { useECFRStore } from '../stores/ecfr';
 import ECFRBreadcrumb from './ECFRBreadcrumb.vue';
 import ECFRSection from './ECFRSection.vue';
+import Fuse from 'fuse.js';
 
 export default {
   name: 'ECFRNavigator',
@@ -207,7 +263,7 @@ export default {
     }
   },
   
-  emits: ['item-selected', 'path-changed', 'search-completed'],
+  emits: ['item-selected', 'path-changed', 'search-completed', 'update:options'],
   
   data() {
     return {
@@ -216,11 +272,19 @@ export default {
       searchQuery: '',
       searchResults: [],
       showSearchResults: false,
+      fuseInstance: null,
+      searchData: [],
+      fuzzyThresholdStep: 4, // Default middle value (0-8 range)
       defaultOptions: {
         showBreadcrumb: true,
         expandAll: false,
         hideContentOnNavigation: false,
-        theme: 'light'
+        theme: 'light',
+        fuzzySearch: {
+          enabled: true,
+          threshold: 0.4, // 0 is exact, 1 is very loose
+          distance: 100
+        }
       }
     };
   },
@@ -268,6 +332,9 @@ export default {
           if (this.mergedOptions.expandAll) {
             this.ecfrStore.expandAll();
           }
+          
+          // Build search index for fuzzy search
+          this.buildSearchIndex(newItems);
         }
       },
       immediate: true
@@ -340,7 +407,71 @@ export default {
     },
     
     /**
-     * Perform search across all items
+     * Build search index for fuzzy search
+     */
+    buildSearchIndex(items) {
+      // Reset search data
+      this.searchData = [];
+      
+      // Helper function to recursively process items and build flat search data
+      const processItems = (items, parentPath = []) => {
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+          const currentPath = [...parentPath, { item, index: i }];
+          
+          // Extract text content from HTML if present (strip tags)
+          let contentText = '';
+          if (item.content) {
+            contentText = item.content.replace(/<[^>]*>/g, '');
+          }
+          
+          // Add item to search data
+          this.searchData.push({
+            id: item.id,
+            title: item.title || '',
+            subtitle: item.subtitle || '',
+            content: contentText,
+            type: item.type || '',
+            number: item.number || '',
+            path: currentPath,
+            item: item
+          });
+          
+          // Process children recursively
+          if (item.children && item.children.length > 0) {
+            processItems(item.children, currentPath);
+          }
+        }
+      };
+      
+      // Process items recursively
+      processItems(items);
+      
+      // Configure Fuse.js options
+      const fuseOptions = {
+        shouldSort: true,
+        includeScore: true,
+        includeMatches: true,
+        threshold: this.mergedOptions.fuzzySearch.threshold,
+        location: 0,
+        distance: this.mergedOptions.fuzzySearch.distance,
+        maxPatternLength: 32,
+        minMatchCharLength: 2,
+        keys: [
+          { name: 'title', weight: 0.7 },
+          { name: 'subtitle', weight: 0.5 },
+          { name: 'content', weight: 0.3 },
+          { name: 'type', weight: 0.2 },
+          { name: 'number', weight: 0.2 }
+        ]
+      };
+      
+      // Create Fuse instance
+      this.fuseInstance = new Fuse(this.searchData, fuseOptions);
+    },
+    
+    /**
+     * Perform search across all items with fuzzy matching
      */
     performSearch() {
       if (!this.searchQuery.trim()) {
@@ -348,9 +479,94 @@ export default {
         return;
       }
       
-      const query = this.searchQuery.toLowerCase().trim();
+      const query = this.searchQuery.trim();
       this.searchResults = [];
       this.isLoading = true;
+      
+      // Check if we should use fuzzy search
+      if (this.mergedOptions.fuzzySearch.enabled && this.fuseInstance) {
+        // Use Fuse.js for fuzzy search
+        setTimeout(() => {
+          // Search with a setTimeout to allow UI to update and show loading state
+          const fuseResults = this.fuseInstance.search(query);
+          
+          // Process results
+          this.searchResults = fuseResults.map(result => {
+            const item = result.item.item;
+            let matchContext = null;
+            
+            // Get the best match to highlight
+            if (result.matches && result.matches.length > 0) {
+              const bestMatch = result.matches[0];
+              const matchValue = bestMatch.value || '';
+              const matchKey = bestMatch.key;
+              
+              // Extract match context based on the matched field
+              if (matchKey === 'title') {
+                matchContext = `Title: ${matchValue}`;
+              } else if (matchKey === 'subtitle') {
+                matchContext = `Subtitle: ${matchValue}`;
+              } else if (matchKey === 'content') {
+                // Get context around the best match
+                if (bestMatch.indices && bestMatch.indices.length > 0) {
+                  const firstMatch = bestMatch.indices[0];
+                  const matchStart = firstMatch[0];
+                  const matchEnd = firstMatch[1] + 1;
+                  
+                  const startIndex = Math.max(0, matchStart - 50);
+                  const endIndex = Math.min(matchValue.length, matchEnd + 50);
+                  let context = matchValue.substring(startIndex, endIndex);
+                  
+                  // Add ellipsis if needed
+                  if (startIndex > 0) {
+                    context = '...' + context;
+                  }
+                  if (endIndex < matchValue.length) {
+                    context = context + '...';
+                  }
+                  
+                  matchContext = `Content: ${context}`;
+                } else {
+                  matchContext = `Content: ${matchValue.substring(0, 100)}...`;
+                }
+              } else {
+                matchContext = `${matchKey.charAt(0).toUpperCase() + matchKey.slice(1)}: ${matchValue}`;
+              }
+            }
+            
+            return {
+              ...item,
+              matchContext,
+              path: result.item.path,
+              score: result.score
+            };
+          });
+          
+          // Sort by score (lower is better)
+          this.searchResults.sort((a, b) => (a.score || 1) - (b.score || 1));
+          
+          // Show results and hide loading indicator
+          this.showSearchResults = this.searchResults.length > 0;
+          this.isLoading = false;
+          
+          // If no results, but we searched something, still show the results container
+          if (this.searchResults.length === 0) {
+            this.showSearchResults = true;
+          }
+          
+          // Emit search event
+          this.$emit('search-completed', {
+            query,
+            results: this.searchResults.length,
+            fuzzy: true
+          });
+        }, 10);
+        
+        return;
+      }
+      
+      // Fallback to regular search if fuzzy search is disabled or not available
+      const searchQuery = query.toLowerCase();
       
       // Helper function to search recursively through items
       const searchInItems = (items, parentPath = []) => {
@@ -363,13 +579,13 @@ export default {
           let matchContext = null;
           
           // Search in title
-          if (item.title && item.title.toLowerCase().includes(query)) {
+          if (item.title && item.title.toLowerCase().includes(searchQuery)) {
             matchFound = true;
             matchContext = `Title: ${item.title}`;
           }
           
           // Search in subtitle
-          if (!matchFound && item.subtitle && item.subtitle.toLowerCase().includes(query)) {
+          if (!matchFound && item.subtitle && item.subtitle.toLowerCase().includes(searchQuery)) {
             matchFound = true;
             matchContext = `Subtitle: ${item.subtitle}`;
           }
@@ -377,13 +593,13 @@ export default {
           // Search in content (strip HTML tags for searching)
           if (!matchFound && item.content) {
             const contentText = item.content.replace(/<[^>]*>/g, '').toLowerCase();
-            if (contentText.includes(query)) {
+            if (contentText.includes(searchQuery)) {
               matchFound = true;
               
               // Get context around the match (50 chars before and after)
-              const matchIndex = contentText.indexOf(query);
+              const matchIndex = contentText.indexOf(searchQuery);
               const startIndex = Math.max(0, matchIndex - 50);
-              const endIndex = Math.min(contentText.length, matchIndex + query.length + 50);
+              const endIndex = Math.min(contentText.length, matchIndex + searchQuery.length + 50);
               let context = contentText.substring(startIndex, endIndex);
               
               // Add ellipsis if needed
@@ -470,6 +686,60 @@ export default {
         return `${result.type.charAt(0).toUpperCase() + result.type.slice(1)} ${result.number}: ${result.title}`;
       }
       return result.title;
+    },
+    
+    /**
+     * Toggle fuzzy search on/off
+     */
+    toggleFuzzySearch() {
+      // Create a new options object to avoid directly mutating props
+      const newOptions = JSON.parse(JSON.stringify(this.mergedOptions));
+      newOptions.fuzzySearch.enabled = !newOptions.fuzzySearch.enabled;
+      
+      // Update local options and rebuild the index
+      this.$emit('update:options', newOptions);
+      
+      // Force a local update since the emit won't automatically update our merged options
+      this.defaultOptions.fuzzySearch.enabled = newOptions.fuzzySearch.enabled;
+      
+      // Rebuild the search index with the new settings
+      if (this.rootItems && this.rootItems.length > 0) {
+        this.buildSearchIndex(this.rootItems);
+      }
+      
+      // Re-run the search with the new settings
+      if (this.searchQuery.trim()) {
+        this.performSearch();
+      }
+    },
+    
+    /**
+     * Update fuzzy search threshold based on slider position
+     */
+    updateFuzzyThreshold() {
+      // Convert the step (0-8) to a threshold (0.1-0.9)
+      // Lower threshold = more exact matches, higher = more fuzzy matches
+      const newThreshold = (this.fuzzyThresholdStep / 10) + 0.1;
+      
+      // Create a new options object to avoid directly mutating props
+      const newOptions = JSON.parse(JSON.stringify(this.mergedOptions));
+      newOptions.fuzzySearch.threshold = newThreshold;
+      
+      // Update local options
+      this.$emit('update:options', newOptions);
+      
+      // Force a local update since the emit won't automatically update our merged options
+      this.defaultOptions.fuzzySearch.threshold = newThreshold;
+      
+      // Rebuild the search index with the new threshold
+      if (this.rootItems && this.rootItems.length > 0) {
+        this.buildSearchIndex(this.rootItems);
+      }
+      
+      // Re-run the search with the new threshold
+      if (this.searchQuery.trim()) {
+        this.performSearch();
+      }
     }
   }
 };
