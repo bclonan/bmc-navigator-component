@@ -84,6 +84,9 @@ export default {
     return {
       selectedItem: null,
       currentPath: [],
+      metadata: null,
+      processedMetadata: null,
+      hasProcessorRegistered: false,
       navigatorOptions: {
         showBreadcrumb: true,
         expandAll: false,
@@ -180,12 +183,94 @@ export default {
   methods: {
     handleItemSelected(event) {
       this.selectedItem = event.item;
+      this.metadata = event.metadata || null;
+      this.processedMetadata = event.processedMetadata || null;
       console.log('Selected item:', event.item.title);
+      
+      if (event.metadata) {
+        console.log('Item has metadata:', event.metadata);
+      }
+      
+      if (event.processedMetadata) {
+        console.log('Item has processed metadata:', event.processedMetadata);
+      }
     },
     
     handlePathChanged(path) {
       this.currentPath = path;
       console.log('Path changed:', path.map(p => p.item.title).join(' > '));
+    },
+    
+    handleMetadataChanged(event) {
+      console.log(`Metadata ${event.action}:`, {
+        itemId: event.itemId, 
+        type: event.metadataType, 
+        data: event.action === 'add' ? event.metadata : event.oldMetadata
+      });
+    },
+    
+    addExampleMetadata() {
+      if (!this.selectedItem) {
+        alert('Please select an item first');
+        return;
+      }
+      
+      // Example metadata for XML links and render targets
+      const metadata = {
+        xmlLink: {
+          url: `https://www.ecfr.gov/api/xml/${this.selectedItem.type}/${this.selectedItem.id}.xml`,
+          version: '1.0'
+        },
+        renderTarget: {
+          elementId: `render-${this.selectedItem.id}`,
+          mode: 'replace'
+        },
+        lastUpdated: new Date().toISOString()
+      };
+      
+      // Add metadata to the selected item
+      this.$refs.ecfrNavigator.addMetadata(this.selectedItem.id, metadata);
+      
+      console.log('Added metadata to', this.selectedItem.title);
+    },
+    
+    registerExampleProcessor() {
+      if (this.hasProcessorRegistered) {
+        // Unregister processors if already registered
+        this.$refs.ecfrNavigator.unregisterMetadataProcessor('xmlLink');
+        this.$refs.ecfrNavigator.unregisterMetadataProcessor('renderTarget');
+        this.hasProcessorRegistered = false;
+        console.log('Unregistered metadata processors');
+        return;
+      }
+      
+      // Register a processor for XML links
+      this.$refs.ecfrNavigator.registerMetadataProcessor('xmlLink', (metadata, itemId) => {
+        // Create a formatted, user-friendly link from the raw XML metadata
+        return {
+          url: metadata.url,
+          label: `XML for ${itemId} (v${metadata.version})`,
+          downloadUrl: `${metadata.url}?download=true`
+        };
+      });
+      
+      // Register a processor for render targets
+      this.$refs.ecfrNavigator.registerMetadataProcessor('renderTarget', (metadata) => {
+        // Add additional rendering information
+        return {
+          elementId: metadata.elementId,
+          mode: metadata.mode,
+          isValid: !!metadata.elementId // Simple validation
+        };
+      });
+      
+      this.hasProcessorRegistered = true;
+      console.log('Registered metadata processors');
+      
+      // If an item is already selected with metadata, re-process it
+      if (this.selectedItem && this.metadata) {
+        this.processedMetadata = this.$refs.ecfrNavigator.processMetadata(this.selectedItem.id);
+      }
     },
     
     toggleTheme() {
