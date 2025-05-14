@@ -20,6 +20,30 @@ A lightweight, reusable Vue 3 component with Pinia integration for navigating hi
 npm install ecfr-navigator
 ```
 
+## Development
+
+For those contributing to or modifying the component, the project includes several npm scripts:
+
+```bash
+# Start development server with hot-reloading
+npm run dev
+
+# Type-check the project
+npm run typecheck
+
+# Lint and fix files
+npm run lint
+
+# Build for production
+npm run build
+
+# Build as a library for distribution
+npm run lib
+
+# Preview the production build
+npm run preview
+```
+
 ## Quick Start
 
 1. First, make sure you have Vue 3, Pinia, and Tailwind CSS set up in your project:
