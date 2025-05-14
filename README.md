@@ -152,8 +152,11 @@ app.mount('#app')
       <ECFRNavigator 
         :items="ecfrData" 
         :options="navigatorOptions"
+        :item-metadata="initialMetadata"
+        :initial-selected-item-id="startingItemId"
         @item-selected="handleItemSelected"
         @path-changed="handlePathChanged"
+        @metadata-changed="handleMetadataChanged"
       />
     </div>
   </div>
@@ -163,11 +166,14 @@ app.mount('#app')
 export default {
   data() {
     return {
+      // Navigation configuration
       navigatorOptions: {
         showBreadcrumb: true,
         expandAll: false,
         theme: 'light' // 'light' or 'dark'
       },
+      
+      // Hierarchical content data
       ecfrData: [
         {
           id: 'title-1',
@@ -192,17 +198,52 @@ export default {
             }
           ]
         }
-      ]
+      ],
+      
+      // Pre-populated metadata for items
+      initialMetadata: {
+        'section-1-1': {
+          xmlLink: {
+            url: 'https://example.com/api/xml/section-1-1.xml',
+            version: '1.0'
+          },
+          renderTarget: {
+            elementId: 'content-viewer',
+            mode: 'replace'
+          }
+        }
+      },
+      
+      // Initially selected item
+      startingItemId: 'section-1-1'
     };
   },
   
   methods: {
     handleItemSelected(event) {
       console.log('Selected item:', event.item);
+      
+      // Access the associated metadata
+      if (event.metadata) {
+        console.log('Item metadata:', event.metadata);
+      }
+      
+      // Access processed metadata (if processors are registered)
+      if (event.processedMetadata) {
+        console.log('Processed metadata:', event.processedMetadata);
+      }
     },
     
     handlePathChanged(path) {
       console.log('Path changed:', path);
+    },
+    
+    handleMetadataChanged(event) {
+      console.log(`Metadata ${event.action}:`, {
+        itemId: event.itemId,
+        type: event.metadataType,
+        data: event.action === 'add' ? event.metadata : event.oldMetadata
+      });
     }
   }
 };
@@ -254,8 +295,44 @@ export default {
     const currentItem = ecfrNavigator.getCurrentItem();
     const breadcrumbPath = ecfrNavigator.getBreadcrumbPath();
     
+    // Metadata operations
+    ecfrNavigator.setItemMetadata('section-1-1', {
+      xmlLink: { url: 'https://example.com/xml/section-1-1.xml' }
+    });
+    
+    // Register metadata processors
+    ecfrNavigator.registerMetadataProcessor('xmlLink', (metadata, itemId) => {
+      return {
+        url: metadata.url,
+        label: `XML Source for ${itemId}`,
+        downloadUrl: `${metadata.url}?download=true`
+      };
+    });
+    
+    // Get processed metadata
+    const metadata = ecfrNavigator.getItemMetadata('section-1-1');
+    const processedMetadata = ecfrNavigator.processItemMetadata('section-1-1');
+    
+    // Get metadata for current item
+    const currentItemMetadata = ecfrNavigator.getCurrentItemMetadata();
+    
     return {
-      // ...
+      // Navigation methods
+      navigateTo: ecfrNavigator.navigateTo,
+      expandItem: ecfrNavigator.expandItem,
+      collapseItem: ecfrNavigator.collapseItem,
+      
+      // Metadata methods
+      addMetadata: ecfrNavigator.setItemMetadata,
+      getMetadata: ecfrNavigator.getItemMetadata,
+      processMetadata: ecfrNavigator.processItemMetadata,
+      registerProcessor: ecfrNavigator.registerMetadataProcessor,
+      
+      // State getters
+      currentItem,
+      breadcrumbPath,
+      metadata,
+      processedMetadata
     };
   }
 }
@@ -285,6 +362,62 @@ The component expects an array of items with the following structure:
   }
 ]
 ```
+
+## Component Props
+
+The ECFRNavigator component accepts the following props:
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `items` | Array | **Required.** Hierarchical data structure of items to display |
+| `options` | Object | Configuration options for the navigator (see below) |
+| `itemMetadata` | Object | Pre-populated metadata for items, keyed by item ID |
+| `initialSelectedItemId` | String | ID of the item to initially select and expand to |
+
+### Passing Initial Metadata
+
+The `itemMetadata` prop is particularly useful when you want to pre-populate items with metadata from an external source:
+
+```javascript
+// Example itemMetadata prop structure
+const itemMetadata = {
+  'item-123': {
+    xmlLink: {
+      url: 'https://example.com/api/xml/item-123.xml',
+      version: '1.0'
+    },
+    renderTarget: {
+      elementId: 'viewer-panel',
+      mode: 'replace'
+    },
+    externalReferences: [
+      { type: 'regulation', id: 'reg-456', title: 'Related Regulation' },
+      { type: 'guidance', id: 'guide-789', title: 'Implementation Guide' }
+    ]
+  },
+  'item-456': {
+    // Another item's metadata
+  }
+};
+```
+
+When the component receives this prop, it automatically loads all metadata into its internal state. Any changes to the metadata prop will be synchronized with the component's internal metadata store.
+
+### Initial Selection
+
+You can specify which item should be initially selected using the `initialSelectedItemId` prop:
+
+```html
+<ECFRNavigator
+  :items="ecfrData"
+  initial-selected-item-id="section-1-1"
+/>
+```
+
+This will cause the navigator to automatically:
+1. Navigate to the specified item
+2. Expand all parent items necessary to reveal it
+3. Trigger the `item-selected` event
 
 ## Configuration Options
 
@@ -814,6 +947,7 @@ export default {
   data() {
     return {
       ecfrData: [],
+      itemMetadata: {},  // Container for initial metadata
       isLoading: true,
       error: null
     };
@@ -822,8 +956,22 @@ export default {
   methods: {
     async fetchData() {
       try {
-        const response = await axios.get('/api/ecfr-data');
-        this.ecfrData = response.data;
+        // Fetch both content data and metadata in parallel
+        const [contentResponse, metadataResponse] = await Promise.all([
+          axios.get('/api/ecfr-data'),
+          axios.get('/api/ecfr-metadata')
+        ]);
+        
+        this.ecfrData = contentResponse.data;
+        
+        // Process metadata into the format expected by the component
+        // The API returns an array of metadata objects with itemId property
+        const metadataMap = {};
+        metadataResponse.data.forEach(meta => {
+          metadataMap[meta.itemId] = meta.data;
+        });
+        
+        this.itemMetadata = metadataMap;
         this.isLoading = false;
       } catch (err) {
         this.error = 'Failed to load data';
@@ -845,6 +993,31 @@ export default {
     
     handleItemSelected(event) {
       this.trackSelection(event.item);
+    },
+    
+    async saveMetadata(itemId, metadata) {
+      try {
+        // Save metadata to the backend
+        await axios.post('/api/ecfr-metadata', {
+          itemId,
+          data: metadata
+        });
+        
+        // Update local state
+        this.itemMetadata = {
+          ...this.itemMetadata,
+          [itemId]: metadata
+        };
+      } catch (err) {
+        console.error('Failed to save metadata', err);
+      }
+    },
+    
+    handleMetadataChanged(event) {
+      if (event.action === 'add') {
+        // Persist the metadata change to the database
+        this.saveMetadata(event.itemId, event.metadata);
+      }
     }
   },
   
@@ -1555,7 +1728,15 @@ const configSchema = {
     trackingEventName: 'ecfr-item-viewed', // Event name for tracking
     externalContentRenderer: null, // External renderer function for content
     useBrowserHistory: true, // Use browser history API for navigation
-    urlPattern: '/ecfr/:itemId' // URL pattern for deep linking
+    urlPattern: '/ecfr/:itemId', // URL pattern for deep linking
+    initialMetadata: {}, // Metadata to pre-populate, keyed by item ID
+    initialSelectedItemId: null, // ID of item to select initially
+    metadataSync: {
+      enabled: false, // Enable automatic syncing of metadata changes
+      syncEndpoint: '/api/sync-metadata', // API endpoint for sync
+      syncDebounce: 500, // Debounce time in ms for syncing changes
+      retryOnFailure: true // Retry failed syncs
+    }
   },
   
   // Customization Options
