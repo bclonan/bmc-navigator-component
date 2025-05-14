@@ -38,10 +38,59 @@ To create the tarball package yourself:
 
 ```bash
 # Build the library and create a tarball
-npm run pack
+./build-package.sh
 ```
 
 This will create a file named `ecfr-navigator-1.0.0.tgz` that you can use to install the package in other projects.
+
+### Using the Package in Another Project
+
+After installing the package, you can use it in your Vue project in different ways:
+
+#### Global Registration
+
+```js
+// main.js
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import App from './App.vue'
+import ECFRNavigatorPlugin from 'ecfr-navigator'
+
+const app = createApp(App)
+app.use(createPinia())
+app.use(ECFRNavigatorPlugin) // Register all components globally
+
+app.mount('#app')
+```
+
+#### Local Component Import
+
+```js
+// YourComponent.vue
+import { ECFRNavigator } from 'ecfr-navigator'
+
+export default {
+  components: {
+    ECFRNavigator
+  }
+}
+```
+
+#### Using the Composable
+
+```js
+// YourComponent.vue
+import { useECFRNavigator } from 'ecfr-navigator'
+
+export default {
+  setup() {
+    const { navigateTo, expandItem, collapseItem, getCurrentItem } = useECFRNavigator()
+    
+    // Use the composable methods
+    return { navigateTo, expandItem, collapseItem, getCurrentItem }
+  }
+}
+```
 
 ## Development
 
