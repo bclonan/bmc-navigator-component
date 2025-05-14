@@ -15,30 +15,89 @@
       class="flex flex-col sm:flex-row justify-between items-center p-2 border-b"
       :class="[options.theme === 'dark' ? 'border-gray-700' : 'border-gray-200']"
     >
-      <div class="flex mb-2 sm:mb-0">
-        <button
-          class="px-3 py-1 text-sm rounded mr-2 focus:outline-none focus:ring-2 focus:ring-opacity-50"
-          :class="[
-            options.theme === 'dark' 
-              ? 'bg-gray-800 text-gray-200 hover:bg-gray-700 focus:ring-gray-500' 
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-300'
-          ]"
-          @click="expandAll"
-        >
-          Expand All
-        </button>
+      <div class="flex flex-wrap mb-2 sm:mb-0 items-center">
+        <!-- Expand/Collapse buttons -->
+        <div class="flex mr-4">
+          <button
+            class="px-3 py-1 text-sm rounded mr-2 focus:outline-none focus:ring-2 focus:ring-opacity-50"
+            :class="[
+              options.theme === 'dark' 
+                ? 'bg-gray-800 text-gray-200 hover:bg-gray-700 focus:ring-gray-500' 
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-300'
+            ]"
+            @click="expandAll"
+          >
+            Expand All
+          </button>
+          
+          <button
+            class="px-3 py-1 text-sm rounded focus:outline-none focus:ring-2 focus:ring-opacity-50"
+            :class="[
+              options.theme === 'dark' 
+                ? 'bg-gray-800 text-gray-200 hover:bg-gray-700 focus:ring-gray-500' 
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-300'
+            ]"
+            @click="collapseAll"
+          >
+            Collapse All
+          </button>
+        </div>
         
-        <button
-          class="px-3 py-1 text-sm rounded focus:outline-none focus:ring-2 focus:ring-opacity-50"
-          :class="[
-            options.theme === 'dark' 
-              ? 'bg-gray-800 text-gray-200 hover:bg-gray-700 focus:ring-gray-500' 
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-300'
-          ]"
-          @click="collapseAll"
-        >
-          Collapse All
-        </button>
+        <!-- View Mode Selector -->
+        <div class="flex items-center mr-2">
+          <label 
+            for="viewMode" 
+            class="sr-only">View Mode</label>
+          <div class="inline-flex items-center">
+            <span 
+              class="text-xs mr-2"
+              :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-600']"
+            >View:</span>
+            <select
+              id="viewMode"
+              v-model="currentViewMode"
+              @change="changeViewMode"
+              class="text-sm py-1 px-2 rounded focus:outline-none focus:ring-2 focus:ring-opacity-50"
+              :class="[
+                options.theme === 'dark' 
+                  ? 'bg-gray-800 text-gray-200 border-gray-700 focus:ring-gray-500' 
+                  : 'bg-gray-100 text-gray-700 border-gray-300 focus:ring-gray-300'
+              ]"
+            >
+              <option value="compact">Compact</option>
+              <option value="standard">Standard</option>
+              <option value="detailed">Detailed</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Spacing Selector -->
+        <div class="flex items-center">
+          <label 
+            for="itemSpacing" 
+            class="sr-only">Item Spacing</label>
+          <div class="inline-flex items-center">
+            <span 
+              class="text-xs mr-2"
+              :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-600']"
+            >Spacing:</span>
+            <select
+              id="itemSpacing"
+              v-model="currentItemSpacing"
+              @change="changeItemSpacing"
+              class="text-sm py-1 px-2 rounded focus:outline-none focus:ring-2 focus:ring-opacity-50"
+              :class="[
+                options.theme === 'dark' 
+                  ? 'bg-gray-800 text-gray-200 border-gray-700 focus:ring-gray-500' 
+                  : 'bg-gray-100 text-gray-700 border-gray-300 focus:ring-gray-300'
+              ]"
+            >
+              <option value="tight">Tight</option>
+              <option value="medium">Medium</option>
+              <option value="loose">Loose</option>
+            </select>
+          </div>
+        </div>
       </div>
       
       <!-- Search box -->
@@ -293,6 +352,9 @@ export default {
       fuseInstance: null,
       searchData: [],
       fuzzyThresholdStep: 4, // Default middle value (0-8 range)
+      currentViewMode: 'standard',
+      currentItemSpacing: 'medium',
+      showMetadataBadges: false,
       defaultOptions: {
         showBreadcrumb: true,
         expandAll: false,
