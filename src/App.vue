@@ -2,28 +2,76 @@
   <div class="container mx-auto p-4">
     <h1 class="text-2xl font-bold mb-4">eCFR Navigator Demo</h1>
     
-    <div class="flex mb-4">
+    <div class="flex space-x-2 mb-4">
       <button 
         @click="toggleTheme" 
         class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors duration-200"
       >
         Toggle Theme ({{ navigatorOptions.theme }})
       </button>
+      
+      <button 
+        @click="addExampleMetadata" 
+        class="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors duration-200"
+      >
+        Add Example Metadata
+      </button>
+      
+      <button 
+        @click="registerExampleProcessor" 
+        class="px-3 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors duration-200"
+      >
+        Register XML Processor
+      </button>
     </div>
     
-    <div class="h-[600px] border border-gray-300 rounded-lg overflow-hidden">
-      <ECFRNavigator 
-        :items="ecfrData" 
-        :options="navigatorOptions"
-        @item-selected="handleItemSelected"
-        @path-changed="handlePathChanged"
-      />
-    </div>
-    
-    <div class="mt-4">
-      <h2 class="text-lg font-semibold">Selected Item:</h2>
-      <pre v-if="selectedItem" class="bg-gray-100 p-2 rounded mt-2 overflow-x-auto">{{ JSON.stringify(selectedItem, null, 2) }}</pre>
-      <p v-else class="text-gray-500 italic">No item selected</p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="md:col-span-2 border border-gray-300 rounded-lg overflow-hidden h-[600px]">
+        <ECFRNavigator 
+          ref="ecfrNavigator"
+          :items="ecfrData" 
+          :options="navigatorOptions"
+          @item-selected="handleItemSelected"
+          @path-changed="handlePathChanged"
+          @metadata-changed="handleMetadataChanged"
+        />
+      </div>
+      
+      <div class="space-y-4">
+        <div class="bg-white dark:bg-gray-800 p-4 border border-gray-300 rounded-lg">
+          <h2 class="text-lg font-semibold mb-2">Selected Item</h2>
+          <pre v-if="selectedItem" class="bg-gray-100 dark:bg-gray-700 p-2 rounded overflow-x-auto text-xs max-h-[150px]">{{ JSON.stringify(selectedItem, null, 2) }}</pre>
+          <p v-else class="text-gray-500 italic">No item selected</p>
+        </div>
+        
+        <div class="bg-white dark:bg-gray-800 p-4 border border-gray-300 rounded-lg">
+          <h2 class="text-lg font-semibold mb-2">Metadata</h2>
+          <pre v-if="metadata" class="bg-gray-100 dark:bg-gray-700 p-2 rounded overflow-x-auto text-xs max-h-[150px]">{{ JSON.stringify(metadata, null, 2) }}</pre>
+          <p v-else class="text-gray-500 italic">No metadata available</p>
+        </div>
+        
+        <div class="bg-white dark:bg-gray-800 p-4 border border-gray-300 rounded-lg">
+          <h2 class="text-lg font-semibold mb-2">Processed Metadata</h2>
+          <div v-if="processedMetadata && processedMetadata.xmlLink" class="bg-blue-50 p-2 rounded mb-2">
+            <h3 class="font-medium mb-1">XML Link Processed:</h3>
+            <a 
+              :href="processedMetadata.xmlLink.url" 
+              target="_blank" 
+              class="text-blue-600 hover:underline block truncate"
+            >
+              {{ processedMetadata.xmlLink.label }}
+            </a>
+          </div>
+          <div v-if="processedMetadata && processedMetadata.renderTarget" class="bg-green-50 p-2 rounded mb-2">
+            <h3 class="font-medium mb-1">Render Target:</h3>
+            <div class="text-sm">
+              Element ID: {{ processedMetadata.renderTarget.elementId }}
+            </div>
+          </div>
+          <pre v-if="processedMetadata" class="bg-gray-100 dark:bg-gray-700 p-2 rounded overflow-x-auto text-xs max-h-[100px]">{{ JSON.stringify(processedMetadata, null, 2) }}</pre>
+          <p v-else class="text-gray-500 italic">No processed metadata available</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
