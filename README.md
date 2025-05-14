@@ -16,9 +16,32 @@ A lightweight, reusable Vue 3 component with Pinia integration for navigating hi
 
 ## Installation
 
+### From NPM
+
 ```bash
 npm install ecfr-navigator
 ```
+
+### From Tarball
+
+You can also install the package directly from a tarball:
+
+```bash
+# Install from a local tarball
+npm install ./ecfr-navigator-1.0.0.tgz
+
+# Or from a URL
+npm install https://example.com/path/to/ecfr-navigator-1.0.0.tgz
+```
+
+To create the tarball package yourself:
+
+```bash
+# Build the library and create a tarball
+npm run pack
+```
+
+This will create a file named `ecfr-navigator-1.0.0.tgz` that you can use to install the package in other projects.
 
 ## Development
 
@@ -254,6 +277,35 @@ The component emits the following events:
 - `search-completed`: Fired when a search is completed, with query info and results count
 - `update:options`: Fired when options are updated internally (for v-model support)
 
+## Configuration Options
+
+The ECFRNavigator component can be extensively customized through its options prop:
+
+### Theme Options
+- **theme**: Sets the color theme ('light' or 'dark')
+- **showBreadcrumb**: Toggle breadcrumb navigation display
+
+### Display Options
+- **display.showTypeIcon**: Show icons to indicate item types (title, part, section)
+- **display.showItemNumbers**: Display item numbers/identifiers
+- **display.indentItems**: Indent nested items to reflect hierarchy
+- **display.compactMode**: Use compact display for denser view
+- **display.hideEmptyItems**: Hide items with no children or content
+
+### Navigation Options
+- **navigation.preserveState**: Maintain expansion state between navigations
+- **navigation.scrollToSelected**: Auto-scroll to selected items
+- **navigation.autoExpandParents**: Automatically expand parent items when selecting a child
+- **navigation.autoCollapseOthers**: Collapse sibling items when expanding an item
+
+### Pagination Options
+- **pagination.enabled**: Enable pagination for large datasets
+- **pagination.itemsPerPage**: Number of items to show per page
+
+### Printing Options
+- **printing.enablePrintView**: Enable print-friendly view
+- **printing.includeChildrenWhenPrinting**: Include child items when printing
+
 ## Advanced Search Functionality
 
 The component includes a powerful search feature with fuzzy matching capabilities:
@@ -272,7 +324,7 @@ The advanced search engine provides:
 3. **Performance Optimization**: Uses an indexed approach for fast results
 4. **Context-Aware Results**: Shows where in the document the match occurred
 
-Example usage with advanced search options:
+Example usage with advanced configuration options:
 
 ```vue
 <template>
@@ -280,13 +332,42 @@ Example usage with advanced search options:
     :items="ecfrData" 
     :options="{
       theme: 'light',
-      fuzzySearch: {
-        enabled: true,       // Enable/disable fuzzy search
-        threshold: 0.4,      // 0 = exact matches only, 1 = very loose matching
-        distance: 100        // Edit distance for fuzzy matching
+      showBreadcrumb: true,         // Show breadcrumb navigation
+      expandAll: false,             // Auto-expand all sections 
+      
+      // Fuzzy search configuration
+      fuzzySearch: {                
+        enabled: true,              // Enable fuzzy search
+        threshold: 0.4,             // 0 = exact matches only, 1 = very loose matching
+        distance: 100               // Edit distance for fuzzy matching
+      },
+      
+      // Display configuration
+      display: {
+        showTypeIcon: true,         // Show icons for different item types
+        showItemNumbers: true,      // Show number identifiers for items
+        indentItems: true,          // Indent nested items
+        compactMode: false,         // Use compact display mode
+        hideEmptyItems: false       // Hide items with no children or content
+      },
+      
+      // Navigation behavior
+      navigation: {
+        preserveState: true,        // Preserve expansion state
+        scrollToSelected: true,     // Auto-scroll to selected items
+        autoExpandParents: true,    // Auto-expand parent items
+        autoCollapseOthers: false   // Auto-collapse siblings when expanding an item
+      },
+      
+      // Printing options
+      printing: {
+        enablePrintView: true,      // Enable print-friendly view
+        includeChildrenWhenPrinting: true  // Include child items when printing
       }
     }"
     @search-completed="onSearchCompleted"
+    @item-selected="onItemSelected"
+    @path-changed="onPathChanged"
   />
 </template>
 
