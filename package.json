@@ -19,9 +19,11 @@
   "dependencies": {
     "@storybook/addon-essentials": "^8.6.12",
     "@storybook/addon-interactions": "^8.6.12",
+    "@storybook/addon-links": "^8.6.12",
     "@storybook/builder-vite": "^8.6.12",
     "@storybook/testing-library": "^0.2.1",
     "@storybook/vue3": "^8.6.12",
+    "@storybook/vue3-vite": "^8.6.12",
     "fuse.js": "^7.1.0",
     "pinia": "^2.3.1",
     "vue": "^3.5.13"
