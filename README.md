@@ -20,6 +20,7 @@ A lightweight, reusable Vue 3 component with Pinia integration for navigating hi
 - 🏷️ **Enhanced Filtering**: Filter by type, agency, date range, and keywords
 - 💬 **Preview Tooltips**: Interactive previews on search results
 - 🎬 **Animated UI**: Smooth transitions for better user experience
+- 🔍 **Adaptive Font Sizing**: Dynamic text scaling for improved readability across devices
 
 ## Installation
 
@@ -310,6 +311,83 @@ export default {
     handleOptionsUpdate(newOptions) {
       this.navigatorOptions = newOptions;
       this.currentViewMode = newOptions.display.viewMode;
+    }
+  }
+}
+</script>
+```
+
+### Adaptive Font Sizing
+
+The ECFRNavigator supports dynamic font scaling for improved readability across different devices and for users with varying visual needs:
+
+```javascript
+options: {
+  display: {
+    fontScaling: {
+      enabled: true, // Enable adaptive font sizing
+      baseSize: 'medium', // 'small', 'medium', 'large'
+      scaleWithWidth: true, // Scale font size with container width
+      scaleWithViewMode: true, // Adjust font based on view mode (compact/detailed)
+      responsive: true // Use responsive breakpoints
+    }
+  }
+}
+```
+
+**Implementation Example:**
+
+```vue
+<template>
+  <div class="flex flex-col">
+    <div class="mb-4">
+      <label class="mr-2">Font Size:</label>
+      <select v-model="fontSize" @change="updateFontSize">
+        <option value="small">Small</option>
+        <option value="medium">Medium</option>
+        <option value="large">Large</option>
+        <option value="adaptive">Adaptive</option>
+      </select>
+    </div>
+    
+    <ECFRNavigator 
+      :items="items" 
+      :options="navigatorOptions" 
+    />
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      fontSize: 'medium',
+      navigatorOptions: {
+        display: {
+          fontScaling: {
+            enabled: true,
+            baseSize: 'medium',
+            scaleWithWidth: false,
+            responsive: true
+          }
+        }
+      }
+    }
+  },
+  methods: {
+    updateFontSize() {
+      // Update the font scaling options
+      this.navigatorOptions = {
+        ...this.navigatorOptions,
+        display: {
+          ...this.navigatorOptions.display,
+          fontScaling: {
+            ...this.navigatorOptions.display.fontScaling,
+            baseSize: this.fontSize === 'adaptive' ? 'medium' : this.fontSize,
+            scaleWithWidth: this.fontSize === 'adaptive'
+          }
+        }
+      };
     }
   }
 }

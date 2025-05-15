@@ -859,6 +859,37 @@ export default {
   },
   
   mounted() {
+    // Initialize font size from options
+    if (this.mergedOptions.display && this.mergedOptions.display.fontScaling) {
+      if (this.mergedOptions.display.fontScaling.enabled) {
+        if (this.mergedOptions.display.fontScaling.scaleWithWidth && 
+            this.mergedOptions.display.fontScaling.responsive) {
+          this.currentFontSize = 'adaptive';
+        } else {
+          this.currentFontSize = this.mergedOptions.display.fontScaling.baseSize || 'medium';
+        }
+        // Apply the font size immediately
+        this.$nextTick(() => {
+          this.applyFontSizeClass();
+        });
+      }
+    }
+    
+    // Initialize item spacing
+    if (this.mergedOptions.display && this.mergedOptions.display.itemSpacing) {
+      this.currentItemSpacing = this.mergedOptions.display.itemSpacing;
+    }
+    
+    // Initialize view mode
+    if (this.mergedOptions.display && this.mergedOptions.display.viewMode) {
+      this.currentViewMode = this.mergedOptions.display.viewMode;
+    }
+    
+    // Initialize metadata badges
+    if (this.mergedOptions.display && this.mergedOptions.display.showMetadataBadges !== undefined) {
+      this.showMetadataBadges = this.mergedOptions.display.showMetadataBadges;
+    }
+  
     if (this.items && this.items.length > 0) {
       this.ecfrStore.setRootItems(this.items);
       
@@ -1473,6 +1504,62 @@ export default {
       
       // Force a local update
       this.defaultOptions.display.itemSpacing = this.currentItemSpacing;
+    },
+    
+    /**
+     * Change the font size setting
+     */
+    changeFontSize() {
+      // Create a new options object
+      const newOptions = JSON.parse(JSON.stringify(this.mergedOptions));
+      
+      // Update font scaling options based on selection
+      if (this.currentFontSize === 'adaptive') {
+        newOptions.display.fontScaling.enabled = true;
+        newOptions.display.fontScaling.scaleWithWidth = true;
+        newOptions.display.fontScaling.responsive = true;
+      } else {
+        // For fixed sizes, disable dynamic scaling but set the base size
+        newOptions.display.fontScaling.enabled = true;
+        newOptions.display.fontScaling.baseSize = this.currentFontSize;
+        newOptions.display.fontScaling.scaleWithWidth = false;
+        newOptions.display.fontScaling.responsive = false;
+      }
+      
+      // Update local options
+      this.$emit('update:options', newOptions);
+      
+      // Force a local update
+      this.defaultOptions.display.fontScaling.enabled = newOptions.display.fontScaling.enabled;
+      this.defaultOptions.display.fontScaling.baseSize = newOptions.display.fontScaling.baseSize;
+      this.defaultOptions.display.fontScaling.scaleWithWidth = newOptions.display.fontScaling.scaleWithWidth;
+      this.defaultOptions.display.fontScaling.responsive = newOptions.display.fontScaling.responsive;
+      
+      // Apply the font size class
+      this.applyFontSizeClass();
+    },
+    
+    /**
+     * Apply the appropriate font size class based on current settings
+     */
+    applyFontSizeClass() {
+      // Remove existing font classes
+      const container = this.$el;
+      if (!container) return;
+      
+      container.classList.remove(
+        'ecfr-font-small', 
+        'ecfr-font-medium', 
+        'ecfr-font-large', 
+        'ecfr-font-adaptive'
+      );
+      
+      // Add the appropriate class
+      if (this.currentFontSize === 'adaptive') {
+        container.classList.add('ecfr-font-adaptive');
+      } else {
+        container.classList.add(`ecfr-font-${this.currentFontSize}`);
+      }
     },
     
     /**
