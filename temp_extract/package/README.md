@@ -513,7 +513,7 @@ import { ECFRNavigator } from 'ecfr-navigator';
 
 // Try using direct file imports:
 import ECFRNavigator from 'ecfr-navigator/dist/ecfr-navigator.es.js';
-import 'ecfr-navigator/dist/ecfr-navigator.css';
+import 'ecfr-navigator/style.css';
 ```
 
 3. Alternatively, rebuild the package with the fixes by running the provided build script:
@@ -535,9 +535,21 @@ npm install /path/to/ecfr-navigator-1.0.0.tgz
 
 To create the tarball package yourself:
 
+**On Linux/MacOS:**
 ```bash
 # Build the library and create a tarball
 ./build-package.sh
+```
+
+**On Windows:**
+```cmd
+# Using Command Prompt
+build-package.bat
+```
+
+```powershell
+# Using PowerShell
+.\build-package.ps1
 ```
 
 This will create a file named `ecfr-navigator-1.0.0.tgz` that you can use to install the package in other projects.

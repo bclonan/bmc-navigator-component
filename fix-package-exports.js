@@ -16,7 +16,8 @@ packageJson.exports = {
     'import': './dist/ecfr-navigator.es.js',
     'require': './dist/ecfr-navigator.umd.js'
   },
-  './dist/style.css': './dist/style.css'
+  './style.css': './dist/ecfr-navigator.css',
+  './dist/style.css': './dist/ecfr-navigator.css'
 };
 
 // Ensure module field is set correctly

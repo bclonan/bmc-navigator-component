@@ -513,7 +513,7 @@ import { ECFRNavigator } from 'ecfr-navigator';
 
 // Try using direct file imports:
 import ECFRNavigator from 'ecfr-navigator/dist/ecfr-navigator.es.js';
-import 'ecfr-navigator/dist/ecfr-navigator.css';
+import 'ecfr-navigator/style.css';
 ```
 
 3. Alternatively, rebuild the package with the fixes by running the provided build script:
