@@ -601,6 +601,7 @@ import { useECFRStore } from '../stores/ecfr';
 import ECFRBreadcrumb from './ECFRBreadcrumb.vue';
 import ECFRSection from './ECFRSection.vue';
 import Fuse from 'fuse.js';
+import { v4 as uuidv4 } from 'uuid';
 
 export default {
   name: 'ECFRNavigator',

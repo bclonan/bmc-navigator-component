@@ -31,12 +31,20 @@
   "license": "ISC",
   "dependencies": {
     "fuse.js": "^7.1.0",
-    "pinia": "^2.3.1",
-    "vue": "^3.5.13"
+    "pinia": "^2.0.0 || ^3.0.0",
+    "uuid": "^11.1.0",
+    "vue": "^3.0.0"
   },
   "module": "dist/ecfr-navigator.es.js",
   "types": "dist/types/index.d.ts",
   "devDependencies": {
+    "@storybook/addon-essentials": "^8.6.12",
+    "@storybook/addon-interactions": "^8.6.12",
+    "@storybook/addon-links": "^8.6.12",
+    "@storybook/builder-vite": "^8.6.12",
+    "@storybook/testing-library": "^0.2.1",
+    "@storybook/vue3": "^8.6.12",
+    "@storybook/vue3-vite": "^8.6.12",
     "@vitejs/plugin-vue": "^5.2.4",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.3",
@@ -44,14 +52,7 @@
     "terser": "^5.39.1",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
-    "vue-tsc": "^2.2.10",
-    "@storybook/addon-essentials": "^8.6.12",
-    "@storybook/addon-interactions": "^8.6.12",
-    "@storybook/addon-links": "^8.6.12",
-    "@storybook/builder-vite": "^8.6.12",
-    "@storybook/testing-library": "^0.2.1",
-    "@storybook/vue3": "^8.6.12",
-    "@storybook/vue3-vite": "^8.6.12"
+    "vue-tsc": "^2.2.10"
   },
   "files": [
     "dist",
