@@ -33,6 +33,41 @@ const filesArray = [
 ];
 packageJson.files = filesArray;
 
+// Fix keywords if it's a string instead of an array
+if (typeof packageJson.keywords === 'string') {
+  try {
+    packageJson.keywords = JSON.parse(packageJson.keywords);
+  } catch (e) {
+    packageJson.keywords = ["vue","ecfr","navigator","ui","component","hierarchical","navigation"];
+  }
+}
+
+// Move Storybook dependencies to devDependencies
+const storybookDeps = {};
+const nonStorybookDeps = {};
+
+for (const [key, value] of Object.entries(packageJson.dependencies || {})) {
+  if (key.includes('@storybook')) {
+    storybookDeps[key] = value;
+  } else {
+    nonStorybookDeps[key] = value;
+  }
+}
+
+packageJson.dependencies = nonStorybookDeps;
+
+// Add storybook deps to devDependencies
+packageJson.devDependencies = {
+  ...packageJson.devDependencies,
+  ...storybookDeps
+};
+
+// Add peerDependencies if they don't exist
+packageJson.peerDependencies = packageJson.peerDependencies || {
+  "pinia": "^2.0.0 || ^3.0.0",
+  "vue": "^3.0.0"
+};
+
 // Write the updated package.json
 fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf8');
 
