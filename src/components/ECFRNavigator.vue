@@ -1037,9 +1037,46 @@ export default {
               matchContext = `Matched filters: ${this.getActiveFiltersAsText()}`;
             }
             
+            // Generate preview content from content field or match context
+            let previewContent = '';
+            
+            // If we have a content match, use a larger portion of it for the preview
+            if (matchContext && matchContext.startsWith('Content:')) {
+              // Extract a larger context for preview from the content field
+              if (result.matches && result.matches.length) {
+                const contentMatch = result.matches.find(m => m.key === 'content');
+                if (contentMatch && contentMatch.value) {
+                  const matchValue = contentMatch.value;
+                  const indices = contentMatch.indices[0];
+                  
+                  // Get a larger section for preview (200 chars before + 200 chars after)
+                  const startIndex = Math.max(0, indices[0] - 200);
+                  const endIndex = Math.min(matchValue.length, indices[1] + 200);
+                  previewContent = matchValue.substring(startIndex, endIndex);
+                  
+                  // Add ellipsis if needed
+                  if (startIndex > 0) previewContent = '...' + previewContent;
+                  if (endIndex < matchValue.length) previewContent += '...';
+                }
+              }
+            }
+            
+            // If no preview content yet, try to get it from the item
+            if (!previewContent) {
+              if (item.content) {
+                // Truncate if needed
+                previewContent = item.content.length > 400 ? 
+                  item.content.substring(0, 400) + '...' : 
+                  item.content;
+              } else if (item.description) {
+                previewContent = item.description;
+              }
+            }
+            
             return {
               ...item,
               matchContext,
+              previewContent,
               path: result.item.path,
               score: result.score,
               // Additional metadata fields for filtering
@@ -1618,6 +1655,92 @@ export default {
     },
     
     /**
+     * Show tooltip for a specific search result
+     * @param {Object} result - The search result to show tooltip for
+     */
+    showTooltipForResult(result) {
+      // Clear any existing timeout
+      if (this.tooltipTimeout) {
+        clearTimeout(this.tooltipTimeout);
+      }
+      
+      // Set small delay before showing tooltip to avoid flickering
+      this.tooltipTimeout = setTimeout(() => {
+        // Get or generate preview content if not already available
+        if (!result.previewContent) {
+          result.previewContent = this.generatePreviewContent(result);
+        }
+        
+        // Only show tooltip if content is available
+        if (result.previewContent) {
+          this.activeTooltipId = result.id;
+        }
+      }, 300); // 300ms delay for a smooth experience
+    },
+    
+    /**
+     * Hide the active tooltip
+     */
+    hideTooltip() {
+      // Clear any pending tooltip timeout
+      if (this.tooltipTimeout) {
+        clearTimeout(this.tooltipTimeout);
+      }
+      
+      // Add small delay before hiding to prevent accidental hiding
+      this.tooltipTimeout = setTimeout(() => {
+        this.activeTooltipId = null;
+      }, 100);
+    },
+    
+    /**
+     * Generate preview content for search result
+     * @param {Object} result - The search result to generate preview for
+     * @returns {string} Preview content
+     */
+    generatePreviewContent(result) {
+      let previewContent = '';
+      
+      // Check if we have a content field in the result or its original item
+      if (result.content) {
+        previewContent = result.content;
+      } else if (result.item && result.item.content) {
+        previewContent = result.item.content;
+      } else {
+        // Try to find content via metadata
+        const metadata = this.ecfrStore.getItemMetadata(result.id);
+        if (metadata && metadata.content) {
+          previewContent = metadata.content;
+        } else if (metadata && metadata.description) {
+          previewContent = metadata.description;
+        }
+      }
+      
+      // If we have content, truncate it to a reasonable preview size
+      if (previewContent) {
+        // Strip HTML tags if present
+        previewContent = previewContent.replace(/<[^>]*>/g, ' ');
+        
+        // Truncate to 300 characters if longer
+        if (previewContent.length > 300) {
+          // Try to cut at word boundary
+          const truncated = previewContent.substring(0, 300);
+          const lastSpace = truncated.lastIndexOf(' ');
+          if (lastSpace > 250) { // Only use word boundary if it's reasonably close to the end
+            previewContent = truncated.substring(0, lastSpace) + '...';
+          } else {
+            previewContent = truncated + '...';
+          }
+        }
+        
+        return previewContent;
+      }
+      
+      // Fallback message if no content available
+      return 'Hover for preview (Content preview is not available for this item)';
+    },
+    
+    /**
      * Prepare an item for display in search results
      * @param {Object} item - The item to prepare
      * @param {Object} match - Fuse.js match information
@@ -1625,6 +1748,7 @@ export default {
      */
     prepareSearchResult(item, match) {
       let matchContext = '';
+      let previewContent = '';
       
       // Extract match context from Fuse.js result
       if (match && match.matches && match.matches.length > 0) {
@@ -1641,6 +1765,27 @@ export default {
         // Add ellipsis if we've truncated
         if (startIdx > 0) matchContext = '...' + matchContext;
         if (endIdx < value.length) matchContext += '...';
+        
+        // Also use this for initial preview content if it's substantial
+        if (value.length > 50 && bestMatch.key === 'content') {
+          // Get a larger context for the preview
+          const previewStart = Math.max(0, indices[0] - 100);
+          const previewEnd = Math.min(value.length, indices[1] + 150);
+          previewContent = value.substring(previewStart, previewEnd);
+          
+          // Add ellipsis for truncation
+          if (previewStart > 0) previewContent = '...' + previewContent;
+          if (previewEnd < value.length) previewContent += '...';
+        }
+      }
+      
+      // Extract or build preview content
+      if (!previewContent) {
+        if (item.content) {
+          previewContent = item.content;
+        } else if (item.description) {
+          previewContent = item.description;
+        }
       }
       
       return {
@@ -1648,7 +1793,10 @@ export default {
         title: item.title,
         type: item.type,
         number: item.number,
-        matchContext
+        matchContext,
+        previewContent, // Add the preview content
+        content: item.content, // Store the full content for reference if available
+        path: item.path
       };
     }
   }
