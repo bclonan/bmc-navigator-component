@@ -1,8 +1,10 @@
 import { createPinia } from 'pinia';
+import { setActivePinia } from 'pinia';
 import 'tailwindcss/tailwind.css'; // Import Tailwind directly
 
 // Create and configure Pinia for all stories
 const pinia = createPinia();
+setActivePinia(pinia); // Set the Pinia instance as active for the stories
 
 /** @type { import('@storybook/vue3').Preview } */
 const preview = {

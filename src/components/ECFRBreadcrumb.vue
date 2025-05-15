@@ -44,7 +44,7 @@
 
       <!-- Breadcrumb items (shows all items, or limited items if truncated) -->
       <template v-if="!options.truncate || path.length <= (options.maxVisible || 3)">
-        <li v-for="(pathItem, index) in path" :key="pathItem.item.id" class="shrink-0">
+        <li v-for="(pathItem, index) in path" :key="pathItem.id || index" class="shrink-0">
           <div class="flex items-center">
             <!-- Separator - customizable -->
             <div class="mx-1 flex-shrink-0" aria-hidden="true">
