@@ -1,0 +1,228 @@
+HomeView.vue:33 [Vue warn]: Property "selectedItem" was accessed during render but is not defined on instance. 
+  at <HomeView onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView > 
+  at <DefaultLayout > 
+  at <App>
+overrideMethod @ hook.js:608
+warn$1 @ runtime-core.esm-bundler.js:51
+get @ runtime-core.esm-bundler.js:3132
+_sfc_render @ HomeView.vue:33
+renderComponentRoot @ runtime-core.esm-bundler.js:6502
+componentUpdateFn @ runtime-core.esm-bundler.js:5319
+run @ reactivity.esm-bundler.js:225
+setupRenderEffect @ runtime-core.esm-bundler.js:5454
+mountComponent @ runtime-core.esm-bundler.js:5229
+processComponent @ runtime-core.esm-bundler.js:5182
+patch @ runtime-core.esm-bundler.js:4700
+componentUpdateFn @ runtime-core.esm-bundler.js:5406
+run @ reactivity.esm-bundler.js:225
+runIfDirty @ reactivity.esm-bundler.js:263
+callWithErrorHandling @ runtime-core.esm-bundler.js:199
+flushJobs @ runtime-core.esm-bundler.js:408
+Promise.then
+queueFlush @ runtime-core.esm-bundler.js:322
+queueJob @ runtime-core.esm-bundler.js:317
+effect2.scheduler @ runtime-core.esm-bundler.js:5448
+trigger @ reactivity.esm-bundler.js:253
+endBatch @ reactivity.esm-bundler.js:311
+notify @ reactivity.esm-bundler.js:597
+trigger @ reactivity.esm-bundler.js:571
+set value @ reactivity.esm-bundler.js:1448
+finalizeNavigation @ vue-router.mjs:3503
+(anonymous) @ vue-router.mjs:3368
+Promise.then
+pushWithRedirect @ vue-router.mjs:3335
+push @ vue-router.mjs:3260
+install @ vue-router.mjs:3704
+use @ runtime-core.esm-bundler.js:3863
+(anonymous) @ main.js:15Understand this warning
+HomeView.vue:45 [Vue warn]: Property "metadata" was accessed during render but is not defined on instance. 
+  at <HomeView onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView > 
+  at <DefaultLayout > 
+  at <App>
+overrideMethod @ hook.js:608
+warn$1 @ runtime-core.esm-bundler.js:51
+get @ runtime-core.esm-bundler.js:3132
+_sfc_render @ HomeView.vue:45
+renderComponentRoot @ runtime-core.esm-bundler.js:6502
+componentUpdateFn @ runtime-core.esm-bundler.js:5319
+run @ reactivity.esm-bundler.js:225
+setupRenderEffect @ runtime-core.esm-bundler.js:5454
+mountComponent @ runtime-core.esm-bundler.js:5229
+processComponent @ runtime-core.esm-bundler.js:5182
+patch @ runtime-core.esm-bundler.js:4700
+componentUpdateFn @ runtime-core.esm-bundler.js:5406
+run @ reactivity.esm-bundler.js:225
+runIfDirty @ reactivity.esm-bundler.js:263
+callWithErrorHandling @ runtime-core.esm-bundler.js:199
+flushJobs @ runtime-core.esm-bundler.js:408
+Promise.then
+queueFlush @ runtime-core.esm-bundler.js:322
+queueJob @ runtime-core.esm-bundler.js:317
+effect2.scheduler @ runtime-core.esm-bundler.js:5448
+trigger @ reactivity.esm-bundler.js:253
+endBatch @ reactivity.esm-bundler.js:311
+notify @ reactivity.esm-bundler.js:597
+trigger @ reactivity.esm-bundler.js:571
+set value @ reactivity.esm-bundler.js:1448
+finalizeNavigation @ vue-router.mjs:3503
+(anonymous) @ vue-router.mjs:3368
+Promise.then
+pushWithRedirect @ vue-router.mjs:3335
+push @ vue-router.mjs:3260
+install @ vue-router.mjs:3704
+use @ runtime-core.esm-bundler.js:3863
+(anonymous) @ main.js:15Understand this warning
+HomeView.vue:57 [Vue warn]: Property "processedMetadata" was accessed during render but is not defined on instance. 
+  at <HomeView onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView > 
+  at <DefaultLayout > 
+  at <App>
+overrideMethod @ hook.js:608
+warn$1 @ runtime-core.esm-bundler.js:51
+get @ runtime-core.esm-bundler.js:3132
+_sfc_render @ HomeView.vue:57
+renderComponentRoot @ runtime-core.esm-bundler.js:6502
+componentUpdateFn @ runtime-core.esm-bundler.js:5319
+run @ reactivity.esm-bundler.js:225
+setupRenderEffect @ runtime-core.esm-bundler.js:5454
+mountComponent @ runtime-core.esm-bundler.js:5229
+processComponent @ runtime-core.esm-bundler.js:5182
+patch @ runtime-core.esm-bundler.js:4700
+componentUpdateFn @ runtime-core.esm-bundler.js:5406
+run @ reactivity.esm-bundler.js:225
+runIfDirty @ reactivity.esm-bundler.js:263
+callWithErrorHandling @ runtime-core.esm-bundler.js:199
+flushJobs @ runtime-core.esm-bundler.js:408
+Promise.then
+queueFlush @ runtime-core.esm-bundler.js:322
+queueJob @ runtime-core.esm-bundler.js:317
+effect2.scheduler @ runtime-core.esm-bundler.js:5448
+trigger @ reactivity.esm-bundler.js:253
+endBatch @ reactivity.esm-bundler.js:311
+notify @ reactivity.esm-bundler.js:597
+trigger @ reactivity.esm-bundler.js:571
+set value @ reactivity.esm-bundler.js:1448
+finalizeNavigation @ vue-router.mjs:3503
+(anonymous) @ vue-router.mjs:3368
+Promise.then
+pushWithRedirect @ vue-router.mjs:3335
+push @ vue-router.mjs:3260
+install @ vue-router.mjs:3704
+use @ runtime-core.esm-bundler.js:3863
+(anonymous) @ main.js:15Understand this warning
+HomeView.vue:70 [Vue warn]: Property "processedMetadata" was accessed during render but is not defined on instance. 
+  at <HomeView onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView > 
+  at <DefaultLayout > 
+  at <App>
+overrideMethod @ hook.js:608
+warn$1 @ runtime-core.esm-bundler.js:51
+get @ runtime-core.esm-bundler.js:3132
+_sfc_render @ HomeView.vue:70
+renderComponentRoot @ runtime-core.esm-bundler.js:6502
+componentUpdateFn @ runtime-core.esm-bundler.js:5319
+run @ reactivity.esm-bundler.js:225
+setupRenderEffect @ runtime-core.esm-bundler.js:5454
+mountComponent @ runtime-core.esm-bundler.js:5229
+processComponent @ runtime-core.esm-bundler.js:5182
+patch @ runtime-core.esm-bundler.js:4700
+componentUpdateFn @ runtime-core.esm-bundler.js:5406
+run @ reactivity.esm-bundler.js:225
+runIfDirty @ reactivity.esm-bundler.js:263
+callWithErrorHandling @ runtime-core.esm-bundler.js:199
+flushJobs @ runtime-core.esm-bundler.js:408
+Promise.then
+queueFlush @ runtime-core.esm-bundler.js:322
+queueJob @ runtime-core.esm-bundler.js:317
+effect2.scheduler @ runtime-core.esm-bundler.js:5448
+trigger @ reactivity.esm-bundler.js:253
+endBatch @ reactivity.esm-bundler.js:311
+notify @ reactivity.esm-bundler.js:597
+trigger @ reactivity.esm-bundler.js:571
+set value @ reactivity.esm-bundler.js:1448
+finalizeNavigation @ vue-router.mjs:3503
+(anonymous) @ vue-router.mjs:3368
+Promise.then
+pushWithRedirect @ vue-router.mjs:3335
+push @ vue-router.mjs:3260
+install @ vue-router.mjs:3704
+use @ runtime-core.esm-bundler.js:3863
+(anonymous) @ main.js:15Understand this warning
+HomeView.vue:79 [Vue warn]: Property "processedMetadata" was accessed during render but is not defined on instance. 
+  at <HomeView onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouterView > 
+  at <DefaultLayout > 
+  at <App>
+overrideMethod @ hook.js:608
+warn$1 @ runtime-core.esm-bundler.js:51
+get @ runtime-core.esm-bundler.js:3132
+_sfc_render @ HomeView.vue:79
+renderComponentRoot @ runtime-core.esm-bundler.js:6502
+componentUpdateFn @ runtime-core.esm-bundler.js:5319
+run @ reactivity.esm-bundler.js:225
+setupRenderEffect @ runtime-core.esm-bundler.js:5454
+mountComponent @ runtime-core.esm-bundler.js:5229
+processComponent @ runtime-core.esm-bundler.js:5182
+patch @ runtime-core.esm-bundler.js:4700
+componentUpdateFn @ runtime-core.esm-bundler.js:5406
+run @ reactivity.esm-bundler.js:225
+runIfDirty @ reactivity.esm-bundler.js:263
+callWithErrorHandling @ runtime-core.esm-bundler.js:199
+flushJobs @ runtime-core.esm-bundler.js:408
+Promise.then
+queueFlush @ runtime-core.esm-bundler.js:322
+queueJob @ runtime-core.esm-bundler.js:317
+effect2.scheduler @ runtime-core.esm-bundler.js:5448
+trigger @ reactivity.esm-bundler.js:253
+endBatch @ reactivity.esm-bundler.js:311
+notify @ reactivity.esm-bundler.js:597
+trigger @ reactivity.esm-bundler.js:571
+set value @ reactivity.esm-bundler.js:1448
+finalizeNavigation @ vue-router.mjs:3503
+(anonymous) @ vue-router.mjs:3368
+Promise.then
+pushWithRedirect @ vue-router.mjs:3335
+push @ vue-router.mjs:3260
+install @ vue-router.mjs:3704
+use @ runtime-core.esm-bundler.js:3863
+(anonymous) @ main.js:15Understand this warning
+main.js:15 [Vue warn]: Unhandled error during execution of component update 
+  at <RouterView > 
+  at <DefaultLayout > 
+  at <App>
+overrideMethod @ hook.js:608
+warn$1 @ runtime-core.esm-bundler.js:51
+logError @ runtime-core.esm-bundler.js:263
+handleError @ runtime-core.esm-bundler.js:255
+callWithErrorHandling @ runtime-core.esm-bundler.js:201
+flushJobs @ runtime-core.esm-bundler.js:408
+Promise.then
+queueFlush @ runtime-core.esm-bundler.js:322
+queueJob @ runtime-core.esm-bundler.js:317
+effect2.scheduler @ runtime-core.esm-bundler.js:5448
+trigger @ reactivity.esm-bundler.js:253
+endBatch @ reactivity.esm-bundler.js:311
+notify @ reactivity.esm-bundler.js:597
+trigger @ reactivity.esm-bundler.js:571
+set value @ reactivity.esm-bundler.js:1448
+finalizeNavigation @ vue-router.mjs:3503
+(anonymous) @ vue-router.mjs:3368
+Promise.then
+pushWithRedirect @ vue-router.mjs:3335
+push @ vue-router.mjs:3260
+install @ vue-router.mjs:3704
+use @ runtime-core.esm-bundler.js:3863
+(anonymous) @ main.js:15Understand this warning
+runtime-dom.esm-bundler.js:708 Uncaught (in promise) RangeError: Maximum call stack size exceeded
+    at RegExp.exec (<anonymous>)
+    at RegExp.test (<anonymous>)
+    at parseName (runtime-dom.esm-bundler.js:708:25)
+    at patchEvent (runtime-dom.esm-bundler.js:692:29)
+    at patchProp (runtime-dom.esm-bundler.js:775:7)
+    at mountElement (runtime-core.esm-bundler.js:4873:11)
+    at processElement (runtime-core.esm-bundler.js:4820:7)
+    at patch (runtime-core.esm-bundler.js:4688:11)
+    at mountChildren (runtime-core.esm-bundler.js:4932:7)
+    at mountElement (runtime-core.esm-bundler.js:4855:7)
