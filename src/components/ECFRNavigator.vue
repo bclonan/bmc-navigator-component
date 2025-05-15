@@ -101,6 +101,35 @@
           </div>
         </div>
         
+        <!-- Font Size Selector -->
+        <div class="flex items-center mr-2">
+          <label 
+            for="fontSize" 
+            class="sr-only">Font Size</label>
+          <div class="inline-flex items-center">
+            <span 
+              class="text-xs mr-2"
+              :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-600']"
+            >Font:</span>
+            <select
+              id="fontSize"
+              v-model="currentFontSize"
+              @change="changeFontSize"
+              class="text-sm py-1 px-2 rounded focus:outline-none focus:ring-2 focus:ring-opacity-50"
+              :class="[
+                options.theme === 'dark' 
+                  ? 'bg-gray-800 text-gray-200 border-gray-700 focus:ring-gray-500' 
+                  : 'bg-gray-100 text-gray-700 border-gray-300 focus:ring-gray-300'
+              ]"
+            >
+              <option value="small">Small</option>
+              <option value="medium">Medium</option>
+              <option value="large">Large</option>
+              <option value="adaptive">Adaptive</option>
+            </select>
+          </div>
+        </div>
+        
         <!-- Metadata Toggle -->
         <div class="flex items-center">
           <div class="inline-flex items-center">
@@ -595,6 +624,7 @@ export default {
       fuzzyThresholdStep: 4, // Default middle value (0-8 range)
       currentViewMode: 'standard',
       currentItemSpacing: 'medium',
+      currentFontSize: 'medium', // Font size setting
       showMetadataBadges: false,
       showAdvancedSearch: false,
       selectedTypeFilters: [],
@@ -638,7 +668,16 @@ export default {
           itemSpacing: 'medium', // 'tight', 'medium', 'loose'
           maxTitleLength: null, // Truncate titles longer than this
           animations: true, // Enable animations for better UX
-          enhancedMobile: true // Optimize for mobile devices
+          enhancedMobile: true, // Optimize for mobile devices
+          fontScaling: {
+            enabled: true, // Enable adaptive font sizing
+            baseSize: 'medium', // 'small', 'medium', 'large'
+            scaleWithWidth: true, // Scale font size with container width
+            scaleWithViewMode: true, // Adjust font based on view mode (compact/detailed)
+            minSize: '12px', // Minimum font size
+            maxSize: '18px', // Maximum font size
+            responsive: true // Use responsive breakpoints
+          }
         },
         
         // Advanced search and filter options
