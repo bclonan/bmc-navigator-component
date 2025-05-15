@@ -17,5 +17,12 @@ echo To use this package in another project:
 echo npm install ./ecfr-navigator-1.0.0.tgz
 echo.
 echo Import components and functions with:
-echo import { ECFRNavigator, useECFRStore } from 'ecfr-navigator';
+echo import { ECFRNavigator, ECFRNavigatorWrapper, useECFRStore, useECFRNavigatorStore } from 'ecfr-navigator';
 echo import 'ecfr-navigator/style.css';
+echo.
+echo // For styleless usage with wrapper component:
+echo import { ECFRNavigatorWrapper } from 'ecfr-navigator';
+echo.
+echo // For direct store access with enhanced features:
+echo import { useECFRNavigatorStore } from 'ecfr-navigator';
+echo const navigator = useECFRNavigatorStore();

@@ -11,12 +11,13 @@ export default defineConfig({
       fileName: (format) => `ecfr-navigator.${format}.js`
     },
     rollupOptions: {
-      external: ['vue', 'pinia'],
+      external: ['vue', 'pinia', 'uuid', /^ecfr-navigator/],
       output: {
         exports: 'named', // ✅ Fix for export warning
         globals: {
           vue: 'Vue',
-          pinia: 'Pinia'
+          pinia: 'Pinia',
+          uuid: 'uuid'
         },
         preserveModules: false,
         assetFileNames: (assetInfo) => {
