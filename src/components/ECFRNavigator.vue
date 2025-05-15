@@ -885,12 +885,13 @@ export default {
      * Perform search across all items with fuzzy matching
      */
     performSearch() {
-      if (!this.searchQuery.trim()) {
+      const query = this.searchQuery.trim();
+      
+      if (!query && !this.hasActiveFilters) {
         this.clearSearch();
         return;
       }
       
-      const query = this.searchQuery.trim();
       this.searchResults = [];
       this.isLoading = true;
       
@@ -899,10 +900,27 @@ export default {
         // Use Fuse.js for fuzzy search
         setTimeout(() => {
           // Search with a setTimeout to allow UI to update and show loading state
-          const fuseResults = this.fuseInstance.search(query);
+          let results = [];
+          
+          if (query) {
+            // Get Fuse.js results if we have a query
+            results = this.fuseInstance.search(query);
+          } else if (this.hasActiveFilters) {
+            // If we only have filters but no query, create "results" from all items
+            results = this.searchData.map(item => ({
+              item: item,
+              matches: [],
+              score: 1
+            }));
+          }
+          
+          // Apply filters to results if we have active filters
+          if (this.hasActiveFilters) {
+            results = results.filter(result => this.itemMatchesFilters(result.item.item));
+          }
           
           // Process results
-          this.searchResults = fuseResults.map(result => {
+          this.searchResults = results.map(result => {
             const item = result.item.item;
             let matchContext = null;
             
@@ -943,13 +961,19 @@ export default {
               } else {
                 matchContext = `${matchKey.charAt(0).toUpperCase() + matchKey.slice(1)}: ${matchValue}`;
               }
+            } else if (this.hasActiveFilters && query === '') {
+              // For filter-only searches without query, provide filter context
+              matchContext = `Matched filters: ${this.getActiveFiltersAsText()}`;
             }
             
             return {
               ...item,
               matchContext,
               path: result.item.path,
-              score: result.score
+              score: result.score,
+              // Additional metadata fields for filtering
+              agency: item.agency,
+              updatedDate: item.updatedDate
             };
           });
           
@@ -961,14 +985,16 @@ export default {
           this.isLoading = false;
           
           // If no results, but we searched something, still show the results container
-          if (this.searchResults.length === 0) {
+          if (this.searchResults.length === 0 && (query || this.hasActiveFilters)) {
             this.showSearchResults = true;
           }
           
-          // Emit search event
+          // Emit search event with filter information
           this.$emit('search-completed', {
             query,
-            results: this.searchResults.length,
+            filters: this.getActiveFilters(),
+            resultsCount: this.searchResults.length,
+            results: this.searchResults,
             fuzzy: true
           });
         }, 10);
@@ -1485,6 +1511,39 @@ export default {
         dateRange: this.selectedDateRange,
         keywords: this.keywordFilter.split(',').map(k => k.trim()).filter(Boolean)
       };
+    },
+    
+    /**
+     * Get a text description of active filters
+     * @returns {string} Human-readable description of active filters
+     */
+    getActiveFiltersAsText() {
+      const parts = [];
+      
+      if (this.selectedTypeFilters.length > 0) {
+        parts.push(`Types: ${this.selectedTypeFilters.join(', ')}`);
+      }
+      
+      if (this.selectedAgency) {
+        parts.push(`Agency: ${this.selectedAgency}`);
+      }
+      
+      if (this.selectedDateRange) {
+        const rangeMap = {
+          'today': 'Today',
+          'week': 'Past Week',
+          'month': 'Past Month',
+          'year': 'Past Year'
+        };
+        parts.push(`Date: ${rangeMap[this.selectedDateRange] || this.selectedDateRange}`);
+      }
+      
+      const keywords = this.keywordFilter.split(',').map(k => k.trim()).filter(Boolean);
+      if (keywords.length > 0) {
+        parts.push(`Keywords: ${keywords.join(', ')}`);
+      }
+      
+      return parts.join('; ');
     },
     
     /**
