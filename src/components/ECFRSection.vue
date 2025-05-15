@@ -19,11 +19,22 @@
     ]"
   >
     <div 
-      class="flex items-start cursor-pointer p-2 hover:bg-opacity-10 transition-colors duration-200 rounded"
       :class="[
-        isSelected ? (darkMode ? 'bg-blue-900 bg-opacity-20' : 'bg-blue-100') : '',
+        // Base styling unless in styleless mode
+        mergedOptions.display.viewMode !== 'styleless' ? 
+          'flex items-start cursor-pointer p-2 hover:bg-opacity-10 transition-colors duration-200 rounded' : 
+          'flex items-start cursor-pointer',
+        
+        // Selection highlight unless in styleless mode
+        mergedOptions.display.viewMode !== 'styleless' && isSelected ? 
+          (darkMode ? 'bg-blue-900 bg-opacity-20' : 'bg-blue-100') : '',
+        
+        // Group class for items with children
         hasChildren ? 'group' : '',
-        darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+        
+        // Hover effect unless in styleless mode
+        mergedOptions.display.viewMode !== 'styleless' ? 
+          (darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100') : ''
       ]"
       @click="handleSelect"
     >
@@ -380,6 +391,8 @@ export default {
         return 'compact-mode py-0.5';
       } else if (mode === 'detailed') {
         return 'detailed-mode py-2';
+      } else if (mode === 'styleless') {
+        return 'styleless-mode';
       }
       
       return 'standard-mode py-1';

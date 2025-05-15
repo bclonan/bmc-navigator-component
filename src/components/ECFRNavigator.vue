@@ -68,6 +68,7 @@
               <option value="compact">Compact</option>
               <option value="standard">Standard</option>
               <option value="detailed">Detailed</option>
+              <option value="styleless">Styleless</option>
             </select>
           </div>
         </div>
@@ -334,118 +335,121 @@
       leave-from-class="transform opacity-100 translate-y-0"
       leave-to-class="transform opacity-0 -translate-y-2"
     >
-      <div v-if="showSearchResults || (isLoading && searchQuery.trim())" 
+      <div 
+        v-if="showSearchResults || (isLoading && searchQuery.trim())" 
         class="p-2 border-b"
         :class="[options.theme === 'dark' ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-gray-50']"
       >
-      <!-- Loading state -->
-      <div v-if="isLoading" class="flex justify-center items-center py-4">
-        <div
-          class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2"
-          :class="[options.theme === 'dark' ? 'border-blue-400' : 'border-blue-600']"
-        ></div>
-        <div class="ml-2 text-sm" :class="[options.theme === 'dark' ? 'text-gray-300' : 'text-gray-700']">
-          Searching...
+        <!-- Loading state -->
+        <div v-if="isLoading" class="flex justify-center items-center py-4">
+          <div
+            class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2"
+            :class="[options.theme === 'dark' ? 'border-blue-400' : 'border-blue-600']"
+          ></div>
+          <div class="ml-2 text-sm" :class="[options.theme === 'dark' ? 'text-gray-300' : 'text-gray-700']">
+            Searching...
+          </div>
         </div>
-      </div>
-      
-      <!-- Results header -->
-      <div v-else>
-        <div class="flex justify-between items-center mb-2">
-          <div class="flex items-center">
-            <div class="text-sm font-medium mr-2"
-              :class="[options.theme === 'dark' ? 'text-gray-300' : 'text-gray-700']"
-            >
-              Found {{ searchResults.length }} result{{ searchResults.length !== 1 ? 's' : '' }}
+        
+        <!-- Results when not loading -->
+        <div v-else>
+          <!-- Results header -->
+          <div class="flex justify-between items-center mb-2">
+            <div class="flex items-center">
+              <div class="text-sm font-medium mr-2"
+                :class="[options.theme === 'dark' ? 'text-gray-300' : 'text-gray-700']"
+              >
+                Found {{ searchResults.length }} result{{ searchResults.length !== 1 ? 's' : '' }}
+              </div>
+              
+              <!-- Fuzzy search badge -->
+              <div v-if="mergedOptions.fuzzySearch.enabled" 
+                class="text-xs px-2 py-0.5 rounded-full"
+                :class="[options.theme === 'dark' ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800']"
+              >
+                Fuzzy
+              </div>
             </div>
             
-            <!-- Fuzzy search badge -->
-            <div v-if="mergedOptions.fuzzySearch.enabled" 
-              class="text-xs px-2 py-0.5 rounded-full"
-              :class="[options.theme === 'dark' ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800']"
-            >
-              Fuzzy
+            <div class="flex items-center">
+              <!-- Fuzzy search toggle -->
+              <div class="flex items-center mr-2">
+                <label class="text-xs mr-1" :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-600']">
+                  Fuzzy:
+                </label>
+                <button
+                  @click="toggleFuzzySearch"
+                  class="relative inline-flex h-4 w-8 items-center rounded-full transition-colors focus:outline-none"
+                  :class="[
+                    mergedOptions.fuzzySearch.enabled 
+                      ? (options.theme === 'dark' ? 'bg-blue-600' : 'bg-blue-500') 
+                      : (options.theme === 'dark' ? 'bg-gray-700' : 'bg-gray-300')
+                  ]"
+                >
+                  <span
+                    class="inline-block h-3 w-3 rounded-full bg-white transform transition-transform"
+                    :class="mergedOptions.fuzzySearch.enabled ? 'translate-x-4' : 'translate-x-1'"
+                  ></span>
+                </button>
+              </div>
+              
+              <!-- Clear button -->
+              <button 
+                class="text-sm text-blue-500 hover:text-blue-700"
+                @click="clearSearch"
+              >
+                Clear
+              </button>
             </div>
           </div>
           
-          <div class="flex items-center">
-            <!-- Fuzzy search toggle -->
-            <div class="flex items-center mr-2">
-              <label class="text-xs mr-1" :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-600']">
-                Fuzzy:
-              </label>
-              <button
-                @click="toggleFuzzySearch"
-                class="relative inline-flex h-4 w-8 items-center rounded-full transition-colors focus:outline-none"
-                :class="[
-                  mergedOptions.fuzzySearch.enabled 
-                    ? (options.theme === 'dark' ? 'bg-blue-600' : 'bg-blue-500') 
-                    : (options.theme === 'dark' ? 'bg-gray-700' : 'bg-gray-300')
-                ]"
-              >
-                <span
-                  class="inline-block h-3 w-3 rounded-full bg-white transform transition-transform"
-                  :class="mergedOptions.fuzzySearch.enabled ? 'translate-x-4' : 'translate-x-1'"
-                ></span>
-              </button>
+          <!-- Search sensitivity slider when fuzzy is enabled -->
+          <div v-if="mergedOptions.fuzzySearch.enabled" class="mb-2 px-1">
+            <div class="flex justify-between items-center text-xs mb-1">
+              <span :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-600']">Exact</span>
+              <span :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-600']">Flexible</span>
+            </div>
+            <input 
+              type="range" 
+              min="0" 
+              max="8" 
+              step="1" 
+              v-model="fuzzyThresholdStep" 
+              @change="updateFuzzyThreshold"
+              class="w-full h-1 rounded-lg appearance-none cursor-pointer"
+              :class="[options.theme === 'dark' ? 'bg-gray-700' : 'bg-gray-300']"
+            />
+          </div>
+          
+          <!-- Results list -->
+          <div class="max-h-40 overflow-y-auto">
+            <div v-if="searchResults.length === 0" 
+              class="text-center p-4 text-sm"
+              :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-500']"
+            >
+              No matches found for "{{ searchQuery }}"
             </div>
             
-            <!-- Clear button -->
-            <button 
-              class="text-sm text-blue-500 hover:text-blue-700"
-              @click="clearSearch"
+            <div 
+              v-for="result in searchResults" 
+              :key="result.id" 
+              class="p-2 mb-1 rounded cursor-pointer hover:bg-opacity-80 transition-colors duration-200"
+              :class="[
+                options.theme === 'dark' 
+                  ? 'bg-gray-700 hover:bg-gray-600 text-gray-200' 
+                  : 'bg-white hover:bg-gray-100 text-gray-800 border border-gray-200'
+              ]"
+              @click="navigateToSearchResult(result)"
             >
-              Clear
-            </button>
-          </div>
-        </div>
-        
-        <!-- Search sensitivity slider when fuzzy is enabled -->
-        <div v-if="mergedOptions.fuzzySearch.enabled" class="mb-2 px-1">
-          <div class="flex justify-between items-center text-xs mb-1">
-            <span :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-600']">Exact</span>
-            <span :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-600']">Flexible</span>
-          </div>
-          <input 
-            type="range" 
-            min="0" 
-            max="8" 
-            step="1" 
-            v-model="fuzzyThresholdStep" 
-            @change="updateFuzzyThreshold"
-            class="w-full h-1 rounded-lg appearance-none cursor-pointer"
-            :class="[options.theme === 'dark' ? 'bg-gray-700' : 'bg-gray-300']"
-          />
-        </div>
-      </div>
-      
-      <!-- Results list -->
-      <div v-if="!isLoading" class="max-h-40 overflow-y-auto">
-        <div v-if="searchResults.length === 0" 
-          class="text-center p-4 text-sm"
-          :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-500']"
-        >
-          No matches found for "{{ searchQuery }}"
-        </div>
-        
-        <div 
-          v-for="result in searchResults" 
-          :key="result.id" 
-          class="p-2 mb-1 rounded cursor-pointer hover:bg-opacity-80 transition-colors duration-200"
-          :class="[
-            options.theme === 'dark' 
-              ? 'bg-gray-700 hover:bg-gray-600 text-gray-200' 
-              : 'bg-white hover:bg-gray-100 text-gray-800 border border-gray-200'
-          ]"
-          @click="navigateToSearchResult(result)"
-        >
-          <div class="font-medium">{{ formatSearchResultTitle(result) }}</div>
-          <div 
-            v-if="result.matchContext" 
-            class="text-xs mt-1 truncate"
-            :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-600']"
-          >
-            {{ result.matchContext }}
+              <div class="font-medium">{{ formatSearchResultTitle(result) }}</div>
+              <div 
+                v-if="result.matchContext" 
+                class="text-xs mt-1 truncate"
+                :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-600']"
+              >
+                {{ result.matchContext }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
