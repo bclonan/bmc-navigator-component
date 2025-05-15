@@ -979,46 +979,45 @@ export default {
     }
   },
   
-  /**
-   * Initialize the component with the available data
-   * This is called after data is loaded from URLs or when direct items are provided
-   */
-  initializeComponent() {
-    // Use loadedData if available from URL loading, otherwise use direct items
-    const dataToUse = this.loadedData.length > 0 ? this.loadedData : this.items;
-    
-    if (dataToUse && dataToUse.length > 0) {
-      this.ecfrStore.setRootItems(dataToUse);
-      
-      // If the expandAll option is true, expand all items
-      if (this.mergedOptions.expandAll) {
-        this.ecfrStore.expandAll();
-      }
-      
-      // Initialize any provided metadata
-      if (this.itemMetadata && typeof this.itemMetadata === 'object') {
-        Object.entries(this.itemMetadata).forEach(([itemId, metadata]) => {
-          this.ecfrStore.setItemMetadata(itemId, metadata);
-        });
-      }
-      
-      // Also apply any loaded metadata from URL
-      if (Object.keys(this.loadedMetadata).length > 0) {
-        Object.entries(this.loadedMetadata).forEach(([itemId, metadata]) => {
-          this.ecfrStore.setItemMetadata(itemId, metadata);
-        });
-      }
-      
-      // Navigate to initial item if provided
-      if (this.initialSelectedItemId) {
-        this.$nextTick(() => {
-          this.navigateTo(this.initialSelectedItemId);
-        });
-      }
-    }
-  },
-  
   methods: {
+    /**
+     * Initialize the component with the available data
+     * This is called after data is loaded from URLs or when direct items are provided
+     */
+    initializeComponent() {
+      // Use loadedData if available from URL loading, otherwise use direct items
+      const dataToUse = this.loadedData.length > 0 ? this.loadedData : this.items;
+      
+      if (dataToUse && dataToUse.length > 0) {
+        this.ecfrStore.setRootItems(dataToUse);
+        
+        // If the expandAll option is true, expand all items
+        if (this.mergedOptions.expandAll) {
+          this.ecfrStore.expandAll();
+        }
+        
+        // Initialize any provided metadata
+        if (this.itemMetadata && typeof this.itemMetadata === 'object') {
+          Object.entries(this.itemMetadata).forEach(([itemId, metadata]) => {
+            this.ecfrStore.setItemMetadata(itemId, metadata);
+          });
+        }
+        
+        // Also apply any loaded metadata from URL
+        if (Object.keys(this.loadedMetadata).length > 0) {
+          Object.entries(this.loadedMetadata).forEach(([itemId, metadata]) => {
+            this.ecfrStore.setItemMetadata(itemId, metadata);
+          });
+        }
+        
+        // Navigate to initial item if provided
+        if (this.initialSelectedItemId) {
+          this.$nextTick(() => {
+            this.navigateTo(this.initialSelectedItemId);
+          });
+        }
+      }
+    },
     /**
      * Load data from URLs provided in dataUrl or dataUrls props
      * @returns {Promise} Promise that resolves when all data is loaded
