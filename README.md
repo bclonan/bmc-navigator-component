@@ -493,6 +493,46 @@ export default {
 
 For a complete API reference, see the full documentation or explore the Storybook examples.
 
+### Important Installation Notes
+
+If you encounter any import errors like this:
+
+```
+Failed to resolve entry for package "ecfr-navigator". 
+The package may have incorrect main/module/exports specified in its package.json.
+```
+
+This is because the package requires proper exports configuration. Follow these steps:
+
+1. After installing the package, ensure you're using the latest version which includes the fixed exports.
+2. If the issue persists, you can use direct imports as a workaround:
+
+```javascript
+// Instead of:
+import { ECFRNavigator } from 'ecfr-navigator';
+
+// Try using direct file imports:
+import ECFRNavigator from 'ecfr-navigator/dist/ecfr-navigator.es.js';
+import 'ecfr-navigator/dist/ecfr-navigator.css';
+```
+
+3. Alternatively, rebuild the package with the fixes by running the provided build script:
+
+```bash
+# Clone the repository
+git clone https://github.com/your-org/ecfr-navigator.git
+cd ecfr-navigator
+
+# Install dependencies
+npm install
+
+# Build with fixed exports
+./build-package.sh
+
+# Install the fixed package in your project
+npm install /path/to/ecfr-navigator-1.0.0.tgz
+```
+
 To create the tarball package yourself:
 
 ```bash

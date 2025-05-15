@@ -40,5 +40,19 @@
     "vite": "^6.3.5",
     "vue-tsc": "^2.2.10"
   },
-  "files": "[\"dist\", \"src/components\", \"src/stores\", \"src/composables\", \"src/types\", \"src/index.js\"]"
+  "files": [
+    "dist",
+    "src/components",
+    "src/stores",
+    "src/composables",
+    "src/types",
+    "src/index.js"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/ecfr-navigator.es.js",
+      "require": "./dist/ecfr-navigator.umd.js"
+    },
+    "./dist/style.css": "./dist/style.css"
+  }
 }
