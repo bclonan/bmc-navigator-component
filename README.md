@@ -39,9 +39,459 @@ You can also install the package directly from a tarball:
 # Install from a local tarball
 npm install ./ecfr-navigator-1.0.0.tgz
 
+# Or if you've downloaded it to another location
+npm install /path/to/ecfr-navigator-1.0.0.tgz
+
 # Or from a URL
 npm install https://example.com/path/to/ecfr-navigator-1.0.0.tgz
 ```
+
+## Integration Guide
+
+After installing the ECFRNavigator component in your Vue 3 application, follow these steps to properly integrate it:
+
+### Step 1: Install Dependencies
+
+Ensure you have the required dependencies:
+
+```bash
+# If you don't already have these dependencies
+npm install pinia vue tailwindcss
+```
+
+### Step 2: Configure Pinia
+
+The ECFRNavigator uses Pinia for state management. Add Pinia to your Vue application in `main.js`:
+
+```javascript
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import App from './App.vue'
+
+const app = createApp(App)
+const pinia = createPinia()
+
+app.use(pinia)
+app.mount('#app')
+```
+
+### Step 3: Import and Register the Component
+
+You can register the component globally:
+
+```javascript
+// In main.js
+import { ECFRNavigator } from 'ecfr-navigator'
+import 'ecfr-navigator/dist/style.css' // Import the styles
+
+app.component('ECFRNavigator', ECFRNavigator)
+```
+
+Or import it locally in your component:
+
+```javascript
+// In your component
+import { ECFRNavigator } from 'ecfr-navigator'
+import 'ecfr-navigator/dist/style.css'
+
+export default {
+  components: {
+    ECFRNavigator
+  }
+}
+```
+
+### Step 4: Use the Component in Your Template
+
+Basic usage with direct data:
+
+```html
+<template>
+  <div class="my-container">
+    <ECFRNavigator 
+      :items="ecfrData"
+      :options="navigatorOptions"
+      @item-selected="handleItemSelected"
+    />
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      ecfrData: [
+        // Your hierarchical data structure
+        {
+          id: 'title-1',
+          type: 'title',
+          number: '1',
+          title: 'General Provisions',
+          children: [
+            // Sub-items...
+          ]
+        }
+      ],
+      navigatorOptions: {
+        showBreadcrumb: true,
+        theme: 'light', // or 'dark'
+        display: {
+          viewMode: 'standard', // 'compact', 'detailed', or 'styleless'
+          showDescription: true,
+          showMetadataBadges: true,
+          fontScaling: {
+            enabled: true,
+            baseSize: 'medium', // 'small', 'medium', 'large'
+            scaleWithWidth: true,
+            responsive: true
+          }
+        }
+      }
+    }
+  },
+  methods: {
+    handleItemSelected(event) {
+      console.log('Selected item:', event.item)
+      // Access the selected item's content or metadata
+    }
+  }
+}
+</script>
+```
+
+### Step 5: Loading Data from URLs
+
+For efficient handling of large datasets, you can load data from URLs:
+
+```html
+<ECFRNavigator 
+  dataUrl="/api/ecfr-structure.json"
+  metadataUrl="/api/ecfr-metadata.json"
+  :options="navigatorOptions"
+/>
+```
+
+Or load and merge data from multiple URLs:
+
+```html
+<ECFRNavigator 
+  :dataUrls="[
+    '/api/titles-1-10.json',
+    '/api/titles-11-20.json',
+    '/api/titles-21-50.json'
+  ]"
+  metadataUrl="/api/metadata.json"
+  :options="navigatorOptions"
+/>
+```
+
+### Step 6: Accessing the Store from Other Components
+
+You can access the ECFRNavigator's state from any component using the Pinia store:
+
+```javascript
+import { useECFRStore } from 'ecfr-navigator'
+
+export default {
+  setup() {
+    const ecfrStore = useECFRStore()
+    
+    // Access current selected item
+    const currentItem = computed(() => ecfrStore.currentItem)
+    
+    // Access breadcrumb path
+    const breadcrumbPath = computed(() => ecfrStore.breadcrumbPath)
+    
+    // Navigate programmatically
+    function jumpToSection(sectionId) {
+      ecfrStore.navigateTo(sectionId)
+    }
+    
+    return {
+      currentItem,
+      breadcrumbPath,
+      jumpToSection
+    }
+  }
+}
+```
+
+### Step 7: Creating a Side-by-Side Layout
+
+This common pattern shows the navigation panel alongside a content display panel:
+
+```html
+<template>
+  <div class="flex flex-col md:flex-row h-screen">
+    <!-- Navigation Panel -->
+    <div class="w-full md:w-[350px] md:mr-4 overflow-y-auto border rounded">
+      <ECFRNavigator 
+        :items="ecfrData"
+        :options="navigatorOptions"
+        @item-selected="handleItemSelected"
+      />
+    </div>
+    
+    <!-- Content Panel -->
+    <div class="flex-1 overflow-y-auto p-4 border rounded">
+      <div v-if="isLoading" class="animate-pulse">
+        <div class="h-4 bg-gray-200 rounded w-full mb-3"></div>
+        <div class="h-4 bg-gray-200 rounded w-5/6 mb-3"></div>
+      </div>
+      
+      <div v-else-if="currentContent" class="prose max-w-none">
+        <h2 class="text-xl font-bold mb-4">{{ currentTitle }}</h2>
+        <div v-html="currentContent"></div>
+        
+        <!-- Metadata Display -->
+        <div v-if="currentMetadata" class="mt-6 pt-4 border-t">
+          <h3 class="font-medium mb-2">Document Information</h3>
+          <div class="bg-gray-50 p-4 rounded">
+            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-sm">
+              <div v-if="currentMetadata.publishInfo">
+                <dt class="text-gray-500">Last Updated</dt>
+                <dd class="font-medium">{{ currentMetadata.publishInfo.lastUpdated }}</dd>
+              </div>
+              <div v-if="currentMetadata.sourceLinks">
+                <dt class="text-gray-500">Source Links</dt>
+                <dd class="font-medium">
+                  <a v-for="(url, format) in currentMetadata.sourceLinks" 
+                     :key="format" 
+                     :href="url" 
+                     class="text-blue-600 hover:underline mr-2"
+                  >{{ format.toUpperCase() }}</a>
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
+      
+      <div v-else class="text-center py-10 text-gray-500">
+        <p>Select an item to view its content</p>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { useECFRStore } from 'ecfr-navigator'
+
+export default {
+  data() {
+    return {
+      ecfrData: [], // Your data here
+      navigatorOptions: {
+        showBreadcrumb: true,
+        theme: 'light',
+        // Additional options...
+      },
+      currentContent: '',
+      currentTitle: '',
+      currentMetadata: null,
+      isLoading: false
+    }
+  },
+  setup() {
+    // Access the store for additional functionality
+    const ecfrStore = useECFRStore()
+    return { ecfrStore }
+  },
+  methods: {
+    handleItemSelected(event) {
+      this.isLoading = true
+      this.currentTitle = event.item.title
+      
+      // Simulate loading content from an API
+      setTimeout(() => {
+        this.currentContent = event.item.content || 
+          `<p>Content for ${event.item.title}</p>`
+        
+        // Get metadata from the store
+        this.currentMetadata = this.ecfrStore.getItemMetadata(event.item.id)
+        this.isLoading = false
+      }, 300)
+    }
+  }
+}
+</script>
+```
+
+### Step 8: Using the Store Composable Outside of Components
+
+For more flexibility, you can use the provided composable:
+
+```javascript
+import { useECFRNavigator } from 'ecfr-navigator'
+
+// In any function or composition function
+function initializeNavigator() {
+  const navigator = useECFRNavigator()
+  
+  // Load data
+  fetch('/api/ecfr-data.json')
+    .then(response => response.json())
+    .then(data => {
+      navigator.setData(data)
+      
+      // Expand all items initially
+      navigator.expandAll()
+      
+      // Navigate to a specific item
+      navigator.navigateTo('section-1-1-1')
+    })
+}
+```
+
+### Complete Example with URL Data Loading and Responsive Layout
+
+```html
+<template>
+  <div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">eCFR Navigation Demo</h1>
+    
+    <!-- Mobile Controls -->
+    <div class="md:hidden mb-4">
+      <button 
+        @click="showNav = !showNav" 
+        class="bg-blue-600 text-white px-4 py-2 rounded"
+      >
+        {{ showNav ? 'Hide Navigation' : 'Show Navigation' }}
+      </button>
+    </div>
+    
+    <div class="flex flex-col md:flex-row gap-4">
+      <!-- Navigation Panel (toggleable on mobile) -->
+      <div 
+        v-show="showNav || !isMobile" 
+        class="w-full md:w-[350px] md:h-[calc(100vh-120px)] shadow-md rounded-lg overflow-hidden border"
+      >
+        <div class="bg-gray-50 border-b p-3">
+          <h2 class="font-medium">Document Navigator</h2>
+        </div>
+        
+        <div class="h-[500px] md:h-[calc(100vh-160px)]">
+          <ECFRNavigator 
+            :dataUrl="dataUrl"
+            :metadataUrl="metadataUrl"
+            :options="navigatorOptions"
+            @item-selected="handleItemSelected"
+          />
+        </div>
+      </div>
+      
+      <!-- Content Panel -->
+      <div 
+        v-show="!showNav || !isMobile" 
+        class="flex-1 border rounded-lg shadow-md"
+      >
+        <div class="p-4 bg-gray-50 border-b">
+          <h2 class="text-xl font-semibold">{{ currentTitle || 'No Selection' }}</h2>
+        </div>
+        
+        <div class="p-4">
+          <div v-if="isLoading" class="animate-pulse">
+            <div class="h-4 bg-gray-200 rounded w-full mb-3"></div>
+            <div class="h-4 bg-gray-200 rounded w-5/6 mb-3"></div>
+          </div>
+          
+          <div v-else-if="currentContent" v-html="currentContent"></div>
+          
+          <div v-else class="text-center py-10 text-gray-500">
+            <p>Select an item from the navigation panel to view its content</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { ref, onMounted, onUnmounted } from 'vue'
+import { ECFRNavigator, useECFRStore } from 'ecfr-navigator'
+import 'ecfr-navigator/dist/style.css'
+
+export default {
+  components: { ECFRNavigator },
+  setup() {
+    const ecfrStore = useECFRStore()
+    const currentTitle = ref('')
+    const currentContent = ref('')
+    const isLoading = ref(false)
+    const showNav = ref(false)
+    const isMobile = ref(false)
+    
+    // URL sources for data and metadata
+    const dataUrl = '/api/ecfr-data.json'
+    const metadataUrl = '/api/ecfr-metadata.json'
+    
+    const navigatorOptions = {
+      showBreadcrumb: true,
+      theme: 'light',
+      display: {
+        viewMode: 'standard',
+        showDescription: true,
+        showMetadataBadges: true,
+        fontScaling: {
+          enabled: true,
+          baseSize: 'medium',
+          scaleWithWidth: true,
+          responsive: true
+        }
+      }
+    }
+    
+    function handleItemSelected(event) {
+      isLoading.value = true
+      currentTitle.value = event.item.title
+      
+      // In a real app you'd fetch content from an API
+      setTimeout(() => {
+        currentContent.value = `<p>Content for ${event.item.title} (ID: ${event.item.id})</p>`
+        
+        if (isMobile.value) {
+          showNav.value = false
+        }
+        
+        isLoading.value = false
+      }, 500)
+    }
+    
+    function checkMobile() {
+      isMobile.value = window.innerWidth < 768
+      if (!isMobile.value) {
+        showNav.value = true
+      }
+    }
+    
+    onMounted(() => {
+      checkMobile()
+      window.addEventListener('resize', checkMobile)
+    })
+    
+    onUnmounted(() => {
+      window.removeEventListener('resize', checkMobile)
+    })
+    
+    return {
+      dataUrl,
+      metadataUrl,
+      navigatorOptions,
+      currentTitle,
+      currentContent,
+      isLoading,
+      showNav,
+      isMobile,
+      handleItemSelected
+    }
+  }
+}
+</script>
+```
+
+### API Reference
+
+For a complete API reference, see the full documentation or explore the Storybook examples.
 
 To create the tarball package yourself:
 
