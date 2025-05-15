@@ -13,7 +13,7 @@
 
     <!-- Control bar -->
     <div 
-      class="flex flex-col sm:flex-row justify-between items-center p-2 border-b"
+      class="flex flex-col sm:flex-row justify-between items-center p-2 border-b space-y-2 sm:space-y-0"
       :class="[options.theme === 'dark' ? 'border-gray-700' : 'border-gray-200']"
     >
       <div class="flex flex-wrap mb-2 sm:mb-0 items-center">
@@ -126,7 +126,7 @@
       </div>
       
       <!-- Search box -->
-      <div class="w-full sm:w-auto relative">
+      <div class="w-full sm:w-auto relative max-w-full">
         <div class="flex items-center">
           <!-- Main search input -->
           <div class="relative flex-grow">
@@ -137,7 +137,7 @@
               v-model="searchQuery"
               placeholder="Search..."
               aria-label="Search document"
-              class="w-full sm:w-64 px-3 py-1 pr-10 rounded-l text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+              class="w-full sm:w-64 px-3 py-2 sm:py-1 pr-10 rounded-l text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
               :class="[
                 options.theme === 'dark' 
                   ? 'bg-gray-800 text-gray-200 border-gray-700' 
@@ -160,7 +160,7 @@
           
           <!-- Advanced search toggle button -->
           <button
-            class="flex-shrink-0 h-full px-2 py-1 rounded-r text-sm"
+            class="flex-shrink-0 h-full px-2 py-2 sm:py-1 rounded-r text-sm"
             :class="[
               options.theme === 'dark' 
                 ? (showAdvancedSearch ? 'bg-blue-700 text-blue-100' : 'bg-gray-700 text-gray-300 hover:bg-gray-600')
@@ -176,15 +176,23 @@
         </div>
         
         <!-- Advanced search panel -->
-        <div 
-          v-if="showAdvancedSearch" 
-          class="absolute right-0 mt-1 p-3 rounded shadow-lg z-10 w-72 sm:w-80 border"
-          :class="[
-            options.theme === 'dark' 
-              ? 'bg-gray-800 border-gray-700' 
-              : 'bg-white border-gray-200'
-          ]"
+        <transition
+          enter-active-class="transition ease-out duration-200"
+          enter-from-class="transform opacity-0 scale-95"
+          enter-to-class="transform opacity-100 scale-100"
+          leave-active-class="transition ease-in duration-150"
+          leave-from-class="transform opacity-100 scale-100"
+          leave-to-class="transform opacity-0 scale-95"
         >
+          <div 
+            v-if="showAdvancedSearch" 
+            class="absolute right-0 mt-1 p-3 rounded shadow-lg z-10 w-full sm:w-80 border max-w-full sm:max-w-md"
+            :class="[
+              options.theme === 'dark' 
+                ? 'bg-gray-800 border-gray-700' 
+                : 'bg-white border-gray-200'
+            ]"
+          >
           <h3 
             class="text-sm font-medium mb-2"
             :class="[options.theme === 'dark' ? 'text-gray-200' : 'text-gray-700']"
@@ -313,14 +321,23 @@
             </button>
           </div>
         </div>
+        </transition>
       </div>
     </div>
     
     <!-- Search results -->
-    <div v-if="showSearchResults || (isLoading && searchQuery.trim())" 
-      class="p-2 border-b"
-      :class="[options.theme === 'dark' ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-gray-50']"
+    <transition
+      enter-active-class="transition duration-200 ease-out"
+      enter-from-class="transform opacity-0 -translate-y-2"
+      enter-to-class="transform opacity-100 translate-y-0"
+      leave-active-class="transition duration-200 ease-in"
+      leave-from-class="transform opacity-100 translate-y-0"
+      leave-to-class="transform opacity-0 -translate-y-2"
     >
+      <div v-if="showSearchResults || (isLoading && searchQuery.trim())" 
+        class="p-2 border-b"
+        :class="[options.theme === 'dark' ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-gray-50']"
+      >
       <!-- Loading state -->
       <div v-if="isLoading" class="flex justify-center items-center py-4">
         <div
@@ -432,7 +449,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </transition>
 
     <!-- Main content area -->
     <div 
@@ -844,6 +861,9 @@ export default {
             content: contentText,
             type: item.type || '',
             number: item.number || '',
+            // Add additional fields for advanced filtering
+            agency: item.agency || '',
+            updatedDate: item.updatedDate || '',
             path: currentPath,
             item: item
           });
@@ -857,6 +877,13 @@ export default {
       
       // Process items recursively
       processItems(items);
+      
+      // Populate available agencies from data
+      this.availableAgencies = [...new Set(
+        this.searchData
+          .map(item => item.agency)
+          .filter(Boolean)
+      )].sort();
       
       // Configure Fuse.js options
       const fuseOptions = {
@@ -873,7 +900,10 @@ export default {
           { name: 'subtitle', weight: 0.5 },
           { name: 'content', weight: 0.3 },
           { name: 'type', weight: 0.2 },
-          { name: 'number', weight: 0.2 }
+          { name: 'number', weight: 0.2 },
+          // Add additional searchable fields to support filtering
+          { name: 'agency', weight: 0.3 },
+          { name: 'updatedDate', weight: 0.1 }
         ]
       };
       
