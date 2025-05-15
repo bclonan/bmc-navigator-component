@@ -581,7 +581,23 @@ export default {
      */
     items: {
       type: Array,
-      required: true
+      default: () => []
+    },
+    
+    /**
+     * URL to load data from (alternative to providing items directly)
+     */
+    dataUrl: {
+      type: String,
+      default: null
+    },
+    
+    /**
+     * Array of URLs to load and merge data from
+     */
+    dataUrls: {
+      type: Array,
+      default: () => []
     },
     
     /**
@@ -602,6 +618,14 @@ export default {
     },
     
     /**
+     * URL to load metadata from
+     */
+    metadataUrl: {
+      type: String,
+      default: null
+    },
+    
+    /**
      * ID of the item to initially select
      */
     initialSelectedItemId: {
@@ -616,6 +640,11 @@ export default {
     return {
       ecfrStore: useECFRStore(),
       isLoading: false,
+      dataLoading: false,
+      metadataLoading: false,
+      loadedData: [],
+      loadedMetadata: {},
+      loadingErrors: [],
       searchQuery: '',
       searchResults: [],
       showSearchResults: false,
