@@ -4,6 +4,7 @@
     :class="[
       darkMode ? 'text-gray-300' : 'text-gray-600', 
       options.style === 'compact' ? 'py-1 px-2' : 'py-2 px-3',
+      options.style === 'clean' ? 'bg-white border-b border-gray-200' : '',
       options.style === 'boxed' ? 'rounded-md shadow-sm border bg-opacity-50' : '',
       darkMode && options.style === 'boxed' ? 'border-gray-700 bg-gray-800' : '', 
       !darkMode && options.style === 'boxed' ? 'border-gray-200 bg-gray-50' : '',
@@ -250,7 +251,7 @@ export default {
         maxItemWidth: '12rem',
         separatorType: 'icon', // 'icon' or 'text'
         separator: '/',
-        style: 'standard', // 'standard', 'compact', 'button', 'boxed'
+        style: 'clean', // 'standard', 'compact', 'button', 'boxed', 'clean'
         type: 'wrap', // 'wrap' or 'scrollable'
         useIcons: false,
         textSize: '',

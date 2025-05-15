@@ -53,10 +53,17 @@ export default {
     return {
       dataUrl: '/src/mock.json', // Path to your mock data
       navigatorOptions: {
-        viewMode: 'standard',
-        fontSize: 'medium',
-        darkMode: false,
-        showMetadata: true,
+        display: {
+          viewMode: 'compact',
+          itemSpacing: 'medium',
+          fontScaling: {
+            baseSize: 'medium'
+          },
+          showMetadataBadges: false
+        },
+        showBreadcrumb: false,
+        showControls: false,
+        theme: 'light',
         expandOnSelect: true
       }
     }

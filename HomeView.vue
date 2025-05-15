@@ -264,12 +264,18 @@ export default {
       metadata: null,
       processedMetadata: null,
       navigatorOptions: {
-        viewMode: 'standard',
-        fontSize: 'medium',
-        darkMode: false,
-        showMetadata: true,
-        expandOnSelect: true,
-        showBreadcrumb: true
+        display: {
+          viewMode: 'compact',
+          itemSpacing: 'medium',
+          fontScaling: {
+            baseSize: 'medium'
+          },
+          showMetadataBadges: false
+        },
+        showBreadcrumb: false,
+        showControls: false,
+        theme: 'light',
+        expandOnSelect: true
       },
       activeTab: 0,
       tabs: [

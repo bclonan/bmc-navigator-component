@@ -12,7 +12,7 @@
     />
 
     <!-- Control bar -->
-    <div 
+    <div v-if="mergedOptions.showControls"
       class="flex flex-col sm:flex-row justify-between items-center p-2 border-b space-y-2 sm:space-y-0"
       :class="[options.theme === 'dark' ? 'border-gray-700' : 'border-gray-200']"
     >
@@ -701,10 +701,11 @@ export default {
       activeTooltipId: null, // For tracking which tooltip is currently shown
       tooltipTimeout: null, // For tooltip delay handling
       defaultOptions: {
-        showBreadcrumb: true,
+        showBreadcrumb: false,
         expandAll: false,
         hideContentOnNavigation: false,
         theme: 'light',
+        showControls: false,
         // Breadcrumb customization options
         breadcrumb: {
           rootLabel: 'Home',
@@ -712,7 +713,7 @@ export default {
           visibleItems: 2,
           maxVisible: 3,
           type: 'scrollable',
-          style: 'standard',
+          style: 'clean',
           separatorType: 'icon',
           truncateLabels: true,
           highlightLast: true
@@ -727,7 +728,7 @@ export default {
           showItemNumbers: true,
           indentItems: true,
           hideEmptyItems: false,
-          viewMode: 'standard', // 'compact', 'standard', or 'detailed'
+          viewMode: 'compact', // 'compact', 'standard', or 'detailed'
           showDescription: false, // Only relevant in detailed mode
           showMetadataBadges: false, // Show badges for items with metadata
           itemSpacing: 'medium', // 'tight', 'medium', 'loose'
