@@ -76,10 +76,10 @@
                 options.maxItemWidth ? 'max-w-[' + options.maxItemWidth + ']' : '',
               ]"
               @click.prevent="navigateToIndex(index)"
-              :title="formatBreadcrumbLabel(pathItem.item)"
+              :title="formatBreadcrumbLabel(pathItem)"
             >
               <span :class="{ truncate: options.truncateLabels }">
-                {{ formatBreadcrumbLabel(pathItem.item) }}
+                {{ formatBreadcrumbLabel(pathItem) }}
               </span>
             </a>
           </div>
@@ -116,10 +116,10 @@
                 options.style === 'button' ? 'px-2 py-1 rounded hover:bg-opacity-10 hover:bg-blue-500' : 'hover:underline',
               ]"
               @click.prevent="navigateToIndex(0)"
-              :title="formatBreadcrumbLabel(path[0].item)"
+              :title="formatBreadcrumbLabel(path[0])"
             >
               <span :class="{ truncate: options.truncateLabels }">
-                {{ formatBreadcrumbLabel(path[0].item) }}
+                {{ formatBreadcrumbLabel(path[0]) }}
               </span>
             </a>
           </div>
@@ -157,7 +157,7 @@
         <!-- Last visible items -->
         <li 
           v-for="(pathItem, idx) in visibleLastItems" 
-          :key="pathItem.item.id"
+          :key="pathItem.id || idx"
           class="shrink-0"
         >
           <div class="flex items-center">
@@ -188,10 +188,10 @@
                 options.maxItemWidth ? 'max-w-[' + options.maxItemWidth + ']' : '',
               ]"
               @click.prevent="navigateToIndex(pathItem.index)"
-              :title="formatBreadcrumbLabel(pathItem.item)"
+              :title="formatBreadcrumbLabel(pathItem)"
             >
               <span :class="{ truncate: options.truncateLabels }">
-                {{ formatBreadcrumbLabel(pathItem.item) }}
+                {{ formatBreadcrumbLabel(pathItem) }}
               </span>
             </a>
           </div>
@@ -291,6 +291,8 @@ export default {
      * @returns {string} The formatted label
      */
     formatBreadcrumbLabel(item) {
+      if (!item) return '';
+      
       // Format title based on item type, label format preferences, and available metadata
       if (this.mergedOptions.labelFormat === 'numbered' && item.type && item.number) {
         return `${item.type.charAt(0).toUpperCase() + item.type.slice(1)} ${item.number}${item.title ? ': ' + item.title : ''}`;
@@ -330,8 +332,7 @@ export default {
      * Navigate to the root level
      */
     navigateToRoot() {
-      const ecfrStore = useECFRStore();
-      ecfrStore.navigateToPath([]);
+      this.$emit('navigate', null);
     },
     
     /**
@@ -339,9 +340,45 @@ export default {
      * @param {number} index - The index to navigate to
      */
     navigateToIndex(index) {
-      const ecfrStore = useECFRStore();
-      const newPath = this.path.slice(0, index + 1);
-      ecfrStore.navigateToPath(newPath);
+      if (this.path && this.path[index]) {
+        this.$emit('navigate', this.path[index]);
+      }
+    },
+    
+    /**
+     * Check if we should show a prefix for this item
+     * @param {Object} item - The item to check
+     * @returns {boolean} Whether to show a prefix
+     */
+    showPrefix(item) {
+      return item && item.type && (item.type !== 'root');
+    },
+    
+    /**
+     * Get the prefix for an item based on its type
+     * @param {Object} item - The item to get a prefix for
+     * @returns {string} The item prefix
+     */
+    getItemPrefix(item) {
+      if (!item || !item.type) return '';
+      
+      // Allow custom prefix if specified
+      if (item.citationPrefix) {
+        return item.citationPrefix;
+      }
+      
+      // Default prefixes by type
+      const typeMap = {
+        title: 'Title',
+        part: 'Part',
+        section: 'Section',
+        subpart: 'Subpart',
+        chapter: 'Chapter',
+        paragraph: 'Para.',
+        subparagraph: 'Subpara.'
+      };
+      
+      return typeMap[item.type] || item.type.charAt(0).toUpperCase() + item.type.slice(1);
     }
   }
 };
