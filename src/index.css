@@ -1,0 +1,100 @@
+/* Import Tailwind CSS classes */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for ECFRNavigator components */
+@layer components {
+  .ecfr-section {
+    @apply mb-2 border-l-4 border-transparent;
+  }
+
+  .ecfr-section.selected {
+    @apply border-blue-500;
+  }
+
+  .ecfr-section.expanded > .ecfr-section-header .ecfr-toggle-icon {
+    @apply transform rotate-90;
+  }
+
+  .ecfr-section-header {
+    @apply flex items-center px-3 py-2 rounded hover:bg-gray-100 transition-colors duration-150;
+  }
+
+  .dark .ecfr-section-header {
+    @apply hover:bg-gray-800;
+  }
+
+  .ecfr-section-header .ecfr-toggle-icon {
+    @apply transition-transform duration-150;
+  }
+
+  .ecfr-section-content {
+    @apply pl-8;
+  }
+
+  /* View mode specific styles */
+  .ecfr-compact .ecfr-section-header {
+    @apply py-1 text-sm;
+  }
+
+  .ecfr-detailed .ecfr-section-header {
+    @apply py-3;
+  }
+
+  .ecfr-detailed .ecfr-section-description {
+    @apply mt-1 text-sm text-gray-600 dark:text-gray-400;
+  }
+
+  /* Breadcrumb styles */
+  .ecfr-breadcrumb {
+    @apply flex items-center overflow-x-auto py-2 px-3 bg-gray-100 dark:bg-gray-800 rounded;
+  }
+
+  .ecfr-breadcrumb-item {
+    @apply flex-shrink-0 text-blue-600 dark:text-blue-400 hover:underline;
+  }
+
+  .ecfr-breadcrumb-separator {
+    @apply mx-2 text-gray-500 dark:text-gray-400;
+  }
+
+  /* Search panel styles */
+  .ecfr-search-panel {
+    @apply p-3 bg-white dark:bg-gray-900 border dark:border-gray-700 rounded shadow-sm mb-4;
+  }
+
+  .ecfr-search-input {
+    @apply w-full px-3 py-2 border dark:border-gray-700 rounded;
+  }
+
+  .ecfr-search-results {
+    @apply mt-3 max-h-64 overflow-auto;
+  }
+
+  .ecfr-search-result-item {
+    @apply p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded cursor-pointer;
+  }
+
+  .ecfr-search-result-item.highlighted {
+    @apply bg-blue-50 dark:bg-blue-900;
+  }
+
+  /* Tooltip styles */
+  .ecfr-tooltip {
+    @apply absolute z-10 p-3 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded shadow-lg max-w-md;
+  }
+
+  .ecfr-tooltip-title {
+    @apply font-medium mb-2;
+  }
+
+  .ecfr-tooltip-content {
+    @apply text-sm text-gray-700 dark:text-gray-300;
+  }
+
+  /* Loading state */
+  .ecfr-loading {
+    @apply flex items-center justify-center p-8 text-gray-500;
+  }
+}

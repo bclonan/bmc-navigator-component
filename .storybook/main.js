@@ -1,6 +1,6 @@
 /** @type { import('@storybook/vue3-vite').StorybookConfig } */
 const config = {
-  stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
+  stories: ['../src/**/*.stories.@(js|jsx)'],
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',
@@ -12,6 +12,13 @@ const config = {
   },
   docs: {
     autodocs: 'tag',
+  },
+  core: {
+    builder: '@storybook/builder-vite',
+    disableTelemetry: true,
+  },
+  features: {
+    storyStoreV7: true,
   },
 };
 export default config;

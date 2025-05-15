@@ -616,7 +616,29 @@ The project uses Storybook to showcase the component's features and provide inte
 - Example configurations for different use cases
 - Documentation for props, events, and slots
 - Visual testing for different component states
+- Mobile responsive layout testing
+- Light/dark theme switching
 - Copy-paste code examples
+
+#### Included Story Categories
+
+1. **Introduction** - Component overview and API reference
+2. **View Modes** - Different display options (standard, compact, detailed, styleless)
+3. **Search & Filtering** - Advanced search capabilities with custom filters
+4. **Metadata** - Working with attached item metadata and processors
+5. **Breadcrumbs** - Breadcrumb trail configuration and customization
+
+#### Running Storybook
+
+```bash
+# Start the Storybook development server
+npx storybook dev -p 6006 --host 0.0.0.0
+
+# Build Storybook as a static site
+npx storybook build
+```
+
+You can access the Storybook interface at http://localhost:6006
 
 ### Building for Production
 

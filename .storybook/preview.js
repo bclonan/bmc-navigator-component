@@ -1,7 +1,7 @@
 import { createPinia } from 'pinia';
-import '../src/index.css'; // Import your styles if needed
+import 'tailwindcss/tailwind.css'; // Import Tailwind directly
 
-// Create pinia to pass to stories
+// Create and configure Pinia for all stories
 const pinia = createPinia();
 
 /** @type { import('@storybook/vue3').Preview } */
@@ -14,11 +14,53 @@ const preview = {
         date: /Date$/,
       },
     },
+    layout: 'centered', // Center all stories by default
+    backgrounds: {
+      default: 'light',
+      values: [
+        { name: 'light', value: '#f8f9fa' },
+        { name: 'dark', value: '#343a40' },
+      ],
+    },
+    viewport: {
+      viewports: {
+        mobile: {
+          name: 'Mobile',
+          styles: {
+            width: '375px',
+            height: '667px',
+          },
+        },
+        tablet: {
+          name: 'Tablet',
+          styles: {
+            width: '768px',
+            height: '1024px',
+          },
+        },
+        desktop: {
+          name: 'Desktop',
+          styles: {
+            width: '1280px',
+            height: '800px',
+          },
+        },
+      },
+    },
+    docs: {
+      source: {
+        state: 'open', // Show source code by default in docs
+      },
+    },
   },
   decorators: [
     (story) => ({
       components: { story },
-      template: '<div class="sb-decorator"><story /></div>',
+      template: `
+        <div class="sb-decorator p-4 font-sans">
+          <story />
+        </div>
+      `,
       setup() {
         return { pinia };
       },
