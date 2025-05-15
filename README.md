@@ -593,6 +593,41 @@ methods: {
 }
 ```
 
+## Development and Testing
+
+For those contributing to or modifying the component, the project includes development tools:
+
+```bash
+# Start development server with hot-reloading
+npm run dev
+
+# Start Storybook development server
+npx storybook dev -p 6006 --host 0.0.0.0
+
+# Build Storybook as static site
+npx storybook build
+```
+
+### Storybook Integration
+
+The project uses Storybook to showcase the component's features and provide interactive examples:
+
+- Interactive demos for all component features
+- Example configurations for different use cases
+- Documentation for props, events, and slots
+- Visual testing for different component states
+- Copy-paste code examples
+
+### Building for Production
+
+```bash
+# Build as a library for distribution
+npm run lib
+
+# Create package tarball
+npm run pack
+```
+
 ## Advanced Customization Examples
 
 ### 1. Custom Filter Functions for Special Data
