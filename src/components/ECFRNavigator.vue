@@ -1051,18 +1051,68 @@ export default {
         return this.fetchJsonData(url, `data-${index}`);
       });
       
+      // Set to track unique IDs to prevent duplicates
+      const processedIds = new Set();
+      
+      // Helper function to ensure unique IDs in the data
+      const ensureUniqueIds = (items, urlIndex) => {
+        if (!Array.isArray(items)) return [];
+        
+        return items.map(item => {
+          // If ID already exists, make it unique by adding URL index
+          if (processedIds.has(item.id)) {
+            const originalId = item.id;
+            item = { ...item }; // Create a copy to avoid mutating the original
+            item.id = `${originalId}-url${urlIndex}`;
+            console.log(`Duplicate ID detected: '${originalId}'. Generated unique ID: '${item.id}'`);
+          }
+          
+          // Add this ID to processed set
+          processedIds.add(item.id);
+          
+          // Process children recursively if they exist
+          if (item.children && Array.isArray(item.children)) {
+            item.children = ensureUniqueIds(item.children, urlIndex);
+          }
+          
+          return item;
+        });
+      };
+      
       // Wait for all fetches to complete
       return Promise.all(fetchPromises)
         .then(results => {
-          // Combine all results into loadedData
-          results.forEach(data => {
+          // Process and combine all results into loadedData with unique IDs
+          results.forEach((data, index) => {
             if (Array.isArray(data)) {
-              this.loadedData.push(...data);
+              // Ensure unique IDs for array data
+              const uniqueData = ensureUniqueIds(data, index);
+              this.loadedData.push(...uniqueData);
             } else if (data && Array.isArray(data.items)) {
-              this.loadedData.push(...data.items);
+              // Ensure unique IDs for items array in object
+              const uniqueItems = ensureUniqueIds(data.items, index);
+              this.loadedData.push(...uniqueItems);
             } else if (data && typeof data === 'object') {
               // If it's a single object with hierarchical structure
-              this.loadedData.push(data);
+              // Clone it to avoid modifying the original
+              const clonedData = JSON.parse(JSON.stringify(data));
+              
+              // Check if the root object has an ID
+              if (clonedData.id) {
+                if (processedIds.has(clonedData.id)) {
+                  const originalId = clonedData.id;
+                  clonedData.id = `${originalId}-url${index}`;
+                  console.log(`Duplicate ID detected: '${originalId}'. Generated unique ID: '${clonedData.id}'`);
+                }
+                processedIds.add(clonedData.id);
+              }
+              
+              // Process children if they exist
+              if (clonedData.children && Array.isArray(clonedData.children)) {
+                clonedData.children = ensureUniqueIds(clonedData.children, index);
+              }
+              
+              this.loadedData.push(clonedData);
             }
           });
           
