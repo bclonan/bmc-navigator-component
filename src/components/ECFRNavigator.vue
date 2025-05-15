@@ -639,6 +639,19 @@ export default {
      */
     currentItem() {
       return this.ecfrStore.currentItem;
+    },
+    
+    /**
+     * Check if there are any active filters
+     * @returns {boolean} True if there are active filters
+     */
+    hasActiveFilters() {
+      return (
+        this.selectedTypeFilters.length > 0 ||
+        this.selectedAgency !== '' ||
+        this.selectedDateRange !== '' ||
+        this.keywordFilter.trim() !== ''
+      );
     }
   },
   
@@ -1304,6 +1317,209 @@ export default {
       
       // Force a local update
       this.defaultOptions.display.showMetadataBadges = this.showMetadataBadges;
+    },
+    
+    /**
+     * Toggle advanced search panel
+     */
+    toggleAdvancedSearch() {
+      this.showAdvancedSearch = !this.showAdvancedSearch;
+    },
+    
+    /**
+     * Toggle a type filter
+     * @param {string} type - The type to toggle
+     */
+    toggleTypeFilter(type) {
+      if (this.selectedTypeFilters.includes(type)) {
+        this.selectedTypeFilters = this.selectedTypeFilters.filter(t => t !== type);
+      } else {
+        this.selectedTypeFilters.push(type);
+      }
+      
+      // Auto-update results if configured
+      if (this.mergedOptions.filters.autoUpdateResults) {
+        this.applyFilters();
+      }
+    },
+    
+    /**
+     * Clear all filters
+     */
+    clearFilters() {
+      this.selectedTypeFilters = [];
+      this.selectedAgency = '';
+      this.selectedDateRange = '';
+      this.keywordFilter = '';
+      
+      // Reset search results to unfiltered state
+      if (this.searchQuery.trim()) {
+        this.performSearch();
+      }
+    },
+    
+    /**
+     * Apply filters to search results
+     */
+    applyFilters() {
+      if (!this.searchQuery.trim() && !this.hasActiveFilters) {
+        return; // Nothing to filter
+      }
+      
+      if (this.searchQuery.trim()) {
+        // If we have a search query, re-run search with filters
+        this.performSearch();
+      } else {
+        // Otherwise, filter the root items directly
+        this.filterRootItems();
+      }
+      
+      // Close the advanced search panel after applying filters
+      this.showAdvancedSearch = false;
+    },
+    
+    /**
+     * Filter root items directly (when no search query)
+     */
+    filterRootItems() {
+      const filteredResults = [];
+      
+      // Helper function to recursively collect matching items
+      const collectMatchingItems = (items) => {
+        for (const item of items) {
+          if (this.itemMatchesFilters(item)) {
+            filteredResults.push(this.prepareSearchResult(item, null));
+          }
+          
+          if (item.children && item.children.length > 0) {
+            collectMatchingItems(item.children);
+          }
+        }
+      };
+      
+      // Start collecting from root items
+      collectMatchingItems(this.rootItems);
+      
+      // Update search results
+      this.searchResults = filteredResults;
+      this.showSearchResults = filteredResults.length > 0;
+      
+      // Emit search completed event
+      this.$emit('search-completed', {
+        query: '',
+        filters: this.getActiveFilters(),
+        resultsCount: filteredResults.length
+      });
+    },
+    
+    /**
+     * Check if an item matches the active filters
+     * @param {Object} item - The item to check
+     * @returns {boolean} True if the item matches all active filters
+     */
+    itemMatchesFilters(item) {
+      // Type filter
+      if (this.selectedTypeFilters.length > 0 && !this.selectedTypeFilters.includes(item.type)) {
+        return false;
+      }
+      
+      // Agency filter
+      if (this.selectedAgency && item.agency !== this.selectedAgency) {
+        return false;
+      }
+      
+      // Date range filter
+      if (this.selectedDateRange && item.updatedDate) {
+        const itemDate = new Date(item.updatedDate);
+        const now = new Date();
+        
+        let cutoffDate = null;
+        if (this.selectedDateRange === 'today') {
+          cutoffDate = new Date(now.setHours(0, 0, 0, 0));
+        } else if (this.selectedDateRange === 'week') {
+          cutoffDate = new Date(now.setDate(now.getDate() - 7));
+        } else if (this.selectedDateRange === 'month') {
+          cutoffDate = new Date(now.setMonth(now.getMonth() - 1));
+        } else if (this.selectedDateRange === 'year') {
+          cutoffDate = new Date(now.setFullYear(now.getFullYear() - 1));
+        }
+        
+        if (cutoffDate && itemDate < cutoffDate) {
+          return false;
+        }
+      }
+      
+      // Keyword filter
+      if (this.keywordFilter.trim()) {
+        const keywords = this.keywordFilter.split(',').map(k => k.trim().toLowerCase()).filter(Boolean);
+        
+        if (keywords.length > 0) {
+          // Check if any keyword matches
+          const itemText = [
+            item.title,
+            item.subtitle,
+            item.content,
+            item.type,
+            item.number,
+            item.agency
+          ].filter(Boolean).join(' ').toLowerCase();
+          
+          const keywordMatches = keywords.some(keyword => itemText.includes(keyword));
+          if (!keywordMatches) {
+            return false;
+          }
+        }
+      }
+      
+      return true;
+    },
+    
+    /**
+     * Get object describing active filters
+     * @returns {Object} Active filters
+     */
+    getActiveFilters() {
+      return {
+        types: [...this.selectedTypeFilters],
+        agency: this.selectedAgency,
+        dateRange: this.selectedDateRange,
+        keywords: this.keywordFilter.split(',').map(k => k.trim()).filter(Boolean)
+      };
+    },
+    
+    /**
+     * Prepare an item for display in search results
+     * @param {Object} item - The item to prepare
+     * @param {Object} match - Fuse.js match information
+     * @returns {Object} Prepared search result object
+     */
+    prepareSearchResult(item, match) {
+      let matchContext = '';
+      
+      // Extract match context from Fuse.js result
+      if (match && match.matches && match.matches.length > 0) {
+        // Get the first matching field with the highest score
+        const bestMatch = match.matches.sort((a, b) => b.score - a.score)[0];
+        const value = bestMatch.value || '';
+        
+        // Get a snippet of text around the match
+        const indices = bestMatch.indices[0];
+        const startIdx = Math.max(0, indices[0] - 20);
+        const endIdx = Math.min(value.length, indices[1] + 20);
+        matchContext = value.substring(startIdx, endIdx);
+        
+        // Add ellipsis if we've truncated
+        if (startIdx > 0) matchContext = '...' + matchContext;
+        if (endIdx < value.length) matchContext += '...';
+      }
+      
+      return {
+        id: item.id,
+        title: item.title,
+        type: item.type,
+        number: item.number,
+        matchContext
+      };
     }
   }
 };
