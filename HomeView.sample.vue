@@ -69,7 +69,16 @@ export default {
       return this.ecfrStore.currentItem
     },
     currentItemMetadata() {
-      return this.ecfrStore.currentItemMetadata
+      if (this.currentItem && this.currentItem.id) {
+        return this.ecfrStore.getItemMetadata(this.currentItem.id)
+      }
+      return null
+    },
+    processedMetadata() {
+      if (this.currentItem && this.currentItem.id) {
+        return this.ecfrStore.processItemMetadata(this.currentItem.id)
+      }
+      return null
     }
   },
   methods: {

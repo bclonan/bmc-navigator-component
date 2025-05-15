@@ -1735,3 +1735,162 @@ export default {
 | `metadata-changed` | `{ action, itemId, metadataType, metadata, oldMetadata }` | Fired when item metadata changes |
 | `tooltip-shown` | `{ itemId, content }` | Fired when a tooltip is displayed |
 | `filter-changed` | `{ type, value }` | Fired when a filter value changes |
+
+## Enhanced Features
+
+### Styleless Wrapper Component
+
+The `ECFRNavigatorWrapper` component provides a way to use the navigation functionality without any built-in styling, allowing complete freedom in UI design:
+
+```javascript
+import { ECFRNavigatorWrapper } from 'ecfr-navigator';
+import 'ecfr-navigator/style.css'; // Optional - import only if you need default styles
+
+export default {
+  components: {
+    ECFRNavigatorWrapper
+  },
+  setup() {
+    const myData = [...]; // Your hierarchical data
+    return { myData };
+  },
+  template: `
+    <ECFRNavigatorWrapper
+      :data="myData"
+      :options="{ viewMode: 'styleless' }"
+      v-slot="{ selectedItem, metadata, processedMetadata, loading }"
+    >
+      <!-- Your fully custom UI implementation -->
+      <div v-if="loading">Loading...</div>
+      <div v-else-if="selectedItem">
+        <h2>{{ selectedItem.title }}</h2>
+        <!-- Your custom rendering -->
+      </div>
+    </ECFRNavigatorWrapper>
+  `
+}
+```
+
+#### Wrapper Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `data` | Array | Direct data array to pass to the navigator |
+| `dataUrl` | String | Single URL to load data from |
+| `dataUrls` | Array | Multiple URLs to load data from |
+| `options` | Object | Options to configure the navigator |
+| `showNavigator` | Boolean | Whether to show the navigator component |
+| `preloadStrategy` | String | Loading strategy: 'lazy', 'eager', or 'worker' |
+
+#### Wrapper Events
+
+| Event | Payload | Description |
+|-------|---------|-------------|
+| `data-loaded` | `Array` | Fired when data is successfully loaded |
+| `load-error` | `Error` | Fired when there's an error loading data |
+| `item-selected` | `Object` | Fired when an item is selected |
+
+### Enhanced Store Access
+
+The `useECFRNavigatorStore` composable provides easier access to the store with additional helper methods:
+
+```javascript
+import { useECFRNavigatorStore } from 'ecfr-navigator';
+
+export default {
+  setup() {
+    // Initialize with callbacks
+    const navigator = useECFRNavigatorStore({
+      autoExpandSelected: true,
+      onItemSelected: (item) => {
+        console.log('Selected:', item);
+      },
+      onMetadataChanged: (event) => {
+        console.log('Metadata changed:', event);
+      }
+    });
+    
+    // Load data
+    navigator.loadData('/path/to/data.json');
+    
+    // Access reactive state
+    const currentItem = computed(() => navigator.state.currentItem);
+    
+    // Navigation methods
+    function goToItem(itemId) {
+      navigator.selectItem(itemId);
+    }
+    
+    return {
+      navigator,
+      currentItem,
+      goToItem,
+      
+      // Expose more methods and state as needed
+      expandAll: navigator.expandAll,
+      collapseAll: navigator.collapseAll,
+      isLoading: computed(() => navigator.state.loading)
+    };
+  }
+}
+```
+
+#### Store Methods
+
+| Method | Description |
+|--------|-------------|
+| `setData(items)` | Set root data items directly |
+| `loadData(urls)` | Load data from URL(s) |
+| `selectItem(itemId)` | Select an item by ID |
+| `navigateTo(itemId)` | Navigate to an item by ID |
+| `expandItem(itemId)` | Expand an item by ID |
+| `collapseItem(itemId)` | Collapse an item by ID |
+| `expandAll()` | Expand all items |
+| `collapseAll()` | Collapse all items |
+| `setItemMetadata(itemId, metadata, type)` | Set metadata for an item |
+| `removeItemMetadata(itemId, type)` | Remove metadata from an item |
+| `findItems(query, options)` | Find items matching a query |
+
+### Optimized JSON Loading
+
+For large JSON documents, the component provides several loading strategies:
+
+```javascript
+<ECFRNavigatorWrapper
+  :data-url="dataUrl"
+  :preload-strategy="'worker'" <!-- Options: 'lazy', 'eager', 'worker' -->
+  @data-loaded="onDataLoaded"
+  @load-error="onLoadError"
+/>
+```
+
+#### Loading Strategies
+
+1. **Lazy Loading** (`lazy`, default)
+   - Loads data when the component mounts
+   - Good for most use cases
+
+2. **Eager Loading** (`eager`) 
+   - Starts loading immediately when the script executes
+   - Good for showing data as quickly as possible
+
+3. **Web Worker Loading** (`worker`)
+   - Uses a web worker for non-blocking loading
+   - Ideal for very large documents (1MB+)
+   - Falls back to lazy loading if web workers are not supported
+
+### Automatic UUID Generation
+
+The component now automatically generates UUIDs for any items with missing or duplicate IDs:
+
+```javascript
+// In your console, when loading data with duplicate IDs:
+"Duplicate ID detected: 'item-123'. Generated UUID: 'a1b2c3d4-e5f6-...'
+```
+
+This ensures that:
+- All items have unique IDs, even when combining data from multiple sources
+- No data is lost due to ID conflicts
+- Components can safely reference items by their unique identifiers
+
+You don't need to configure anything - this feature works automatically when loading data.
