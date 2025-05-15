@@ -8,6 +8,7 @@
       v-if="options.showBreadcrumb" 
       :path="breadcrumbPath"
       :dark-mode="options.theme === 'dark'"
+      :options="mergedOptions.breadcrumb || {}"
     />
 
     <!-- Control bar -->
@@ -125,33 +126,193 @@
       </div>
       
       <!-- Search box -->
-      <div class="relative w-full sm:w-auto">
-        <label for="ecfr-search" class="sr-only">Search document</label>
-        <input
-          id="ecfr-search"
-          type="text"
-          v-model="searchQuery"
-          placeholder="Search..."
-          aria-label="Search document"
-          class="w-full sm:w-64 px-3 py-1 pr-10 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+      <div class="w-full sm:w-auto relative">
+        <div class="flex items-center">
+          <!-- Main search input -->
+          <div class="relative flex-grow">
+            <label for="ecfr-search" class="sr-only">Search document</label>
+            <input
+              id="ecfr-search"
+              type="text"
+              v-model="searchQuery"
+              placeholder="Search..."
+              aria-label="Search document"
+              class="w-full sm:w-64 px-3 py-1 pr-10 rounded-l text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+              :class="[
+                options.theme === 'dark' 
+                  ? 'bg-gray-800 text-gray-200 border-gray-700' 
+                  : 'bg-white text-gray-700 border border-gray-300'
+              ]"
+              @keyup.enter="performSearch"
+              @keyup.esc="clearSearch"
+              @input="onSearchInput"
+            />
+            <button
+              aria-label="Search"
+              class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              @click="performSearch"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+          </div>
+          
+          <!-- Advanced search toggle button -->
+          <button
+            class="flex-shrink-0 h-full px-2 py-1 rounded-r text-sm"
+            :class="[
+              options.theme === 'dark' 
+                ? (showAdvancedSearch ? 'bg-blue-700 text-blue-100' : 'bg-gray-700 text-gray-300 hover:bg-gray-600')
+                : (showAdvancedSearch ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200')
+            ]"
+            @click="toggleAdvancedSearch"
+            title="Advanced Search Options"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Advanced search panel -->
+        <div 
+          v-if="showAdvancedSearch" 
+          class="absolute right-0 mt-1 p-3 rounded shadow-lg z-10 w-72 sm:w-80 border"
           :class="[
             options.theme === 'dark' 
-              ? 'bg-gray-800 text-gray-200 border-gray-700' 
-              : 'bg-white text-gray-700 border border-gray-300'
+              ? 'bg-gray-800 border-gray-700' 
+              : 'bg-white border-gray-200'
           ]"
-          @keyup.enter="performSearch"
-          @keyup.esc="clearSearch"
-          @input="onSearchInput"
-        />
-        <button
-          aria-label="Search"
-          class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-          @click="performSearch"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </button>
+          <h3 
+            class="text-sm font-medium mb-2"
+            :class="[options.theme === 'dark' ? 'text-gray-200' : 'text-gray-700']"
+          >
+            Advanced Filters
+          </h3>
+          
+          <!-- Filter by type -->
+          <div class="mb-2">
+            <label 
+              class="block text-xs font-medium mb-1"
+              :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-600']"
+            >
+              Item Type
+            </label>
+            <div class="flex flex-wrap gap-1">
+              <button
+                v-for="type in availableTypes"
+                :key="type"
+                @click="toggleTypeFilter(type)"
+                class="text-xs px-2 py-0.5 rounded transition-colors duration-200"
+                :class="[
+                  selectedTypeFilters.includes(type)
+                    ? (options.theme === 'dark' ? 'bg-blue-700 text-white' : 'bg-blue-100 text-blue-800')
+                    : (options.theme === 'dark' ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200')
+                ]"
+              >
+                {{ type }}
+              </button>
+            </div>
+          </div>
+          
+          <!-- Agency filter (when available) -->
+          <div v-if="mergedOptions.filters && mergedOptions.filters.showAgencyFilter" class="mb-2">
+            <label 
+              class="block text-xs font-medium mb-1"
+              :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-600']"
+            >
+              Agency
+            </label>
+            <select
+              v-model="selectedAgency"
+              class="w-full text-xs px-2 py-1 rounded"
+              :class="[
+                options.theme === 'dark' 
+                  ? 'bg-gray-700 text-gray-200 border-gray-600' 
+                  : 'bg-white text-gray-700 border-gray-300'
+              ]"
+            >
+              <option value="">All Agencies</option>
+              <option v-for="agency in availableAgencies" :key="agency" :value="agency">
+                {{ agency }}
+              </option>
+            </select>
+          </div>
+          
+          <!-- Date range filter -->
+          <div v-if="mergedOptions.filters && mergedOptions.filters.showDateFilter" class="mb-2">
+            <label 
+              class="block text-xs font-medium mb-1"
+              :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-600']"
+            >
+              Last Updated
+            </label>
+            <select
+              v-model="selectedDateRange"
+              class="w-full text-xs px-2 py-1 rounded"
+              :class="[
+                options.theme === 'dark' 
+                  ? 'bg-gray-700 text-gray-200 border-gray-600' 
+                  : 'bg-white text-gray-700 border-gray-300'
+              ]"
+            >
+              <option value="">Any Time</option>
+              <option value="today">Today</option>
+              <option value="week">Past Week</option>
+              <option value="month">Past Month</option>
+              <option value="year">Past Year</option>
+            </select>
+          </div>
+          
+          <!-- Custom tags/keywords filter -->
+          <div class="mb-3">
+            <label 
+              class="block text-xs font-medium mb-1"
+              :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-600']"
+            >
+              Keywords (separate with comma)
+            </label>
+            <input
+              type="text"
+              v-model="keywordFilter"
+              placeholder="Enter keywords..."
+              class="w-full text-xs px-2 py-1 rounded"
+              :class="[
+                options.theme === 'dark' 
+                  ? 'bg-gray-700 text-gray-200 border-gray-600' 
+                  : 'bg-white text-gray-700 border-gray-300'
+              ]"
+            />
+          </div>
+          
+          <!-- Action buttons -->
+          <div class="flex justify-between">
+            <button
+              @click="clearFilters"
+              class="text-xs px-2 py-1 rounded transition-colors duration-200"
+              :class="[
+                options.theme === 'dark' 
+                  ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              ]"
+            >
+              Clear Filters
+            </button>
+            <button
+              @click="applyFilters"
+              class="text-xs px-2 py-1 rounded transition-colors duration-200"
+              :class="[
+                options.theme === 'dark' 
+                  ? 'bg-blue-700 text-white hover:bg-blue-600' 
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
+              ]"
+            >
+              Apply Filters
+            </button>
+          </div>
+        </div>
       </div>
     </div>
     
@@ -384,6 +545,18 @@ export default {
         expandAll: false,
         hideContentOnNavigation: false,
         theme: 'light',
+        // Breadcrumb customization options
+        breadcrumb: {
+          rootLabel: 'Home',
+          truncate: true,
+          visibleItems: 2,
+          maxVisible: 3,
+          type: 'scrollable',
+          style: 'standard',
+          separatorType: 'icon',
+          truncateLabels: true,
+          highlightLast: true
+        },
         fuzzySearch: {
           enabled: true,
           threshold: 0.4, // 0 is exact, 1 is very loose
