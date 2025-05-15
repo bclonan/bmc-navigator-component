@@ -540,6 +540,13 @@ export default {
       currentViewMode: 'standard',
       currentItemSpacing: 'medium',
       showMetadataBadges: false,
+      showAdvancedSearch: false,
+      selectedTypeFilters: [],
+      selectedAgency: '',
+      selectedDateRange: '',
+      keywordFilter: '',
+      availableTypes: ['title', 'part', 'section', 'chapter', 'subpart'],
+      availableAgencies: [],
       defaultOptions: {
         showBreadcrumb: true,
         expandAll: false,
@@ -571,7 +578,21 @@ export default {
           showDescription: false, // Only relevant in detailed mode
           showMetadataBadges: false, // Show badges for items with metadata
           itemSpacing: 'medium', // 'tight', 'medium', 'loose'
-          maxTitleLength: null // Truncate titles longer than this
+          maxTitleLength: null, // Truncate titles longer than this
+          animations: true, // Enable animations for better UX
+          enhancedMobile: true // Optimize for mobile devices
+        },
+        
+        // Advanced search and filter options
+        filters: {
+          enabled: true,
+          showTypeFilter: true,
+          showAgencyFilter: true,
+          showDateFilter: true, 
+          showKeywordFilter: true,
+          autoUpdateResults: true, // Update results as filters change
+          persistFilters: true, // Remember filter selections
+          agencies: [] // Agency options can be populated from data
         },
         pagination: {
           enabled: false,
