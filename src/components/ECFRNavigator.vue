@@ -1060,12 +1060,18 @@ export default {
         if (!Array.isArray(items)) return [];
         
         return items.map(item => {
-          // If ID already exists, make it unique by adding URL index
-          if (processedIds.has(item.id)) {
+          // If item has no ID, generate a UUID
+          if (!item.id) {
+            item = { ...item }; // Create a copy to avoid mutating the original
+            item.id = uuidv4();
+            console.log(`Missing ID detected. Generated UUID: '${item.id}'`);
+          }
+          // If ID already exists, create a new UUID
+          else if (processedIds.has(item.id)) {
             const originalId = item.id;
             item = { ...item }; // Create a copy to avoid mutating the original
-            item.id = `${originalId}-url${urlIndex}`;
-            console.log(`Duplicate ID detected: '${originalId}'. Generated unique ID: '${item.id}'`);
+            item.id = uuidv4();
+            console.log(`Duplicate ID detected: '${originalId}'. Generated UUID: '${item.id}'`);
           }
           
           // Add this ID to processed set
@@ -1099,14 +1105,15 @@ export default {
               const clonedData = JSON.parse(JSON.stringify(data));
               
               // Check if the root object has an ID
-              if (clonedData.id) {
-                if (processedIds.has(clonedData.id)) {
-                  const originalId = clonedData.id;
-                  clonedData.id = `${originalId}-url${index}`;
-                  console.log(`Duplicate ID detected: '${originalId}'. Generated unique ID: '${clonedData.id}'`);
-                }
-                processedIds.add(clonedData.id);
+              if (!clonedData.id) {
+                clonedData.id = uuidv4();
+                console.log(`Missing ID detected in root object. Generated UUID: '${clonedData.id}'`);
+              } else if (processedIds.has(clonedData.id)) {
+                const originalId = clonedData.id;
+                clonedData.id = uuidv4();
+                console.log(`Duplicate ID detected: '${originalId}'. Generated UUID: '${clonedData.id}'`);
               }
+              processedIds.add(clonedData.id);
               
               // Process children if they exist
               if (clonedData.children && Array.isArray(clonedData.children)) {
