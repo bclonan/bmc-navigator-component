@@ -433,13 +433,15 @@
             <div 
               v-for="result in searchResults" 
               :key="result.id" 
-              class="p-2 mb-1 rounded cursor-pointer hover:bg-opacity-80 transition-colors duration-200"
+              class="p-2 mb-1 rounded cursor-pointer hover:bg-opacity-80 transition-colors duration-200 relative group"
               :class="[
                 options.theme === 'dark' 
                   ? 'bg-gray-700 hover:bg-gray-600 text-gray-200' 
                   : 'bg-white hover:bg-gray-100 text-gray-800 border border-gray-200'
               ]"
               @click="navigateToSearchResult(result)"
+              @mouseenter="showTooltipForResult(result)"
+              @mouseleave="hideTooltip"
             >
               <div class="font-medium">{{ formatSearchResultTitle(result) }}</div>
               <div 
@@ -449,6 +451,39 @@
               >
                 {{ result.matchContext }}
               </div>
+              
+              <!-- Preview tooltip -->
+              <transition
+                enter-active-class="transition ease-out duration-100"
+                enter-from-class="transform opacity-0 scale-95"
+                enter-to-class="transform opacity-100 scale-100"
+                leave-active-class="transition ease-in duration-75"
+                leave-from-class="transform opacity-100 scale-100"
+                leave-to-class="transform opacity-0 scale-95"
+              >
+                <div 
+                  v-if="activeTooltipId === result.id && result.previewContent"
+                  class="absolute z-10 px-4 py-3 rounded shadow-lg max-w-sm left-full ml-2 top-0"
+                  :class="[
+                    options.theme === 'dark' 
+                      ? 'bg-gray-800 border border-gray-700 text-gray-300' 
+                      : 'bg-white border border-gray-200 text-gray-800'
+                  ]"
+                  style="min-width: 250px; width: 350px;"
+                >
+                  <div class="text-xs font-medium mb-1"
+                    :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-500']"
+                  >
+                    {{ result.type }} {{ result.number }}
+                  </div>
+                  <div class="text-sm font-medium mb-2">{{ result.title }}</div>
+                  <div class="text-xs mt-1 text-left max-h-32 overflow-y-auto"
+                    :class="[options.theme === 'dark' ? 'text-gray-400' : 'text-gray-600']"
+                  >
+                    {{ result.previewContent }}
+                  </div>
+                </div>
+              </transition>
             </div>
           </div>
         </div>
@@ -568,6 +603,8 @@ export default {
       keywordFilter: '',
       availableTypes: ['title', 'part', 'section', 'chapter', 'subpart'],
       availableAgencies: [],
+      activeTooltipId: null, // For tracking which tooltip is currently shown
+      tooltipTimeout: null, // For tooltip delay handling
       defaultOptions: {
         showBreadcrumb: true,
         expandAll: false,
