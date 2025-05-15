@@ -12,6 +12,10 @@ A lightweight, reusable Vue 3 component with Pinia integration for navigating hi
 - 📱 **Responsive Design**: Works on all screen sizes
 - 🔌 **Simple Integration**: Easy to integrate into existing Vue applications
 - 🔄 **Pinia State Management**: Lightweight state management
+- 🛠️ **Enhanced Store Access**: New composable for easier state management and item navigation
+- 🖼️ **Styleless Wrapper Component**: Build fully custom UIs while leveraging the navigation logic
+- ⚡ **Optimized JSON Loading**: Support for web workers and different loading strategies for large documents
+- 🆔 **UUID Generation**: Automatic UUID generation for missing or duplicate IDs
 - 🌙 **Light/Dark Themes**: Support for light and dark modes
 - 📋 **Metadata Support**: Attach custom data to items with extensible processors
 - 🔗 **External Resources**: Connect to external resources like XML source files
