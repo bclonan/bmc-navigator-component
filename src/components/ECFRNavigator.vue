@@ -521,9 +521,44 @@
 
     <!-- Main content area -->
     <div 
-      class="ecfr-content overflow-y-auto p-2"
+      class="ecfr-content overflow-y-auto p-2 relative"
       :class="[options.theme === 'dark' ? 'text-gray-300' : 'text-gray-800']"
     >
+      <!-- URL Data loading indicator -->
+      <div 
+        v-if="dataLoading || metadataLoading" 
+        class="absolute inset-0 flex items-center justify-center z-30 bg-white/80 dark:bg-gray-900/80"
+      >
+        <div class="text-center p-4 rounded-lg bg-white dark:bg-gray-800 shadow-lg">
+          <div class="inline-block animate-spin h-8 w-8 border-4 border-gray-300 dark:border-gray-600 border-t-blue-500 dark:border-t-blue-400 rounded-full mb-2"></div>
+          <div class="font-medium text-gray-700 dark:text-gray-200">
+            {{ dataLoading ? 'Loading data from URL...' : 'Loading metadata...' }}
+          </div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Please wait...
+          </div>
+        </div>
+      </div>
+      
+      <!-- Error message for loading failures -->
+      <div 
+        v-if="loadingErrors.length > 0 && !dataLoading && !metadataLoading" 
+        class="absolute inset-0 flex items-center justify-center z-30 bg-white/80 dark:bg-gray-900/80"
+      >
+        <div class="max-w-md p-4 rounded-lg bg-white dark:bg-gray-800 shadow-lg border-l-4 border-red-500">
+          <div class="font-medium text-red-600 dark:text-red-400 mb-2">Error Loading Data</div>
+          <ul class="text-sm text-gray-700 dark:text-gray-300 list-disc pl-5">
+            <li v-for="(error, i) in loadingErrors" :key="i">{{ error }}</li>
+          </ul>
+          <button 
+            @click="loadingErrors = []" 
+            class="mt-3 px-3 py-1 bg-red-100 hover:bg-red-200 text-red-800 text-sm rounded"
+          >
+            Dismiss
+          </button>
+        </div>
+      </div>
+      
       <div v-if="isLoading" class="flex justify-center items-center py-8">
         <div
           class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2"
@@ -919,8 +954,41 @@ export default {
       this.showMetadataBadges = this.mergedOptions.display.showMetadataBadges;
     }
   
-    if (this.items && this.items.length > 0) {
-      this.ecfrStore.setRootItems(this.items);
+    // Prioritize loading data from URLs if provided
+    const hasUrlData = this.dataUrl || (this.dataUrls && this.dataUrls.length > 0);
+    
+    if (hasUrlData) {
+      // Load data from URLs
+      this.loadDataFromUrls().then(() => {
+        this.initializeComponent();
+      }).catch(error => {
+        console.error("Error loading data from URLs:", error);
+        // Fall back to direct items if available
+        if (this.items && this.items.length > 0) {
+          this.initializeComponent();
+        }
+      });
+    } else if (this.items && this.items.length > 0) {
+      // Initialize with direct items
+      this.initializeComponent();
+    }
+    
+    // Load metadata from URL if provided
+    if (this.metadataUrl) {
+      this.loadMetadataFromUrl();
+    }
+  },
+  
+  /**
+   * Initialize the component with the available data
+   * This is called after data is loaded from URLs or when direct items are provided
+   */
+  initializeComponent() {
+    // Use loadedData if available from URL loading, otherwise use direct items
+    const dataToUse = this.loadedData.length > 0 ? this.loadedData : this.items;
+    
+    if (dataToUse && dataToUse.length > 0) {
+      this.ecfrStore.setRootItems(dataToUse);
       
       // If the expandAll option is true, expand all items
       if (this.mergedOptions.expandAll) {
@@ -930,6 +998,13 @@ export default {
       // Initialize any provided metadata
       if (this.itemMetadata && typeof this.itemMetadata === 'object') {
         Object.entries(this.itemMetadata).forEach(([itemId, metadata]) => {
+          this.ecfrStore.setItemMetadata(itemId, metadata);
+        });
+      }
+      
+      // Also apply any loaded metadata from URL
+      if (Object.keys(this.loadedMetadata).length > 0) {
+        Object.entries(this.loadedMetadata).forEach(([itemId, metadata]) => {
           this.ecfrStore.setItemMetadata(itemId, metadata);
         });
       }
@@ -944,6 +1019,129 @@ export default {
   },
   
   methods: {
+    /**
+     * Load data from URLs provided in dataUrl or dataUrls props
+     * @returns {Promise} Promise that resolves when all data is loaded
+     */
+    loadDataFromUrls() {
+      this.dataLoading = true;
+      this.loadingErrors = [];
+      this.loadedData = [];
+      
+      // Create an array of URL promises to fetch
+      const urlsToFetch = [];
+      
+      // Add single dataUrl if provided
+      if (this.dataUrl) {
+        urlsToFetch.push(this.dataUrl);
+      }
+      
+      // Add multiple dataUrls if provided
+      if (this.dataUrls && this.dataUrls.length > 0) {
+        urlsToFetch.push(...this.dataUrls);
+      }
+      
+      // If no URLs to fetch, resolve immediately
+      if (urlsToFetch.length === 0) {
+        this.dataLoading = false;
+        return Promise.resolve();
+      }
+      
+      // Create an array of promises for each URL fetch
+      const fetchPromises = urlsToFetch.map((url, index) => {
+        return this.fetchJsonData(url, `data-${index}`);
+      });
+      
+      // Wait for all fetches to complete
+      return Promise.all(fetchPromises)
+        .then(results => {
+          // Combine all results into loadedData
+          results.forEach(data => {
+            if (Array.isArray(data)) {
+              this.loadedData.push(...data);
+            } else if (data && Array.isArray(data.items)) {
+              this.loadedData.push(...data.items);
+            } else if (data && typeof data === 'object') {
+              // If it's a single object with hierarchical structure
+              this.loadedData.push(data);
+            }
+          });
+          
+          this.dataLoading = false;
+          return this.loadedData;
+        })
+        .catch(error => {
+          this.loadingErrors.push(`Error loading data: ${error.message}`);
+          this.dataLoading = false;
+          throw error;
+        });
+    },
+    
+    /**
+     * Load metadata from URL provided in metadataUrl prop
+     * @returns {Promise} Promise that resolves when metadata is loaded
+     */
+    loadMetadataFromUrl() {
+      if (!this.metadataUrl) {
+        return Promise.resolve();
+      }
+      
+      this.metadataLoading = true;
+      
+      return this.fetchJsonData(this.metadataUrl, 'metadata')
+        .then(data => {
+          if (data && typeof data === 'object') {
+            this.loadedMetadata = data;
+            
+            // Apply metadata to store if items are already loaded
+            if (this.ecfrStore.rootItems.length > 0) {
+              Object.entries(this.loadedMetadata).forEach(([itemId, metadata]) => {
+                this.ecfrStore.setItemMetadata(itemId, metadata);
+              });
+            }
+          }
+          
+          this.metadataLoading = false;
+          return this.loadedMetadata;
+        })
+        .catch(error => {
+          this.loadingErrors.push(`Error loading metadata: ${error.message}`);
+          this.metadataLoading = false;
+          throw error;
+        });
+    },
+    
+    /**
+     * Fetch JSON data from a URL
+     * @param {string} url - URL to fetch data from
+     * @param {string} type - Type of data being fetched (for logging)
+     * @returns {Promise} Promise that resolves with the fetched data
+     */
+    fetchJsonData(url, type) {
+      return new Promise((resolve, reject) => {
+        // Allow local file URLs to be used with relative paths
+        const fullUrl = url.startsWith('http') || url.startsWith('/') ? url : (window.location.origin + '/' + url);
+        
+        console.log(`Fetching ${type} from ${fullUrl}...`);
+        
+        fetch(fullUrl)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log(`Successfully loaded ${type} data`);
+            resolve(data);
+          })
+          .catch(error => {
+            console.error(`Error fetching ${type} from ${fullUrl}:`, error);
+            reject(error);
+          });
+      });
+    },
+    
     /**
      * Expand all items
      */

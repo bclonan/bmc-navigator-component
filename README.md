@@ -21,6 +21,7 @@ A lightweight, reusable Vue 3 component with Pinia integration for navigating hi
 - 💬 **Preview Tooltips**: Interactive previews on search results
 - 🎬 **Animated UI**: Smooth transitions for better user experience
 - 🔍 **Adaptive Font Sizing**: Dynamic text scaling for improved readability across devices
+- 📦 **URL Data Loading**: Load large JSON documents efficiently from URLs
 
 ## Installation
 
