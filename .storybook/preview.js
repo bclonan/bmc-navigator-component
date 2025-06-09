@@ -9,62 +9,178 @@ setActivePinia(pinia); // Set the Pinia instance as active for the stories
 /** @type { import('@storybook/vue3').Preview } */
 const preview = {
   parameters: {
-    actions: { argTypesRegex: '^on[A-Z].*' },
+    actions: { 
+      argTypesRegex: '^on[A-Z].*',
+      disable: false,
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/,
       },
+      expanded: true,
+      sort: 'requiredFirst',
+      hideNoControlsWarning: true,
     },
-    layout: 'centered', // Center all stories by default
+    layout: 'centered',
     backgrounds: {
-      default: 'light',
+      default: 'mariner-light',
       values: [
-        { name: 'light', value: '#f8f9fa' },
-        { name: 'dark', value: '#343a40' },
+        { name: 'mariner-light', value: '#ffffff' },
+        { name: 'mariner-bg', value: '#f8f8f8' },
+        { name: 'mariner-surface', value: '#f4f4f4' },
+        { name: 'mariner-primary', value: 'rgb(56, 96, 190)' },
+        { name: 'mariner-secondary', value: 'rgb(1, 52, 116)' },
+        { name: 'dark', value: '#1a1a1a' },
+        { name: 'financial-green', value: 'rgb(249, 255, 250)' },
       ],
     },
     viewport: {
       viewports: {
         mobile: {
-          name: 'Mobile',
-          styles: {
-            width: '375px',
-            height: '667px',
-          },
+          name: 'Mobile (375px)',
+          styles: { width: '375px', height: '667px' },
+          type: 'mobile',
+        },
+        mobileLarge: {
+          name: 'Mobile Large (414px)',
+          styles: { width: '414px', height: '896px' },
+          type: 'mobile',
         },
         tablet: {
-          name: 'Tablet',
-          styles: {
-            width: '768px',
-            height: '1024px',
-          },
+          name: 'Tablet (768px)',
+          styles: { width: '768px', height: '1024px' },
+          type: 'tablet',
+        },
+        tabletLarge: {
+          name: 'Tablet Large (1024px)',
+          styles: { width: '1024px', height: '768px' },
+          type: 'tablet',
         },
         desktop: {
-          name: 'Desktop',
-          styles: {
-            width: '1280px',
-            height: '800px',
-          },
+          name: 'Desktop (1280px)',
+          styles: { width: '1280px', height: '800px' },
+          type: 'desktop',
+        },
+        desktopLarge: {
+          name: 'Large Desktop (1440px)',
+          styles: { width: '1440px', height: '900px' },
+          type: 'desktop',
+        },
+        desktopXL: {
+          name: 'XL Desktop (1920px)',
+          styles: { width: '1920px', height: '1080px' },
+          type: 'desktop',
         },
       },
     },
     docs: {
       source: {
-        state: 'open', // Show source code by default in docs
+        state: 'open',
+        excludeDecorators: true,
+        format: 'dedent',
+      },
+      canvas: { sourceState: 'shown' },
+      extractComponentDescription: (component, { notes }) => {
+        if (notes) {
+          return typeof notes === 'string' ? notes : notes.markdown || notes.text;
+        }
+        return null;
+      },
+    },
+    options: {
+      storySort: {
+        order: [
+          'Introduction',
+          'Design System',
+          ['Overview', 'Colors', 'Typography', 'Spacing', 'Themes'],
+          'MUI Components',
+          [
+            'Overview',
+            'Data Display',
+            ['Avatar', 'Badge', 'Chip', 'Typography'],
+            'Feedback', 
+            ['Alert', 'Progress', 'Tooltip & Financial Literacy'],
+            'Inputs',
+            ['Button', 'Input', 'Form Controls'],
+            'Layout',
+            ['App Bar', 'Drawer', 'Toolbar'],
+            'Navigation',
+            ['List', 'List Item'],
+            'Surfaces',
+            ['Dialog', 'Dialog Title', 'Dialog Content', 'Dialog Actions'],
+          ],
+          'Mariner Finance',
+          ['Brand Theme'],
+          'Examples',
+          ['Financial Literacy Demo'],
+          '*',
+        ],
+      },
+    },
+  },
+  globalTypes: {
+    theme: {
+      description: 'Global theme for components',
+      defaultValue: 'mariner',
+      toolbar: {
+        title: 'Theme',
+        icon: 'paintbrush',
+        items: [
+          { value: 'mariner', title: 'Mariner Finance', left: '🏦' },
+          { value: 'default', title: 'Default Material', left: '⚪' },
+          { value: 'dark', title: 'Dark Mode', left: '🌙' },
+        ],
+        dynamicTitle: true,
+      },
+    },
+    locale: {
+      description: 'Internationalization locale',
+      defaultValue: 'en',
+      toolbar: {
+        icon: 'globe',
+        items: [
+          { value: 'en', title: 'English', right: '🇺🇸' },
+          { value: 'es', title: 'Español', right: '🇪🇸' },
+        ],
+      },
+    },
+    density: {
+      description: 'Component density',
+      defaultValue: 'medium',
+      toolbar: {
+        title: 'Density',
+        icon: 'component',
+        items: [
+          { value: 'compact', title: 'Compact' },
+          { value: 'medium', title: 'Medium' },
+          { value: 'comfortable', title: 'Comfortable' },
+        ],
       },
     },
   },
   decorators: [
-    (story) => ({
+    (story, context) => ({
       components: { story },
       template: `
-        <div class="sb-decorator p-4 font-sans">
+        <div class="sb-decorator font-sans" :class="decoratorClasses">
           <story />
         </div>
       `,
       setup() {
-        return { pinia };
+        const theme = context.globals.theme || 'mariner';
+        const density = context.globals.density || 'medium';
+        
+        const decoratorClasses = {
+          'p-2': density === 'compact',
+          'p-4': density === 'medium',
+          'p-6': density === 'comfortable',
+          'mariner-theme': theme === 'mariner',
+          'default-theme': theme === 'default',
+          'dark-theme': theme === 'dark',
+        };
+        
+        return { pinia, decoratorClasses };
       },
     }),
   ],
