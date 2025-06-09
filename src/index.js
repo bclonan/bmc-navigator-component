@@ -109,6 +109,41 @@ export {
   useUIStore
 };
 
+// Export Charts and Tables
+export {
+  MChart,
+  MTable
+};
+
+// Export Dynamic Forms and Visualization
+export {
+  DynamicFormRenderer,
+  StateTransitionVisualizer
+};
+
+// Export Composables
+export {
+  useFormValidation,
+  useAdvancedValidation,
+  useStorageEngine,
+  useDynamicFormRenderer,
+  useLoanFlow
+};
+
+// Export Configurations
+export {
+  personalLoanFormConfig,
+  loanApplicationStates,
+  chartConfigs,
+  tableConfigs,
+  dashboardConfig,
+  loanAnalyticsConfig,
+  mobileConfig,
+  mergeConfig,
+  generateChartData,
+  generateTableData
+};
+
 // Export the main plugin
 export { ECFRNavigatorPlugin };
 
