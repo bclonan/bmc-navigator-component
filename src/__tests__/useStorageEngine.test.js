@@ -9,7 +9,10 @@ const localStorageMock = {
   clear: vi.fn()
 };
 
-global.localStorage = localStorageMock;
+Object.defineProperty(global, 'localStorage', {
+  value: localStorageMock,
+  writable: true
+});
 
 // Mock sessionStorage
 const sessionStorageMock = {
