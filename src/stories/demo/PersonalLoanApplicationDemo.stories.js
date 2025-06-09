@@ -5,6 +5,7 @@ import MSlider from '../../components/ui/MSlider.vue';
 import { useDynamicFormRenderer } from '../../composables/useDynamicFormRenderer.js';
 import { useStorageEngine } from '../../composables/useStorageEngine.js';
 import { useAdvancedValidation } from '../../composables/useAdvancedValidation.js';
+import { personalLoanFormConfig, loanApplicationStates } from '../../config/formConfigs.js';
 
 export default {
   title: 'Demo/Personal Loan Application',

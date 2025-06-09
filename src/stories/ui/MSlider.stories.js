@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import MSlider from '../../components/ui/MSlider.vue';
 
 export default {
