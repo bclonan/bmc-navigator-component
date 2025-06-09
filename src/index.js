@@ -12,9 +12,13 @@ import MCard from './components/ui/MCard.vue';
 import MTextField from './components/ui/MTextField.vue';
 import MSelect from './components/ui/MSelect.vue';
 import MCheckbox from './components/ui/MCheckbox.vue';
-import MLayout from './components/ui/MLayout.vue';
 import MSlider from './components/ui/MSlider.vue';
 import MProgress from './components/ui/MProgress.vue';
+
+// Layout Components
+import MNavbar from './components/layout/MNavbar.vue';
+import MLayout from './components/layout/MLayout.vue';
+import MFooter from './components/layout/MFooter.vue';
 
 // Charts and Tables
 import MChart from './components/charts/MChart.vue';
@@ -71,9 +75,13 @@ const ECFRNavigatorPlugin = {
     app.component('MTextField', MTextField);
     app.component('MSelect', MSelect);
     app.component('MCheckbox', MCheckbox);
-    app.component('MLayout', MLayout);
     app.component('MSlider', MSlider);
     app.component('MProgress', MProgress);
+    
+    // Register Layout components
+    app.component('MNavbar', MNavbar);
+    app.component('MLayout', MLayout);
+    app.component('MFooter', MFooter);
     
     // Register Charts and Tables
     app.component('MChart', MChart);
@@ -103,10 +111,16 @@ export {
   MTextField,
   MSelect,
   MCheckbox,
-  MLayout,
   MSlider,
   MProgress,
   useUIStore
+};
+
+// Export Layout components
+export {
+  MNavbar,
+  MLayout,
+  MFooter
 };
 
 // Export Charts and Tables

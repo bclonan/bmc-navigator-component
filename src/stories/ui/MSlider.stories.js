@@ -2,7 +2,7 @@ import { ref, computed } from 'vue';
 import MSlider from '../../components/ui/MSlider.vue';
 
 export default {
-  title: 'UI Components/MSlider',
+  title: 'UI/Forms/Slider',
   component: MSlider,
   parameters: {
     docs: {
