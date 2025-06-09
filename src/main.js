@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import ECFRNavigatorPlugin from './index'
 import './index.css'
+import './styles/mariner-finance.css'
 
 // Create the app
 const app = createApp(App)

@@ -23,25 +23,25 @@ export const VARIANTS = {
   text: 'text'
 };
 
-// Color mappings for consistent styling
+// Mariner Finance brand color mappings for consistent styling
 export const COLOR_CLASSES = {
   filled: {
     default: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
-    primary: 'bg-blue-600 text-white hover:bg-blue-700',
-    secondary: 'bg-purple-600 text-white hover:bg-purple-700',
+    primary: 'mf-button-primary',
+    secondary: 'mf-button-secondary',
     error: 'bg-red-600 text-white hover:bg-red-700',
     info: 'bg-cyan-600 text-white hover:bg-cyan-700',
-    success: 'bg-green-600 text-white hover:bg-green-700',
-    warning: 'bg-orange-600 text-white hover:bg-orange-700'
+    success: 'text-white hover:opacity-90',
+    warning: 'text-black hover:opacity-90'
   },
   outlined: {
     default: 'border border-gray-300 text-gray-700 hover:bg-gray-50',
-    primary: 'border border-blue-600 text-blue-600 hover:bg-blue-50',
-    secondary: 'border border-purple-600 text-purple-600 hover:bg-purple-50',
+    primary: 'mf-button-outlined-primary',
+    secondary: 'mf-button-outlined-secondary',
     error: 'border border-red-600 text-red-600 hover:bg-red-50',
     info: 'border border-cyan-600 text-cyan-600 hover:bg-cyan-50',
-    success: 'border border-green-600 text-green-600 hover:bg-green-50',
-    warning: 'border border-orange-600 text-orange-600 hover:bg-orange-50'
+    success: 'border-2 hover:bg-opacity-10',
+    warning: 'border-2 hover:bg-opacity-10'
   },
   text: {
     inherit: 'text-inherit',
