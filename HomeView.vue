@@ -181,7 +181,7 @@
 </template>
 
 <script>
-import { ECFRNavigator, ECFRNavigatorWrapper, useECFRNavigatorStore, useECFRStore } from 'ecfr-navigator'
+import { ECFRNavigator, ECFRNavigatorWrapper, useECFRNavigatorStore, useECFRStore, MLayout, MCard, MButton, MTextField, useUIStore } from 'ecfr-navigator'
 import 'ecfr-navigator/style.css'
 
 // A custom component for tree view with the composable

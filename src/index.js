@@ -1,13 +1,28 @@
 import { createPinia } from 'pinia';
+
+// ECFR Navigator Components
 import ECFRNavigator from './components/ECFRNavigator.vue';
 import ECFRSection from './components/ECFRSection.vue';
 import ECFRBreadcrumb from './components/ECFRBreadcrumb.vue';
 import ECFRNavigatorWrapper from './components/ECFRNavigatorWrapper.vue';
+
+// Material UI Components
+import MButton from './components/ui/MButton.vue';
+import MCard from './components/ui/MCard.vue';
+import MTextField from './components/ui/MTextField.vue';
+import MSelect from './components/ui/MSelect.vue';
+import MCheckbox from './components/ui/MCheckbox.vue';
+import MLayout from './components/ui/MLayout.vue';
+import MSlider from './components/ui/MSlider.vue';
+import MProgress from './components/ui/MProgress.vue';
+
+// Stores and Composables
 import { useECFRStore } from './stores/ecfr';
+import { useUIStore } from './stores/ui';
 import { useECFRNavigator } from './composables/useECFRNavigator';
 import { useECFRNavigatorStore } from './composables/useECFRNavigatorStore';
 
-// Create plugin
+// Create comprehensive plugin
 const ECFRNavigatorPlugin = {
   install(app) {
     // Register Pinia if it's not already registered
@@ -17,15 +32,25 @@ const ECFRNavigatorPlugin = {
       console.warn('Pinia is already registered or there was an error initializing it.');
     }
     
-    // Register components
+    // Register ECFR Navigator components
     app.component('ECFRNavigator', ECFRNavigator);
     app.component('ECFRSection', ECFRSection);
     app.component('ECFRBreadcrumb', ECFRBreadcrumb);
     app.component('ECFRNavigatorWrapper', ECFRNavigatorWrapper);
+    
+    // Register Material UI components
+    app.component('MButton', MButton);
+    app.component('MCard', MCard);
+    app.component('MTextField', MTextField);
+    app.component('MSelect', MSelect);
+    app.component('MCheckbox', MCheckbox);
+    app.component('MLayout', MLayout);
+    app.component('MSlider', MSlider);
+    app.component('MProgress', MProgress);
   }
 };
 
-// Export components and helpers
+// Export ECFR Navigator components and helpers
 export { 
   ECFRNavigator,
   ECFRSection,
@@ -33,9 +58,24 @@ export {
   ECFRNavigatorWrapper,
   useECFRStore,
   useECFRNavigator,
-  useECFRNavigatorStore,
-  ECFRNavigatorPlugin
+  useECFRNavigatorStore
 };
+
+// Export Material UI components
+export {
+  MButton,
+  MCard,
+  MTextField,
+  MSelect,
+  MCheckbox,
+  MLayout,
+  MSlider,
+  MProgress,
+  useUIStore
+};
+
+// Export the main plugin
+export { ECFRNavigatorPlugin };
 
 // Default export for plugin usage
 export default ECFRNavigatorPlugin;
