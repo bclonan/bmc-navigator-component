@@ -1,112 +1,117 @@
 <template>
-  <div class="m-text-field" :class="containerClasses">
-    <!-- Label -->
-    <label v-if="label" :for="fieldId" class="m-text-field-label" :class="labelClasses">
-      {{ label }}
-      <span v-if="required" class="text-red-500 ml-1">*</span>
-    </label>
+  <component 
+    :is="wrap ? 'div' : 'div'" 
+    :class="wrap ? ['m-text-field-wrapper', wrapperClass] : null"
+  >
+    <div class="m-text-field" :class="[containerClasses, extend ? extendedClass : null]">
+      <!-- Label -->
+      <label v-if="label" :for="fieldId" class="m-text-field-label" :class="labelClasses">
+        {{ label }}
+        <span v-if="required" class="text-red-500 ml-1">*</span>
+      </label>
 
-    <!-- Input Container -->
-    <div class="m-text-field-container" :class="inputContainerClasses">
-      <!-- Prepend Icon -->
-      <div v-if="prependIcon" class="m-text-field-prepend" :class="iconClasses">
-        <slot name="prepend-icon">
-          <i :class="prependIcon"></i>
-        </slot>
+      <!-- Input Container -->
+      <div class="m-text-field-container" :class="inputContainerClasses">
+        <!-- Prepend Icon -->
+        <div v-if="prependIcon" class="m-text-field-prepend" :class="iconClasses">
+          <slot name="prepend-icon">
+            <i :class="prependIcon"></i>
+          </slot>
+        </div>
+
+        <!-- Input Field -->
+        <input
+          v-if="!multiline"
+          :id="fieldId"
+          :type="inputType"
+          :value="modelValue"
+          :placeholder="placeholder"
+          :disabled="disabled"
+          :readonly="readonly"
+          :required="required"
+          :min="min"
+          :max="max"
+          :step="step"
+          :maxlength="maxlength"
+          :pattern="pattern"
+          :autocomplete="autocomplete"
+          class="m-text-field-input"
+          :class="inputClasses"
+          @input="handleInput"
+          @focus="handleFocus"
+          @blur="handleBlur"
+          @keyup.enter="handleEnter"
+        />
+
+        <!-- Textarea -->
+        <textarea
+          v-else
+          :id="fieldId"
+          :value="modelValue"
+          :placeholder="placeholder"
+          :disabled="disabled"
+          :readonly="readonly"
+          :required="required"
+          :maxlength="maxlength"
+          :rows="rows"
+          class="m-text-field-input m-text-field-textarea"
+          :class="inputClasses"
+          @input="handleInput"
+          @focus="handleFocus"
+          @blur="handleBlur"
+        ></textarea>
+
+        <!-- Append Icon -->
+        <div v-if="appendIcon || clearable || showPasswordToggle" class="m-text-field-append" :class="iconClasses">
+          <!-- Clear button -->
+          <button
+            v-if="clearable && modelValue && !disabled && !readonly"
+            type="button"
+            class="m-text-field-clear"
+            :class="clearButtonClasses"
+            @click="clearInput"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          <!-- Password toggle -->
+          <button
+            v-if="showPasswordToggle"
+            type="button"
+            class="m-text-field-password-toggle"
+            :class="clearButtonClasses"
+            @click="togglePasswordVisibility"
+          >
+            <svg v-if="showPassword" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+            </svg>
+          </button>
+
+          <!-- Append icon -->
+          <slot name="append-icon">
+            <i v-if="appendIcon" :class="appendIcon"></i>
+          </slot>
+        </div>
       </div>
 
-      <!-- Input Field -->
-      <input
-        v-if="!multiline"
-        :id="fieldId"
-        :type="inputType"
-        :value="modelValue"
-        :placeholder="placeholder"
-        :disabled="disabled"
-        :readonly="readonly"
-        :required="required"
-        :min="min"
-        :max="max"
-        :step="step"
-        :maxlength="maxlength"
-        :pattern="pattern"
-        :autocomplete="autocomplete"
-        class="m-text-field-input"
-        :class="inputClasses"
-        @input="handleInput"
-        @focus="handleFocus"
-        @blur="handleBlur"
-        @keyup.enter="handleEnter"
-      />
-
-      <!-- Textarea -->
-      <textarea
-        v-else
-        :id="fieldId"
-        :value="modelValue"
-        :placeholder="placeholder"
-        :disabled="disabled"
-        :readonly="readonly"
-        :required="required"
-        :maxlength="maxlength"
-        :rows="rows"
-        class="m-text-field-input m-text-field-textarea"
-        :class="inputClasses"
-        @input="handleInput"
-        @focus="handleFocus"
-        @blur="handleBlur"
-      ></textarea>
-
-      <!-- Append Icon -->
-      <div v-if="appendIcon || clearable || showPasswordToggle" class="m-text-field-append" :class="iconClasses">
-        <!-- Clear button -->
-        <button
-          v-if="clearable && modelValue && !disabled && !readonly"
-          type="button"
-          class="m-text-field-clear"
-          :class="clearButtonClasses"
-          @click="clearInput"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-
-        <!-- Password toggle -->
-        <button
-          v-if="showPasswordToggle"
-          type="button"
-          class="m-text-field-password-toggle"
-          :class="clearButtonClasses"
-          @click="togglePasswordVisibility"
-        >
-          <svg v-if="showPassword" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-          </svg>
-          <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
-          </svg>
-        </button>
-
-        <!-- Append icon -->
-        <slot name="append-icon">
-          <i v-if="appendIcon" :class="appendIcon"></i>
-        </slot>
+      <!-- Helper text / Error message -->
+      <div v-if="hasHelperText" class="m-text-field-helper" :class="helperClasses">
+        <span v-if="errorMessage" class="m-text-field-error">{{ errorMessage }}</span>
+        <span v-else-if="helperText" class="m-text-field-helper-text">{{ helperText }}</span>
+        
+        <!-- Character counter -->
+        <span v-if="maxlength && showCounter" class="m-text-field-counter">
+          {{ characterCount }}/{{ maxlength }}
+        </span>
       </div>
     </div>
-
-    <!-- Helper text / Error message -->
-    <div v-if="hasHelperText" class="m-text-field-helper" :class="helperClasses">
-      <span v-if="errorMessage" class="m-text-field-error">{{ errorMessage }}</span>
-      <span v-else-if="helperText" class="m-text-field-helper-text">{{ helperText }}</span>
-      
-      <!-- Character counter -->
-      <span v-if="maxlength && showCounter" class="m-text-field-counter">
-        {{ characterCount }}/{{ maxlength }}
-      </span>
-    </div>
-  </div>
+  </component>
 </template>
 
 <script>
@@ -208,6 +213,23 @@ export default {
     autocomplete: {
       type: String,
       default: null
+    },
+    // Wrap/Extend functionality
+    wrap: {
+      type: Boolean,
+      default: false
+    },
+    extend: {
+      type: Boolean,
+      default: false
+    },
+    wrapperClass: {
+      type: String,
+      default: ''
+    },
+    extendedClass: {
+      type: String,
+      default: ''
     }
   },
 

@@ -126,6 +126,23 @@ export default {
     name: {
       type: String,
       default: null
+    },
+    // Wrap/Extend functionality
+    wrap: {
+      type: Boolean,
+      default: false
+    },
+    extend: {
+      type: Boolean,
+      default: false
+    },
+    wrapperClass: {
+      type: String,
+      default: ''
+    },
+    extendedClass: {
+      type: String,
+      default: ''
     }
   },
 

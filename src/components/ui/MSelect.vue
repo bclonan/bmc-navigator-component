@@ -1,5 +1,9 @@
 <template>
-  <div class="m-select" :class="containerClasses">
+  <component 
+    :is="wrap ? 'div' : 'div'" 
+    :class="wrap ? ['m-select-wrapper', wrapperClass] : null"
+  >
+    <div class="m-select" :class="[containerClasses, extend ? extendedClass : null]">
     <!-- Label -->
     <label v-if="label" :for="fieldId" class="m-select-label" :class="labelClasses">
       {{ label }}
@@ -109,7 +113,8 @@
         {{ getOptionLabel(option) }}
       </option>
     </select>
-  </div>
+    </div>
+  </component>
 </template>
 
 <script>
@@ -187,6 +192,23 @@ export default {
     name: {
       type: String,
       default: null
+    },
+    // Wrap/Extend functionality
+    wrap: {
+      type: Boolean,
+      default: false
+    },
+    extend: {
+      type: Boolean,
+      default: false
+    },
+    wrapperClass: {
+      type: String,
+      default: ''
+    },
+    extendedClass: {
+      type: String,
+      default: ''
     }
   },
 
