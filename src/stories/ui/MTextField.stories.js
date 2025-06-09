@@ -339,6 +339,91 @@ export const DisabledAndReadonly = {
   })
 };
 
+export const WrapExtendFunctionality = {
+  render: () => ({
+    components: { MTextField },
+    data() {
+      return {
+        values: {
+          wrapped: '',
+          extended: '',
+          both: ''
+        }
+      };
+    },
+    template: `
+      <div class="space-y-6">
+        <h3 class="text-lg font-semibold mb-4">Wrap & Extend Functionality</h3>
+        
+        <!-- Wrapped Field -->
+        <MTextField 
+          v-model="values.wrapped"
+          label="Wrapped Field" 
+          placeholder="This field has custom wrapper styling"
+          :wrap="true"
+          wrapper-class="p-4 bg-blue-50 border-2 border-blue-200 rounded-lg"
+          prepend-icon="fas fa-user"
+        />
+        
+        <!-- Extended Field -->
+        <MTextField 
+          v-model="values.extended"
+          label="Extended Field" 
+          placeholder="This field has extended classes"
+          :extend="true"
+          extended-class="shadow-lg border-2 border-purple-300"
+          prepend-icon="fas fa-envelope"
+        />
+        
+        <!-- Both Wrap and Extend -->
+        <MTextField 
+          v-model="values.both"
+          label="Wrapped & Extended Field" 
+          placeholder="Combines both wrap and extend features"
+          :wrap="true"
+          :extend="true"
+          wrapper-class="p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl"
+          extended-class="border-2 border-purple-400 shadow-xl"
+          prepend-icon="fas fa-star"
+        />
+        
+        <!-- Form Card Example -->
+        <div class="mt-8">
+          <h4 class="text-md font-semibold mb-4">Semantic Form Grouping</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <MTextField 
+              v-model="values.wrapped"
+              label="Contact Information" 
+              placeholder="Phone number"
+              :wrap="true"
+              wrapper-class="p-4 bg-green-50 border border-green-200 rounded-lg"
+              prepend-icon="fas fa-phone"
+              helper-text="Primary contact method"
+            />
+            
+            <MTextField 
+              v-model="values.extended"
+              label="Emergency Contact" 
+              placeholder="Emergency phone"
+              :extend="true"
+              extended-class="border-2 border-red-300 bg-red-50"
+              prepend-icon="fas fa-exclamation-triangle"
+              helper-text="For urgent matters only"
+            />
+          </div>
+        </div>
+      </div>
+    `
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Demonstrates wrap and extend functionality for semantic form grouping and custom styling.'
+      }
+    }
+  }
+};
+
 export const MarinerFinanceForm = {
   render: () => ({
     components: { MTextField },

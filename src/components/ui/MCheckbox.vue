@@ -1,5 +1,9 @@
 <template>
-  <div class="m-checkbox" :class="containerClasses">
+  <component 
+    :is="wrap ? 'div' : 'div'" 
+    :class="wrap ? ['m-checkbox-wrapper', wrapperClass] : null"
+  >
+    <div class="m-checkbox" :class="[containerClasses, extend ? extendedClass : null]">
     <label class="m-checkbox-wrapper" :class="wrapperClasses" @click="handleClick">
       <!-- Hidden native checkbox for form submission -->
       <input
@@ -73,7 +77,8 @@
       <span v-if="errorMessage" class="m-checkbox-error">{{ errorMessage }}</span>
       <span v-else-if="helperText" class="m-checkbox-helper-text">{{ helperText }}</span>
     </div>
-  </div>
+    </div>
+  </component>
 </template>
 
 <script>

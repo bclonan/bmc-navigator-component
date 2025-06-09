@@ -1,5 +1,9 @@
 <template>
-  <div class="m-slider" :class="containerClasses">
+  <component 
+    :is="wrap ? 'div' : 'div'" 
+    :class="wrap ? ['m-slider-wrapper', wrapperClass] : null"
+  >
+    <div class="m-slider" :class="[containerClasses, extend ? extendedClass : null]">
     <!-- Label -->
     <label v-if="label" :for="fieldId" class="m-slider-label" :class="labelClasses">
       {{ label }}
@@ -91,7 +95,8 @@
       <span v-if="errorMessage" class="m-slider-error">{{ errorMessage }}</span>
       <span v-else-if="helperText" class="m-slider-helper-text">{{ helperText }}</span>
     </div>
-  </div>
+    </div>
+  </component>
 </template>
 
 <script>
@@ -173,6 +178,23 @@ export default {
     name: {
       type: String,
       default: null
+    },
+    // Wrap/Extend functionality
+    wrap: {
+      type: Boolean,
+      default: false
+    },
+    extend: {
+      type: Boolean,
+      default: false
+    },
+    wrapperClass: {
+      type: String,
+      default: ''
+    },
+    extendedClass: {
+      type: String,
+      default: ''
     }
   },
 
