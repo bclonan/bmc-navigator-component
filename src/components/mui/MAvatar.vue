@@ -22,6 +22,7 @@
 
 <script>
 import { computed, ref } from 'vue';
+import { SIZE_CLASSES, COLOR_CLASSES, validateColor, validateSize } from './utils/constants.js';
 
 export default {
   name: 'MAvatar',
