@@ -15,6 +15,7 @@ export { default as MFormControl } from './MFormControl.vue';
 export { default as MFormHelperText } from './MFormHelperText.vue';
 export { default as MInput } from './MInput.vue';
 export { default as MInputLabel } from './MInputLabel.vue';
+export { default as MIconButton } from './MIconButton.vue';
 
 // Layout Components
 export { default as MAppBar } from './MAppBar.vue';

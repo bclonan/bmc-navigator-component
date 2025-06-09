@@ -31,6 +31,9 @@ import StateTransitionVisualizer from './components/visualization/StateTransitio
 // Theming Components
 import MThemeGenerator from './components/theming/MThemeGenerator.vue';
 
+// Material-UI Component Analogs
+import * as MUIComponents from './components/mui';
+
 // Stores and Composables
 import { useECFRStore } from './stores/ecfr';
 import { useUIStore } from './stores/ui';
@@ -97,6 +100,11 @@ const ECFRNavigatorPlugin = {
     
     // Register Theming Components
     app.component('MThemeGenerator', MThemeGenerator);
+    
+    // Register Material-UI Components
+    Object.entries(MUIComponents).forEach(([name, component]) => {
+      app.component(name, component);
+    });
   }
 };
 
@@ -145,6 +153,11 @@ export {
 // Export Theming Components
 export {
   MThemeGenerator
+};
+
+// Export Material-UI Components
+export {
+  MUIComponents
 };
 
 // Export Composables
