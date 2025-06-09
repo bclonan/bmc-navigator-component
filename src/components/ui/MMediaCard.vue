@@ -604,13 +604,7 @@ export default {
 .elevation-4 { @apply shadow-lg; }
 .elevation-5 { @apply shadow-xl; }
 
-/* Rounded styles */
-.rounded { @apply rounded-lg; }
-.rounded-sm { @apply rounded-sm; }
-.rounded-md { @apply rounded-md; }
-.rounded-lg { @apply rounded-lg; }
-.rounded-xl { @apply rounded-xl; }
-.rounded-full { @apply rounded-full; }
+/* Rounded styles - removed circular dependencies */
 
 /* Bordered */
 .bordered { @apply border border-gray-200; }

@@ -1127,7 +1127,7 @@ export const AccessibilityDemo = {
                   aria-describedby="amount-help"
                 />
                 <div id="amount-help" class="text-sm text-gray-600 mt-1">
-                  Current selection: ${{ formData.loanAmount.toLocaleString() }}
+                  Current selection: ${formData?.loanAmount }
                 </div>
               </div>
 

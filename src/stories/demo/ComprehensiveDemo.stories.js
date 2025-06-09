@@ -89,9 +89,7 @@ export const FinancialDashboard = {
 
       const setActiveTab = (tab) => {
         dashboardState.activeTab = tab;
-      };
-
-      return {
+      };      return {
         dashboardState,
         formData,
         chartData,
@@ -102,7 +100,7 @@ export const FinancialDashboard = {
         setActiveTab
       };
     },
-    template: \`
+    template: `
       <MLayout class="min-h-screen bg-gray-50">
         <!-- Navigation -->
         <MNavbar 
@@ -310,9 +308,7 @@ export const FinancialDashboard = {
               />
             </MCard>
           </div>
-        </div>
-
-        <!-- Footer -->
+        </div>        <!-- Footer -->
         <MFooter 
           copyright="© 2025 Financial Services Platform. All rights reserved."
           :links="[
@@ -322,7 +318,7 @@ export const FinancialDashboard = {
           ]"
         />
       </MLayout>
-    \`
+    `
   }),
   parameters: {
     docs: {
@@ -361,15 +357,13 @@ export const ComponentShowcase = {
           backgroundColor: 'rgba(99, 102, 241, 0.2)',
           borderColor: 'rgb(99, 102, 241)'
         }]
-      };
-
-      return {
+      };      return {
         showcaseState,
         sampleData,
         chartData
       };
     },
-    template: \`
+    template: `
       <div class="space-y-8 p-6">
         <div class="text-center mb-8">
           <h1 class="text-3xl font-bold text-gray-900 mb-2">Component Showcase</h1>
@@ -451,11 +445,10 @@ export const ComponentShowcase = {
               ]"
               :show-search="true"
               search-placeholder="Search products..."
-            />
-          </MCard>
+            />          </MCard>
         </div>
       </div>
-    \`
+    `
   }),
   parameters: {
     docs: {
@@ -464,4 +457,6 @@ export const ComponentShowcase = {
       }
     }
   }
-};
+}; 
+
+
