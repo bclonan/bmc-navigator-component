@@ -72,9 +72,6 @@
   --mf-transition-accelerated: all 0.1s ease;
 }
 
-/* Global font loading for Muli */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
 /* Fallback if Muli isn't available */
 body {
   font-family: var(--mf-font-family);

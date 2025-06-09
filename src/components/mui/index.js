@@ -11,6 +11,7 @@ export { default as MLinearProgress } from './MLinearProgress.vue';
 export { default as MSnackbar } from './MSnackbar.vue';
 
 // Inputs Components
+export { default as MButton } from './MButton.vue';
 export { default as MFormControl } from './MFormControl.vue';
 export { default as MFormHelperText } from './MFormHelperText.vue';
 export { default as MInput } from './MInput.vue';
@@ -31,3 +32,6 @@ export { default as MDialog } from './MDialog.vue';
 export { default as MDialogTitle } from './MDialogTitle.vue';
 export { default as MDialogContent } from './MDialogContent.vue';
 export { default as MDialogActions } from './MDialogActions.vue';
+
+// Theme exports
+export { default as marinerFinanceTheme } from '../../themes/mariner-finance.js';
