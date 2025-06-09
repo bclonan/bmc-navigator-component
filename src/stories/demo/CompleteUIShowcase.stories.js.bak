@@ -1,0 +1,952 @@
+import { ref, reactive, computed } from 'vue';
+import MButton from '../../components/ui/MButton.vue';
+import MCard from '../../components/ui/MCard.vue';
+import MTextField from '../../components/ui/MTextField.vue';
+import MSelect from '../../components/ui/MSelect.vue';
+import MCheckbox from '../../components/ui/MCheckbox.vue';
+import MSlider from '../../components/ui/MSlider.vue';
+import MProgress from '../../components/ui/MProgress.vue';
+import MLayout from '../../components/ui/MLayout.vue';
+import MChart from '../../components/charts/MChart.vue';
+import MTable from '../../components/tables/MTable.vue';
+import StateTransitionVisualizer from '../../components/visualization/StateTransitionVisualizer.vue';
+import DynamicFormRenderer from '../../components/dynamic/DynamicFormRenderer.vue';
+
+export default {
+  title: 'Demo/Complete UI Showcase',
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        component: 'Complete showcase of all UI components in the library with real-world usage examples and interactive demonstrations.'
+      }
+    }
+  }
+};
+
+// Complete component library showcase
+export const CompleteLibraryShowcase = {
+  render: () => ({
+    components: { 
+      MLayout, MCard, MButton, MTextField, MSelect, MCheckbox, MSlider, MProgress,
+      MChart, MTable, StateTransitionVisualizer, DynamicFormRenderer
+    },
+    setup() {
+      const showcaseState = reactive({
+        activeSection: 'buttons',
+        theme: 'light',
+        formData: {
+          firstName: 'John',
+          lastName: 'Doe',
+          email: 'john.doe@example.com',
+          phoneNumber: '(555) 123-4567',
+          preferredContact: 'email',
+          notifications: true,
+          loanAmount: 25000,
+          interestRate: 7.5,
+          term: 36
+        },
+        tableData: [
+          {
+            id: '001',
+            customerName: 'Alice Johnson',
+            loanType: 'Personal',
+            amount: 15000,
+            status: 'approved',
+            applicationDate: '2024-01-15',
+            creditScore: 720
+          },
+          {
+            id: '002',
+            customerName: 'Bob Smith',
+            loanType: 'Auto',
+            amount: 28000,
+            status: 'pending',
+            applicationDate: '2024-01-20',
+            creditScore: 680
+          },
+          {
+            id: '003',
+            customerName: 'Carol Williams',
+            loanType: 'Mortgage',
+            amount: 250000,
+            status: 'review',
+            applicationDate: '2024-01-18',
+            creditScore: 750
+          },
+          {
+            id: '004',
+            customerName: 'David Brown',
+            loanType: 'Business',
+            amount: 75000,
+            status: 'declined',
+            applicationDate: '2024-01-12',
+            creditScore: 620
+          }
+        ],
+        chartData: [
+          { x: 'Jan', y: 1200 },
+          { x: 'Feb', y: 1500 },
+          { x: 'Mar', y: 1800 },
+          { x: 'Apr', y: 1600 },
+          { x: 'May', y: 2100 },
+          { x: 'Jun', y: 2400 }
+        ],
+        progressValues: {
+          application: 75,
+          approval: 45,
+          funding: 90,
+          customer: 60
+        },
+        workflowSteps: [
+          {
+            id: 'application',
+            title: 'Application',
+            description: 'Customer submits application',
+            status: 'completed'
+          },
+          {
+            id: 'verification',
+            title: 'Verification',
+            description: 'Document verification',
+            status: 'completed'
+          },
+          {
+            id: 'underwriting',
+            title: 'Underwriting',
+            description: 'Credit assessment',
+            status: 'active'
+          },
+          {
+            id: 'approval',
+            title: 'Approval',
+            description: 'Final decision',
+            status: 'pending'
+          },
+          {
+            id: 'funding',
+            title: 'Funding',
+            description: 'Loan disbursement',
+            status: 'pending'
+          }
+        ]
+      });
+
+      const sections = [
+        { id: 'buttons', label: 'Buttons & Actions', icon: '🔘' },
+        { id: 'inputs', label: 'Form Inputs', icon: '📝' },
+        { id: 'layout', label: 'Layout & Cards', icon: '📱' },
+        { id: 'data', label: 'Data Visualization', icon: '📊' },
+        { id: 'feedback', label: 'Feedback & Progress', icon: '💬' },
+        { id: 'workflow', label: 'Workflow & States', icon: '🔄' },
+        { id: 'forms', label: 'Dynamic Forms', icon: '📋' }
+      ];
+
+      const calculatedPayment = computed(() => {
+        const principal = showcaseState.formData.loanAmount;
+        const rate = showcaseState.formData.interestRate / 100 / 12;
+        const term = showcaseState.formData.term;
+        
+        if (rate === 0) return principal / term;
+        
+        return (principal * rate * Math.pow(1 + rate, term)) / (Math.pow(1 + rate, term) - 1);
+      });
+
+      const toggleTheme = () => {
+        showcaseState.theme = showcaseState.theme === 'light' ? 'dark' : 'light';
+      };
+
+      const handleButtonAction = (action) => {
+        console.log(`Button action: ${action}`);
+        alert(`${action} button clicked!`);
+      };
+
+      const handleTableAction = (action, row) => {
+        console.log(`Table action: ${action}`, row);
+        alert(`${action} action on ${row.customerName}`);
+      };
+
+      return {
+        showcaseState,
+        sections,
+        calculatedPayment,
+        toggleTheme,
+        handleButtonAction,
+        handleTableAction
+      };
+    },
+    template: `
+      <MLayout
+        app-title="Complete UI Component Showcase"
+        :theme="showcaseState.theme"
+        :show-drawer="true"
+        :permanent-drawer="true"
+      >
+        <!-- Sidebar Navigation -->
+        <template #drawer>
+          <div class="p-4">
+            <h3 class="text-lg font-semibold mb-4">Component Sections</h3>
+            <nav class="space-y-2">
+              <button
+                v-for="section in sections"
+                :key="section.id"
+                @click="showcaseState.activeSection = section.id"
+                :class="[
+                  'w-full text-left px-3 py-2 rounded-lg transition-colors flex items-center space-x-3',
+                  showcaseState.activeSection === section.id
+                    ? 'bg-blue-100 text-blue-700 font-medium'
+                    : 'hover:bg-gray-100'
+                ]"
+              >
+                <span class="text-xl">{{ section.icon }}</span>
+                <span>{{ section.label }}</span>
+              </button>
+            </nav>
+          </div>
+        </template>
+
+        <!-- Header Actions -->
+        <template #toolbar>
+          <div class="flex items-center space-x-4">
+            <span class="text-sm text-gray-600">Theme:</span>
+            <MButton
+              variant="outline"
+              size="small"
+              :text="showcaseState.theme"
+              @click="toggleTheme"
+            />
+          </div>
+        </template>
+
+        <!-- Main Content -->
+        <div class="space-y-8">
+          <!-- Buttons & Actions Section -->
+          <div v-if="showcaseState.activeSection === 'buttons'">
+            <h2 class="text-3xl font-bold mb-6">Buttons & Actions</h2>
+            
+            <!-- Button Variants -->
+            <MCard title="Button Variants" subtitle="Different styles and states" class="mb-8">
+              <div class="space-y-6">
+                <!-- Primary Buttons -->
+                <div>
+                  <h4 class="text-lg font-semibold mb-3">Primary Buttons</h4>
+                  <div class="flex flex-wrap gap-4">
+                    <MButton variant="primary" text="Primary" @click="handleButtonAction('primary')" />
+                    <MButton variant="primary" text="With Icon" prepend-icon="fas fa-plus" @click="handleButtonAction('icon')" />
+                    <MButton variant="primary" text="Loading" :loading="true" />
+                    <MButton variant="primary" text="Disabled" :disabled="true" />
+                  </div>
+                </div>
+
+                <!-- Secondary Buttons -->
+                <div>
+                  <h4 class="text-lg font-semibold mb-3">Secondary & Outline</h4>
+                  <div class="flex flex-wrap gap-4">
+                    <MButton variant="secondary" text="Secondary" @click="handleButtonAction('secondary')" />
+                    <MButton variant="outline" text="Outline" @click="handleButtonAction('outline')" />
+                    <MButton variant="ghost" text="Ghost" @click="handleButtonAction('ghost')" />
+                    <MButton variant="link" text="Link Style" @click="handleButtonAction('link')" />
+                  </div>
+                </div>
+
+                <!-- Sizes -->
+                <div>
+                  <h4 class="text-lg font-semibold mb-3">Button Sizes</h4>
+                  <div class="flex flex-wrap items-end gap-4">
+                    <MButton variant="primary" text="Small" size="small" />
+                    <MButton variant="primary" text="Medium" size="medium" />
+                    <MButton variant="primary" text="Large" size="large" />
+                  </div>
+                </div>
+
+                <!-- Colors -->
+                <div>
+                  <h4 class="text-lg font-semibold mb-3">Contextual Colors</h4>
+                  <div class="flex flex-wrap gap-4">
+                    <MButton variant="primary" color="success" text="Success" />
+                    <MButton variant="primary" color="warning" text="Warning" />
+                    <MButton variant="primary" color="danger" text="Danger" />
+                    <MButton variant="outline" color="success" text="Success Outline" />
+                    <MButton variant="outline" color="danger" text="Danger Outline" />
+                  </div>
+                </div>
+              </div>
+            </MCard>
+
+            <!-- Button Groups -->
+            <MCard title="Button Groups & Actions" subtitle="Grouped buttons and action patterns">
+              <div class="space-y-6">
+                <div>
+                  <h4 class="text-lg font-semibold mb-3">Action Groups</h4>
+                  <div class="flex space-x-2">
+                    <MButton variant="primary" text="Save" />
+                    <MButton variant="outline" text="Cancel" />
+                    <MButton variant="ghost" text="Reset" />
+                  </div>
+                </div>
+
+                <div>
+                  <h4 class="text-lg font-semibold mb-3">Toggle Group</h4>
+                  <div class="flex rounded-lg border overflow-hidden">
+                    <MButton variant="ghost" text="Day" class="rounded-none border-r" />
+                    <MButton variant="primary" text="Week" class="rounded-none border-r" />
+                    <MButton variant="ghost" text="Month" class="rounded-none" />
+                  </div>
+                </div>
+              </div>
+            </MCard>
+          </div>
+
+          <!-- Form Inputs Section -->
+          <div v-if="showcaseState.activeSection === 'inputs'">
+            <h2 class="text-3xl font-bold mb-6">Form Inputs</h2>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <!-- Text Inputs -->
+              <MCard title="Text Inputs" subtitle="Various input types and states">
+                <div class="space-y-4">
+                  <MTextField
+                    v-model="showcaseState.formData.firstName"
+                    label="First Name"
+                    placeholder="Enter your first name"
+                    help-text="As it appears on your ID"
+                  />
+                  
+                  <MTextField
+                    v-model="showcaseState.formData.lastName"
+                    label="Last Name"
+                    placeholder="Enter your last name"
+                    required
+                  />
+                  
+                  <MTextField
+                    v-model="showcaseState.formData.email"
+                    label="Email Address"
+                    type="email"
+                    placeholder="your.email@example.com"
+                    prepend-icon="fas fa-envelope"
+                  />
+                  
+                  <MTextField
+                    v-model="showcaseState.formData.phoneNumber"
+                    label="Phone Number"
+                    placeholder="(555) 123-4567"
+                    prepend-icon="fas fa-phone"
+                  />
+                  
+                  <MTextField
+                    label="Disabled Input"
+                    value="Cannot edit this"
+                    :disabled="true"
+                  />
+                  
+                  <MTextField
+                    label="Error State"
+                    placeholder="This has an error"
+                    :error="true"
+                    error-message="This field is required"
+                  />
+                </div>
+              </MCard>
+
+              <!-- Selects and Checkboxes -->
+              <MCard title="Selects & Checkboxes" subtitle="Selection controls">
+                <div class="space-y-4">
+                  <MSelect
+                    v-model="showcaseState.formData.preferredContact"
+                    label="Preferred Contact Method"
+                    :options="[
+                      { value: 'email', label: 'Email' },
+                      { value: 'phone', label: 'Phone Call' },
+                      { value: 'sms', label: 'Text Message' },
+                      { value: 'mail', label: 'Postal Mail' }
+                    ]"
+                  />
+                  
+                  <MSelect
+                    label="Loan Type"
+                    :options="[
+                      { value: 'personal', label: 'Personal Loan' },
+                      { value: 'auto', label: 'Auto Loan' },
+                      { value: 'mortgage', label: 'Mortgage' },
+                      { value: 'business', label: 'Business Loan' }
+                    ]"
+                    placeholder="Select loan type..."
+                  />
+                  
+                  <div class="space-y-3">
+                    <MCheckbox
+                      v-model="showcaseState.formData.notifications"
+                      label="Email notifications"
+                      help-text="Receive updates about your application"
+                    />
+                    
+                    <MCheckbox
+                      label="SMS alerts"
+                      help-text="Get text message alerts"
+                    />
+                    
+                    <MCheckbox
+                      label="Terms and conditions"
+                      required
+                      help-text="Required to proceed"
+                    />
+                    
+                    <MCheckbox
+                      label="Disabled option"
+                      :disabled="true"
+                      help-text="This option is not available"
+                    />
+                  </div>
+                </div>
+              </MCard>
+            </div>
+
+            <!-- Sliders -->
+            <MCard title="Sliders & Range Controls" subtitle="Interactive value selection" class="mt-8">
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div>
+                  <MSlider
+                    v-model="showcaseState.formData.loanAmount"
+                    label="Loan Amount"
+                    :min="5000"
+                    :max="100000"
+                    :step="1000"
+                    :show-tooltip="true"
+                    :format-value="(value) => \`$\${value.toLocaleString()}\`"
+                    :show-markers="true"
+                    :markers="[
+                      { value: 10000, label: '$10K' },
+                      { value: 50000, label: '$50K' },
+                      { value: 100000, label: '$100K' }
+                    ]"
+                  />
+                </div>
+                
+                <div>
+                  <MSlider
+                    v-model="showcaseState.formData.interestRate"
+                    label="Interest Rate"
+                    :min="3"
+                    :max="15"
+                    :step="0.1"
+                    :show-tooltip="true"
+                    :format-value="(value) => \`\${value}%\`"
+                    color="secondary"
+                  />
+                </div>
+                
+                <div>
+                  <MSlider
+                    v-model="showcaseState.formData.term"
+                    label="Loan Term"
+                    :min="12"
+                    :max="84"
+                    :step="6"
+                    :show-tooltip="true"
+                    :format-value="(value) => value + ' months'"
+                    color="success"
+                  />
+                </div>
+              </div>
+              
+              <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                <h4 class="font-semibold text-blue-900 mb-2">Calculated Monthly Payment</h4>
+                <div class="text-2xl font-bold text-blue-700">
+                  ${{ calculatedPayment }}
+                </div>
+                <div class="text-sm text-blue-600">
+                  Based on {{ showcaseState.formData.loanAmount.toLocaleString() }} at {{ showcaseState.formData.interestRate }}% for {{ showcaseState.formData.term }} months
+                </div>
+              </div>
+            </MCard>
+          </div>
+
+          <!-- Layout & Cards Section -->
+          <div v-if="showcaseState.activeSection === 'layout'">
+            <h2 class="text-3xl font-bold mb-6">Layout & Cards</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <!-- Basic Cards -->
+              <MCard title="Basic Card" subtitle="Simple card with content">
+                <p class="text-gray-600">This is a basic card with title, subtitle, and content. Cards are the building blocks of modern UI design.</p>
+              </MCard>
+              
+              <!-- Card with Actions -->
+              <MCard 
+                title="Card with Actions" 
+                subtitle="Interactive card"
+                :actions="[
+                  { key: 'edit', label: 'Edit', variant: 'primary' },
+                  { key: 'delete', label: 'Delete', variant: 'danger' }
+                ]"
+                @action-click="(action) => handleButtonAction(action.key)"
+              >
+                <p class="text-gray-600">This card has action buttons in the header.</p>
+              </MCard>
+              
+              <!-- Elevated Card -->
+              <MCard title="Elevated Card" subtitle="With shadow" variant="elevated">
+                <p class="text-gray-600">This card uses the elevated variant for more visual prominence.</p>
+              </MCard>
+              
+              <!-- Outlined Card -->
+              <MCard title="Outlined Card" subtitle="Border style" variant="outlined">
+                <p class="text-gray-600">This card uses borders instead of shadows.</p>
+              </MCard>
+              
+              <!-- Card with Header Slot -->
+              <MCard>
+                <template #header>
+                  <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                      <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 class="font-semibold">Custom Header</h3>
+                      <p class="text-sm text-gray-600">With icon and description</p>
+                    </div>
+                  </div>
+                </template>
+                
+                <p class="text-gray-600">This card uses a custom header slot for more complex layouts.</p>
+              </MCard>
+              
+              <!-- Card with Footer -->
+              <MCard title="Card with Footer" subtitle="Custom footer content">
+                <p class="text-gray-600 mb-4">This card has custom footer content below the main content area.</p>
+                
+                <template #footer>
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-500">Last updated: 2 hours ago</span>
+                    <MButton variant="link" text="View Details" size="small" />
+                  </div>
+                </template>
+              </MCard>
+            </div>
+          </div>
+
+          <!-- Data Visualization Section -->
+          <div v-if="showcaseState.activeSection === 'data'">
+            <h2 class="text-3xl font-bold mb-6">Data Visualization</h2>
+            
+            <!-- Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+              <MCard title="Line Chart" subtitle="Monthly loan applications">
+                <MChart
+                  type="line"
+                  :data="showcaseState.chartData"
+                  :width="400"
+                  :height="300"
+                  :show-grid="true"
+                  :show-points="true"
+                  :formatters="{
+                    y: (value) => \`\${value} apps\`
+                  }"
+                />
+              </MCard>
+              
+              <MCard title="Bar Chart" subtitle="Revenue by month">
+                <MChart
+                  type="bar"
+                  :data="showcaseState.chartData.map(d => ({ ...d, y: d.y * 1000 }))"
+                  :width="400"
+                  :height="300"
+                  :show-grid="true"
+                  :formatters="{
+                    y: (value) => \`$\${(value/1000).toFixed(0)}K\`
+                  }"
+                />
+              </MCard>
+            </div>
+            
+            <!-- Data Table -->
+            <MCard title="Advanced Data Table" subtitle="Loan applications with actions">
+              <MTable
+                :data="showcaseState.tableData"
+                :columns="[
+                  { key: 'id', label: 'ID', sortable: true },
+                  { key: 'customerName', label: 'Customer', sortable: true },
+                  { key: 'loanType', label: 'Type', sortable: true },
+                  { key: 'amount', label: 'Amount', type: 'currency', sortable: true, align: 'right' },
+                  { key: 'status', label: 'Status', type: 'status' },
+                  { key: 'applicationDate', label: 'Date', type: 'date', sortable: true },
+                  { key: 'creditScore', label: 'Credit Score', sortable: true, align: 'right' }
+                ]"
+                :actions="[
+                  { key: 'view', label: 'View', variant: 'primary' },
+                  { key: 'approve', label: 'Approve', variant: 'success' },
+                  { key: 'decline', label: 'Decline', variant: 'danger' }
+                ]"
+                :show-search="true"
+                :show-filters="true"
+                :show-pagination="true"
+                :selectable="true"
+                @action-click="handleTableAction"
+              />
+            </MCard>
+          </div>
+
+          <!-- Feedback & Progress Section -->
+          <div v-if="showcaseState.activeSection === 'feedback'">
+            <h2 class="text-3xl font-bold mb-6">Feedback & Progress</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <!-- Progress Indicators -->
+              <MCard title="Progress Indicators" subtitle="Various progress styles">
+                <div class="space-y-6">
+                  <div>
+                    <div class="flex justify-between text-sm mb-2">
+                      <span>Application Progress</span>
+                      <span>{{ showcaseState.progressValues.application }}%</span>
+                    </div>
+                    <MProgress 
+                      :value="showcaseState.progressValues.application" 
+                      color="primary"
+                    />
+                  </div>
+                  
+                  <div>
+                    <div class="flex justify-between text-sm mb-2">
+                      <span>Approval Process</span>
+                      <span>{{ showcaseState.progressValues.approval }}%</span>
+                    </div>
+                    <MProgress 
+                      :value="showcaseState.progressValues.approval" 
+                      color="warning"
+                      :striped="true"
+                    />
+                  </div>
+                  
+                  <div>
+                    <div class="flex justify-between text-sm mb-2">
+                      <span>Funding Complete</span>
+                      <span>{{ showcaseState.progressValues.funding }}%</span>
+                    </div>
+                    <MProgress 
+                      :value="showcaseState.progressValues.funding" 
+                      color="success"
+                      :animated="true"
+                    />
+                  </div>
+                  
+                  <div>
+                    <div class="flex justify-between text-sm mb-2">
+                      <span>Customer Satisfaction</span>
+                      <span>{{ showcaseState.progressValues.customer }}%</span>
+                    </div>
+                    <MProgress 
+                      :value="showcaseState.progressValues.customer" 
+                      color="secondary"
+                      size="large"
+                    />
+                  </div>
+                  
+                  <!-- Indeterminate Progress -->
+                  <div>
+                    <div class="text-sm mb-2">Processing...</div>
+                    <MProgress 
+                      :indeterminate="true" 
+                      color="primary"
+                    />
+                  </div>
+                </div>
+              </MCard>
+              
+              <!-- Loading States -->
+              <MCard title="Loading States" subtitle="Different loading patterns">
+                <div class="space-y-6">
+                  <!-- Spinner -->
+                  <div class="flex items-center space-x-4">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <span class="text-gray-600">Loading data...</span>
+                  </div>
+                  
+                  <!-- Skeleton Loading -->
+                  <div class="space-y-3">
+                    <div class="animate-pulse">
+                      <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                      <div class="space-y-2 mt-2">
+                        <div class="h-3 bg-gray-200 rounded"></div>
+                        <div class="h-3 bg-gray-200 rounded w-5/6"></div>
+                        <div class="h-3 bg-gray-200 rounded w-4/6"></div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Pulse Animation -->
+                  <div class="space-y-2">
+                    <div class="w-full h-4 bg-blue-100 rounded animate-pulse"></div>
+                    <div class="w-5/6 h-4 bg-blue-100 rounded animate-pulse" style="animation-delay: 0.1s"></div>
+                    <div class="w-4/6 h-4 bg-blue-100 rounded animate-pulse" style="animation-delay: 0.2s"></div>
+                  </div>
+                  
+                  <!-- Button Loading States -->
+                  <div class="space-y-3">
+                    <MButton variant="primary" text="Loading Button" :loading="true" />
+                    <MButton variant="outline" text="Processing..." :loading="true" />
+                  </div>
+                </div>
+              </MCard>
+            </div>
+          </div>
+
+          <!-- Workflow & States Section -->
+          <div v-if="showcaseState.activeSection === 'workflow'">
+            <h2 class="text-3xl font-bold mb-6">Workflow & States</h2>
+            
+            <MCard title="Loan Application Workflow" subtitle="Step-by-step process visualization">
+              <StateTransitionVisualizer
+                :steps="showcaseState.workflowSteps"
+                :current-step="2"
+                :completed-steps="new Set([0, 1])"
+                :animated="true"
+                :show-validation="true"
+                :validation-results="[
+                  { id: 'credit', name: 'Credit Check', status: 'valid', confidence: 95, message: 'Credit score verified' },
+                  { id: 'income', name: 'Income Verification', status: 'valid', confidence: 87, message: 'Income documents approved' },
+                  { id: 'identity', name: 'Identity Check', status: 'active', confidence: 75, message: 'Verifying documents...' },
+                  { id: 'collateral', name: 'Collateral Assessment', status: 'pending', confidence: 0, message: 'Waiting for appraisal' }
+                ]"
+              />
+            </MCard>
+          </div>
+
+          <!-- Dynamic Forms Section -->
+          <div v-if="showcaseState.activeSection === 'forms'">
+            <h2 class="text-3xl font-bold mb-6">Dynamic Forms</h2>
+            
+            <MCard title="Loan Application Form" subtitle="Dynamic form with real-time validation">
+              <DynamicFormRenderer
+                :config="{
+                  title: 'Personal Loan Application',
+                  description: 'Complete this form to apply for a personal loan',
+                  sections: [
+                    {
+                      id: 'personal',
+                      title: 'Personal Information',
+                      fields: [
+                        {
+                          id: 'firstName',
+                          type: 'text',
+                          label: 'First Name',
+                          required: true,
+                          validation: { minLength: 2 }
+                        },
+                        {
+                          id: 'lastName',
+                          type: 'text',
+                          label: 'Last Name',
+                          required: true,
+                          validation: { minLength: 2 }
+                        },
+                        {
+                          id: 'email',
+                          type: 'email',
+                          label: 'Email Address',
+                          required: true
+                        },
+                        {
+                          id: 'phone',
+                          type: 'tel',
+                          label: 'Phone Number',
+                          required: true
+                        }
+                      ]
+                    },
+                    {
+                      id: 'financial',
+                      title: 'Financial Information',
+                      fields: [
+                        {
+                          id: 'income',
+                          type: 'slider',
+                          label: 'Annual Income',
+                          min: 20000,
+                          max: 200000,
+                          step: 5000,
+                          required: true,
+                          formatValue: (value) => \`$\${value.toLocaleString()}\`
+                        },
+                        {
+                          id: 'employment',
+                          type: 'select',
+                          label: 'Employment Status',
+                          required: true,
+                          options: [
+                            { value: 'employed', label: 'Employed' },
+                            { value: 'self-employed', label: 'Self-employed' },
+                            { value: 'unemployed', label: 'Unemployed' },
+                            { value: 'retired', label: 'Retired' }
+                          ]
+                        },
+                        {
+                          id: 'loanAmount',
+                          type: 'slider',
+                          label: 'Requested Loan Amount',
+                          min: 1000,
+                          max: 50000,
+                          step: 500,
+                          required: true,
+                          formatValue: (value) => \`$\${value.toLocaleString()}\`
+                        }
+                      ]
+                    }
+                  ]
+                }"
+                :auto-save="true"
+                :real-time-validation="true"
+                @form-submit="(data) => console.log('Form submitted:', data)"
+                @field-change="(field, value) => console.log(\`Field \${field} changed to:\`, value)"
+              />
+            </MCard>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <template #footer>
+          <div class="text-center text-sm text-gray-500">
+            Complete UI Component Showcase - {{ new Date().getFullYear() }}
+          </div>
+        </template>
+      </MLayout>
+    `
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Complete showcase of all UI components in the library with real-world examples, interactive demonstrations, and comprehensive usage patterns.'
+      }
+    }
+  }
+};
+
+// Component Variants Comparison
+export const ComponentVariantsComparison = {
+  render: () => ({
+    components: { MCard, MButton, MTextField, MSelect, MProgress },
+    setup() {
+      const variants = reactive({
+        button: 'primary',
+        input: 'default',
+        card: 'default',
+        progress: 'primary'
+      });
+
+      const buttonVariants = ['primary', 'secondary', 'outline', 'ghost', 'link'];
+      const cardVariants = ['default', 'elevated', 'outlined'];
+      const progressColors = ['primary', 'secondary', 'success', 'warning', 'danger'];
+
+      return {
+        variants,
+        buttonVariants,
+        cardVariants,
+        progressColors
+      };
+    },
+    template: `
+      <div class="space-y-8 p-6">
+        <h2 class="text-3xl font-bold text-center mb-8">Component Variants Comparison</h2>
+        
+        <!-- Button Variants -->
+        <MCard title="Button Variants" subtitle="Compare different button styles">
+          <div class="space-y-6">
+            <div class="flex justify-center space-x-4">
+              <button
+                v-for="variant in buttonVariants"
+                :key="variant"
+                @click="variants.button = variant"
+                :class="[
+                  'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                  variants.button === variant
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ]"
+              >
+                {{ variant }}
+              </button>
+            </div>
+            
+            <div class="flex justify-center">
+              <MButton :variant="variants.button" text="Sample Button" />
+            </div>
+          </div>
+        </MCard>
+
+        <!-- Card Variants -->
+        <MCard title="Card Variants" subtitle="Different card presentations">
+          <div class="space-y-6">
+            <div class="flex justify-center space-x-4">
+              <button
+                v-for="variant in cardVariants"
+                :key="variant"
+                @click="variants.card = variant"
+                :class="[
+                  'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                  variants.card === variant
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ]"
+              >
+                {{ variant }}
+              </button>
+            </div>
+            
+            <div class="flex justify-center">
+              <MCard
+                :variant="variants.card"
+                title="Sample Card"
+                subtitle="This is how the selected variant looks"
+                class="w-80"
+              >
+                <p class="text-gray-600">
+                  This card demonstrates the {{ variants.card }} variant style.
+                  Each variant has different visual characteristics.
+                </p>
+              </MCard>
+            </div>
+          </div>
+        </MCard>
+
+        <!-- Progress Colors -->
+        <MCard title="Progress Bar Colors" subtitle="Different progress indicator colors">
+          <div class="space-y-6">
+            <div class="flex justify-center space-x-4 flex-wrap gap-2">
+              <button
+                v-for="color in progressColors"
+                :key="color"
+                @click="variants.progress = color"
+                :class="[
+                  'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                  variants.progress === color
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ]"
+              >
+                {{ color }}
+              </button>
+            </div>
+            
+            <div class="max-w-md mx-auto">
+              <MProgress 
+                :value="75" 
+                :color="variants.progress"
+                :show-percentage="true"
+              />
+            </div>
+          </div>
+        </MCard>
+      </div>
+    `
+  }),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Side-by-side comparison of component variants to showcase different styles and options available.'
+      }
+    }
+  }
+};
