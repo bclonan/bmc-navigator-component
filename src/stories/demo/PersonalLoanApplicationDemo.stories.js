@@ -20,836 +20,484 @@ export default {
   }
 };
 
-// Reusable validation patterns for any JS setting
-const createValidationRules = () => ({
-  required: (value) => !!value || 'This field is required',
-  email: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || 'Invalid email format',
-  phone: (value) => /^\(\d{3}\)\s\d{3}-\d{4}$/.test(value) || 'Format: (555) 123-4567',
-  ssn: (value) => /^\d{3}-\d{2}-\d{4}$/.test(value) || 'Format: 123-45-6789',
-  minAge: (age) => (value) => {
-    if (!value) return true;
-    const birthDate = new Date(value);
-    const today = new Date();
-    const userAge = today.getFullYear() - birthDate.getFullYear();
-    return userAge >= age || `Must be at least ${age} years old`;
-  },
-  minValue: (min) => (value) => value >= min || `Minimum value is ${min}`,
-  maxValue: (max) => (value) => value <= max || `Maximum value is ${max}`,
-  bankAccount: (value) => /^\d{8,17}$/.test(value) || 'Invalid account number',
-  routingNumber: (value) => /^\d{9}$/.test(value) || 'Invalid routing number'
-});
-
-// Simple, reusable loan application schema generator
-const createLoanApplicationSteps = () => {
-  const validators = createValidationRules();
-  
-  return [
-    {
-      id: 'personal_info',
-      title: 'Personal Information',
-      description: 'Basic personal details',
-      icon: 'user',
-      schema: {
-        title: 'Tell us about yourself',
-        description: 'We need some basic information to get started',
-        fields: [
-          {
-            id: 'firstName',
-            type: 'text',
-            label: 'First Name',
-            placeholder: 'John',
-            validation: [validators.required],
-            layout: { width: 'half' }
-          },
-          {
-            id: 'lastName',
-            type: 'text',
-            label: 'Last Name',
-            placeholder: 'Smith',
-            validation: [validators.required],
-            layout: { width: 'half' }
-          },
-          {
-            id: 'email',
-            type: 'email',
-            label: 'Email Address',
-            placeholder: 'john.smith@email.com',
-            validation: [validators.required, validators.email],
-            layout: { width: 'full' }
-          },
-          {
-            id: 'phone',
-            type: 'tel',
-            label: 'Phone Number',
-            placeholder: '(555) 123-4567',
-            validation: [validators.required, validators.phone],
-            layout: { width: 'half' }
-          },
-          {
-            id: 'dateOfBirth',
-            type: 'date',
-            label: 'Date of Birth',
-            validation: [validators.required, validators.minAge(18)],
-            layout: { width: 'half' }
-          },
-          {
-            id: 'ssn',
-            type: 'text',
-            label: 'Social Security Number',
-            placeholder: '123-45-6789',
-            validation: [validators.required, validators.ssn],
-            layout: { width: 'half' }
-          },
-          {
-            id: 'maritalStatus',
-            type: 'select',
-            label: 'Marital Status',
-            options: [
-              { value: 'single', label: 'Single' },
-              { value: 'married', label: 'Married' },
-              { value: 'divorced', label: 'Divorced' },
-              { value: 'widowed', label: 'Widowed' }
-            ],
-            validation: [validators.required],
-            layout: { width: 'half' }
-          }
-        ]
-      }
-    },
-    {
-      id: 'employment_income',
-      title: 'Employment & Income',
-      description: 'Work and financial details',
-      icon: 'briefcase',
-      schema: {
-        title: 'Employment Information',
-        description: 'Help us understand your income and employment status',
-        fields: [
-          {
-            id: 'employmentStatus',
-            type: 'select',
-            label: 'Employment Status',
-            options: [
-              { value: 'employed_full', label: 'Employed Full-time' },
-              { value: 'employed_part', label: 'Employed Part-time' },
-              { value: 'self_employed', label: 'Self-employed' },
-              { value: 'retired', label: 'Retired' },
-              { value: 'unemployed', label: 'Unemployed' }
-            ],
-            validation: [validators.required],
-            layout: { width: 'half' }
-          },
-          {
-            id: 'employer',
-            type: 'text',
-            label: 'Employer Name',
-            placeholder: 'Company Name',
-            conditionalLogic: {
-              showIf: "employmentStatus === 'employed_full' || employmentStatus === 'employed_part'"
-            },
-            validation: [validators.required],
-            layout: { width: 'half' }
-          },
-          {
-            id: 'jobTitle',
-            type: 'text',
-            label: 'Job Title',
-            placeholder: 'Software Engineer',
-            conditionalLogic: {
-              showIf: "employmentStatus === 'employed_full' || employmentStatus === 'employed_part'"
-            },
-            layout: { width: 'full' }
-          },
-          {
-            id: 'monthlyIncome',
-            type: 'slider',
-            label: 'Monthly Income',
-            min: 1000,
-            max: 25000,
-            step: 250,
-            unit: '$',
-            showTooltip: true,
-            showMarkers: true,
-            markers: [
-              { value: 1000, label: '$1K' },
-              { value: 5000, label: '$5K' },
-              { value: 10000, label: '$10K' },
-              { value: 15000, label: '$15K' },
-              { value: 25000, label: '$25K' }
-            ],
-            validation: [validators.required, validators.minValue(1000)],
-            layout: { width: 'full' }
-          },
-          {
-            id: 'additionalIncome',
-            type: 'number',
-            label: 'Additional Monthly Income (Optional)',
-            placeholder: '500',
-            helpText: 'Include rental income, investments, side jobs, etc.',
-            layout: { width: 'half' }
-          },
-          {
-            id: 'yearsAtJob',
-            type: 'number',
-            label: 'Years at Current Job',
-            placeholder: '2.5',
-            validation: [validators.required, validators.minValue(0)],
-            layout: { width: 'half' }
-          }
-        ]
-      }
-    },
-    {
-      id: 'financial_profile',
-      title: 'Financial Profile',
-      description: 'Credit and expenses',
-      icon: 'chart',
-      schema: {
-        title: 'Financial Information',
-        description: 'Tell us about your credit and monthly expenses',
-        fields: [
-          {
-            id: 'creditScore',
-            type: 'select',
-            label: 'Estimated Credit Score',
-            options: [
-              { value: 'excellent', label: 'Excellent (750+)' },
-              { value: 'very_good', label: 'Very Good (700-749)' },
-              { value: 'good', label: 'Good (650-699)' },
-              { value: 'fair', label: 'Fair (600-649)' },
-              { value: 'poor', label: 'Poor (Below 600)' }
-            ],
-            validation: [validators.required],
-            layout: { width: 'half' }
-          },
-          {
-            id: 'housingStatus',
-            type: 'select',
-            label: 'Housing Status',
-            options: [
-              { value: 'own_mortgage', label: 'Own with Mortgage' },
-              { value: 'own_free', label: 'Own Free and Clear' },
-              { value: 'rent', label: 'Rent' },
-              { value: 'live_family', label: 'Live with Family' }
-            ],
-            validation: [validators.required],
-            layout: { width: 'half' }
-          },
-          {
-            id: 'monthlyHousing',
-            type: 'slider',
-            label: 'Monthly Housing Payment',
-            min: 0,
-            max: 5000,
-            step: 50,
-            unit: '$',
-            showTooltip: true,
-            validation: [validators.required],
-            layout: { width: 'full' }
-          },
-          {
-            id: 'monthlyDebt',
-            type: 'slider',
-            label: 'Other Monthly Debt Payments',
-            min: 0,
-            max: 3000,
-            step: 25,
-            unit: '$',
-            showTooltip: true,
-            helpText: 'Credit cards, auto loans, student loans, etc.',
-            validation: [validators.required],
-            layout: { width: 'full' }
-          },
-          {
-            id: 'bankAccount',
-            type: 'text',
-            label: 'Primary Bank Account Number',
-            placeholder: '123456789012',
-            validation: [validators.required, validators.bankAccount],
-            layout: { width: 'half' }
-          },
-          {
-            id: 'routingNumber',
-            type: 'text',
-            label: 'Bank Routing Number',
-            placeholder: '021000021',
-            validation: [validators.required, validators.routingNumber],
-            layout: { width: 'half' }
-          }
-        ]
-      }
-    },
-    {
-      id: 'loan_details',
-      title: 'Loan Details',
-      description: 'Amount and purpose',
-      icon: 'dollar',
-      schema: {
-        title: 'Loan Requirements',
-        description: 'Specify your loan amount and how you plan to use it',
-        fields: [
-          {
-            id: 'loanAmount',
-            type: 'slider',
-            label: 'Loan Amount Requested',
-            min: 1000,
-            max: 50000,
-            step: 500,
-            unit: '$',
-            showTooltip: true,
-            showMarkers: true,
-            markers: [
-              { value: 1000, label: '$1K' },
-              { value: 10000, label: '$10K' },
-              { value: 25000, label: '$25K' },
-              { value: 50000, label: '$50K' }
-            ],
-            validation: [validators.required, validators.minValue(1000), validators.maxValue(50000)],
-            layout: { width: 'full' }
-          },
-          {
-            id: 'loanPurpose',
-            type: 'select',
-            label: 'Primary Loan Purpose',
-            options: [
-              { value: 'debt_consolidation', label: 'Debt Consolidation' },
-              { value: 'home_improvement', label: 'Home Improvement' },
-              { value: 'major_purchase', label: 'Major Purchase' },
-              { value: 'medical', label: 'Medical Expenses' },
-              { value: 'vacation', label: 'Vacation' },
-              { value: 'wedding', label: 'Wedding' },
-              { value: 'business', label: 'Business Investment' },
-              { value: 'other', label: 'Other' }
-            ],
-            validation: [validators.required],
-            layout: { width: 'half' }
-          },
-          {
-            id: 'loanTerm',
-            type: 'select',
-            label: 'Preferred Loan Term',
-            options: [
-              { value: '24', label: '24 months' },
-              { value: '36', label: '36 months' },
-              { value: '48', label: '48 months' },
-              { value: '60', label: '60 months' }
-            ],
-            validation: [validators.required],
-            layout: { width: 'half' }
-          },
-          {
-            id: 'urgency',
-            type: 'select',
-            label: 'When do you need the funds?',
-            options: [
-              { value: 'asap', label: 'As soon as possible' },
-              { value: 'week', label: 'Within a week' },
-              { value: 'month', label: 'Within a month' },
-              { value: 'flexible', label: 'Timeline is flexible' }
-            ],
-            validation: [validators.required],
-            layout: { width: 'full' }
-          }
-        ]
-      }
-    },
-    {
-      id: 'review_submit',
-      title: 'Review & Submit',
-      description: 'Final confirmation',
-      icon: 'check',
-      schema: {
-        title: 'Application Review',
-        description: 'Review your information and submit your application',
-        fields: [
-          {
-            id: 'creditCheck',
-            type: 'checkbox',
-            label: 'I authorize a credit check to be performed',
-            validation: [validators.required],
-            layout: { width: 'full' }
-          },
-          {
-            id: 'termsAccepted',
-            type: 'checkbox',
-            label: 'I agree to the terms and conditions',
-            validation: [validators.required],
-            layout: { width: 'full' }
-          },
-          {
-            id: 'accurateInfo',
-            type: 'checkbox',
-            label: 'I certify that all information provided is accurate',
-            validation: [validators.required],
-            layout: { width: 'full' }
-          },
-          {
-            id: 'electronicSignature',
-            type: 'text',
-            label: 'Electronic Signature (Type your full name)',
-            placeholder: 'John Smith',
-            validation: [validators.required],
-            layout: { width: 'full' }
-          }
-        ]
-      }
-    }
-  ];
-};
-
-// Cross-step validation logic - reusable for any application
-const createCrossStepValidation = () => [
-  {
-    id: 'income_loan_ratio',
-    name: 'Income vs Loan Amount',
-    validate: (data) => {
-      if (!data.monthlyIncome || !data.loanAmount) return { valid: true };
-      const annualIncome = data.monthlyIncome * 12;
-      const maxLoan = annualIncome * 0.4; // 40% rule
-      return {
-        valid: data.loanAmount <= maxLoan,
-        message: data.loanAmount > maxLoan 
-          ? `Loan amount ($${data.loanAmount.toLocaleString()}) exceeds 40% of annual income ($${maxLoan.toLocaleString()})`
-          : 'Loan amount within income guidelines',
-        severity: data.loanAmount > maxLoan ? 'error' : 'success',
-        confidence: data.loanAmount <= maxLoan ? 95 : 25,
-        affectedSteps: [1, 3]
-      };
-    }
-  },
-  {
-    id: 'debt_to_income',
-    name: 'Debt-to-Income Ratio',
-    validate: (data) => {
-      if (!data.monthlyIncome || !data.loanAmount || !data.loanTerm) return { valid: true };
-      const totalIncome = data.monthlyIncome + (data.additionalIncome || 0);
-      const currentDebt = (data.monthlyHousing || 0) + (data.monthlyDebt || 0);
-      const newPayment = data.loanAmount / parseInt(data.loanTerm);
-      const totalDebt = currentDebt + newPayment;
-      const dtiRatio = totalDebt / totalIncome;
-      
-      return {
-        valid: dtiRatio <= 0.43,
-        message: `Total DTI: ${Math.round(dtiRatio * 100)}% ${dtiRatio <= 0.43 ? '(Acceptable)' : '(Exceeds 43% limit)'}`,
-        severity: dtiRatio <= 0.43 ? 'success' : 'error',
-        confidence: dtiRatio <= 0.43 ? 90 : 20,
-        affectedSteps: [1, 2, 3],
-        metrics: {
-          currentDTI: Math.round((currentDebt / totalIncome) * 100),
-          newDTI: Math.round(dtiRatio * 100),
-          monthlyPayment: Math.round(newPayment)
-        }
-      };
-    }
-  },
-  {
-    id: 'employment_stability',
-    name: 'Employment Stability',
-    validate: (data) => {
-      if (!data.employmentStatus || !data.loanAmount || !data.yearsAtJob) return { valid: true };
-      
-      const isEmployed = ['employed_full', 'employed_part'].includes(data.employmentStatus);
-      const isSelfEmployed = data.employmentStatus === 'self_employed';
-      const isLargeAmount = data.loanAmount > 15000;
-      
-      let minYears = 1;
-      if (isLargeAmount) {
-        minYears = isEmployed ? 2 : isSelfEmployed ? 3 : 1;
-      }
-      
-      return {
-        valid: data.yearsAtJob >= minYears,
-        message: data.yearsAtJob >= minYears 
-          ? 'Employment stability meets requirements'
-          : `Need ${minYears} years for ${data.employmentStatus.replace('_', ' ')} status with $${data.loanAmount.toLocaleString()} loan`,
-        severity: data.yearsAtJob >= minYears ? 'success' : 'warning',
-        confidence: data.yearsAtJob >= minYears ? 85 : 50,
-        affectedSteps: [1, 3]
-      };
-    }
-  },
-  {
-    id: 'signature_validation',
-    name: 'Signature Verification',
-    validate: (data) => {
-      if (!data.electronicSignature || !data.firstName || !data.lastName) return { valid: true };
-      const expectedSignature = `${data.firstName} ${data.lastName}`.toLowerCase();
-      const actualSignature = data.electronicSignature.toLowerCase().trim();
-      
-      return {
-        valid: actualSignature === expectedSignature,
-        message: actualSignature === expectedSignature 
-          ? 'Signature matches applicant name'
-          : `Signature must match: ${data.firstName} ${data.lastName}`,
-        severity: actualSignature === expectedSignature ? 'success' : 'error',
-        confidence: actualSignature === expectedSignature ? 100 : 0,
-        affectedSteps: [0, 4]
-      };
-    }
-  }
-];
-
-// Main template with mobile-responsive design
-const Template = (args) => ({
+// Main template using flat configuration structure
+const Template = () => ({
   components: { StateTransitionVisualizer, DynamicFormRenderer, MSlider },
   setup() {
-    const steps = createLoanApplicationSteps();
-    const validators = createCrossStepValidation();
-    const currentStepIndex = ref(0);
-    const completedSteps = ref(new Set());
-    const stepProgress = ref({});
-    const validationResults = ref([]);
-    const isMobile = ref(window.innerWidth < 768);
+    // Use the flat configuration from formConfigs.js
+    const formSchema = personalLoanFormConfig;
+    const stateConfig = loanApplicationStates;
     
-    // Storage with mobile-friendly configuration
+    // Initialize form renderer with flat config
+    const {
+      formData,
+      errors,
+      isFormValid,
+      validateField,
+      validateForm,
+      submitForm,
+      resetForm,
+      exportForm,
+      importForm
+    } = useDynamicFormRenderer({
+      schema: formSchema,
+      autoSave: true,
+      storageKey: 'personal-loan-application'
+    });
+    
+    // Initialize storage engine
     const storage = useStorageEngine({
       storageType: 'localStorage',
+      key: 'loan-app-storage',
       autoSave: true,
-      autoSaveInterval: 2000,
-      encryption: true,
-      versioning: true,
-      keyPrefix: 'personal_loan_app_'
+      encryption: false
     });
     
-    // Form renderer
-    const formRenderer = useDynamicFormRenderer({
-      storage,
-      autoSave: true,
-      realTimeValidation: true
-    });
+    // Current step tracking
+    const currentStep = ref(1);
+    const totalSteps = computed(() => formSchema.sections.length);
     
-    // Mobile detection
-    const updateMobileStatus = () => {
-      isMobile.value = window.innerWidth < 768;
-    };
-    
-    window.addEventListener('resize', updateMobileStatus);
-    
-    // Load current step
-    const loadCurrentStep = async () => {
-      const currentStep = steps[currentStepIndex.value];
-      await formRenderer.loadSchema(currentStep.schema);
-    };
-    
-    // Validation with metrics
-    const runValidation = () => {
-      const data = storage.exportData();
-      validationResults.value = [];
+    // Real-time calculations using flat data structure
+    const calculations = computed(() => {
+      const loanAmount = formData.loanAmount || 15000;
+      const loanTerm = formData.loanTerm || 36;
+      const monthlyIncome = formData.monthlyIncome || 5000;
+      const monthlyExpenses = formData.monthlyExpenses || 3000;
+      const creditScore = formData.creditScore || 720;
+      const debtToIncome = formData.debtToIncome || 25;
       
-      validators.forEach(validator => {
-        const result = validator.validate(data);
-        validationResults.value.push({
-          id: validator.id,
-          name: validator.name,
-          ...result
-        });
+      // Monthly payment calculation
+      const annualRate = 0.085; // 8.5% APR
+      const monthlyRate = annualRate / 12;
+      let monthlyPayment = 0;
+      
+      if (monthlyRate === 0) {
+        monthlyPayment = loanAmount / loanTerm;
+      } else {
+        const numerator = loanAmount * monthlyRate * Math.pow(1 + monthlyRate, loanTerm);
+        const denominator = Math.pow(1 + monthlyRate, loanTerm) - 1;
+        monthlyPayment = numerator / denominator;
+      }
+      
+      const totalInterest = (monthlyPayment * loanTerm) - loanAmount;
+      const totalAmount = loanAmount + totalInterest;
+      const availableIncome = monthlyIncome - monthlyExpenses;
+      const paymentToIncomeRatio = (monthlyPayment / monthlyIncome) * 100;
+      
+      // Approval likelihood calculation
+      let approvalScore = 0;
+      
+      // Credit score impact (40%)
+      if (creditScore >= 750) approvalScore += 40;
+      else if (creditScore >= 650) approvalScore += 30;
+      else if (creditScore >= 500) approvalScore += 20;
+      else approvalScore += 10;
+      
+      // Income stability (30%)
+      if (monthlyIncome >= 8000) approvalScore += 30;
+      else if (monthlyIncome >= 5000) approvalScore += 25;
+      else if (monthlyIncome >= 3000) approvalScore += 15;
+      else approvalScore += 5;
+      
+      // Debt-to-income ratio (30%)
+      if (debtToIncome <= 20) approvalScore += 30;
+      else if (debtToIncome <= 35) approvalScore += 20;
+      else if (debtToIncome <= 45) approvalScore += 10;
+      else approvalScore += 0;
+      
+      const approvalLikelihood = Math.min(approvalScore, 100);
+      
+      return {
+        monthlyPayment,
+        totalInterest,
+        totalAmount,
+        availableIncome,
+        paymentToIncomeRatio,
+        approvalLikelihood,
+        creditRating: creditScore >= 750 ? 'Excellent' : 
+                     creditScore >= 650 ? 'Good' : 
+                     creditScore >= 500 ? 'Fair' : 'Poor'
+      };
+    });
+    
+    // Step navigation
+    const nextStep = () => {
+      if (currentStep.value < totalSteps.value) {
+        currentStep.value++;
+      }
+    };
+    
+    const prevStep = () => {
+      if (currentStep.value > 1) {
+        currentStep.value--;
+      }
+    };
+    
+    const goToStep = (step) => {
+      if (step >= 1 && step <= totalSteps.value) {
+        currentStep.value = step;
+      }
+    };
+    
+    // Current section based on step
+    const currentSection = computed(() => {
+      return formSchema.sections.find(section => section.step === currentStep.value);
+    });
+    
+    // Step validation
+    const isCurrentStepValid = computed(() => {
+      if (!currentSection.value) return false;
+      
+      return currentSection.value.fields.every(field => {
+        if (!field.required) return true;
+        const value = formData[field.id];
+        return value !== undefined && value !== null && value !== '';
       });
-    };
+    });
     
-    // Navigation
-    const goToStep = async (stepIndex) => {
-      if (stepIndex >= 0 && stepIndex < steps.length) {
-        currentStepIndex.value = stepIndex;
-        await loadCurrentStep();
-        runValidation();
-      }
-    };
-    
-    const nextStep = async () => {
-      const isValid = await formRenderer.validateForm();
-      if (isValid) {
-        completedSteps.value.add(currentStepIndex.value);
-        stepProgress.value[currentStepIndex.value] = 100;
-        
-        if (currentStepIndex.value < steps.length - 1) {
-          await goToStep(currentStepIndex.value + 1);
-          stepProgress.value[currentStepIndex.value] = 0;
-        }
-      }
-    };
-    
-    const prevStep = async () => {
-      if (currentStepIndex.value > 0) {
-        await goToStep(currentStepIndex.value - 1);
-      }
-    };
-    
-    // Submission
-    const submitApplication = async () => {
-      const isValid = await formRenderer.validateForm();
-      runValidation();
+    // Form submission handler
+    const handleSubmit = async () => {
+      const isValid = await validateForm();
+      if (!isValid) return;
       
-      const hasErrors = validationResults.value.some(v => v.severity === 'error');
-      
-      if (isValid && !hasErrors) {
-        const applicationData = storage.exportData();
+      try {
+        const result = await submitForm(async (data) => {
+          // Simulate API submission
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          return {
+            id: `LOAN-${Date.now()}`,
+            status: 'submitted',
+            approvalLikelihood: calculations.value.approvalLikelihood,
+            estimatedDecision: '2-3 business days',
+            referenceNumber: `REF-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+          };
+        });
         
-        // Calculate qualification metrics
-        const monthlyPayment = applicationData.loanAmount / parseInt(applicationData.loanTerm);
-        const totalIncome = applicationData.monthlyIncome + (applicationData.additionalIncome || 0);
-        const totalDebt = (applicationData.monthlyHousing || 0) + (applicationData.monthlyDebt || 0) + monthlyPayment;
-        const dtiRatio = totalDebt / totalIncome;
-        
-        const result = {
-          success: true,
-          applicationId: `PL-${Date.now()}`,
-          submittedAt: new Date().toISOString(),
-          qualification: {
-            status: dtiRatio <= 0.36 ? 'Pre-approved' : dtiRatio <= 0.43 ? 'Under Review' : 'Additional Documentation Required',
-            monthlyPayment: Math.round(monthlyPayment),
-            dtiRatio: Math.round(dtiRatio * 100),
-            estimatedRate: dtiRatio <= 0.36 ? '6.99%' : '8.99%'
-          },
-          nextSteps: [
-            'Document verification',
-            'Final credit check',
-            'Loan decision within 24 hours'
-          ]
-        };
-        
-        console.log('Personal Loan Application:', result);
-        return result;
-      }
-      
-      return { success: false, errors: validationResults.value.filter(v => v.severity === 'error') };
-    };
-    
-    // Event handlers
-    const handleVisualizerStepClick = (stepIndex) => {
-      if (completedSteps.value.has(stepIndex) || stepIndex <= currentStepIndex.value) {
-        goToStep(stepIndex);
+        console.log('Application submitted:', result);
+      } catch (error) {
+        console.error('Submission failed:', error);
       }
     };
     
-    const handleVisualizerActionClick = (action) => {
-      if (action.id === 'save') {
-        console.log('Saving application:', storage.exportData());
-      } else if (action.id === 'export') {
-        const data = storage.exportData();
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'personal-loan-application.json';
-        a.click();
-        URL.revokeObjectURL(url);
-      }
-    };
-    
-    // Watch for form changes
-    watch(() => storage.exportData(), (data) => {
-      const currentFields = steps[currentStepIndex.value].schema.fields;
-      const completedFields = currentFields.filter(field => data[field.id]).length;
-      const progress = (completedFields / currentFields.length) * 100;
-      stepProgress.value[currentStepIndex.value] = Math.round(progress);
-      
-      runValidation();
-    }, { deep: true });
-    
-    // Initialize
-    loadCurrentStep();
-    
-    // Computed properties
-    const currentStep = computed(() => steps[currentStepIndex.value]);
-    const canProceed = computed(() => completedSteps.value.has(currentStepIndex.value));
-    const isLastStep = computed(() => currentStepIndex.value === steps.length - 1);
-    const overallProgress = computed(() => {
-      const totalSteps = steps.length;
-      const completedCount = completedSteps.value.size;
-      const currentProgress = stepProgress.value[currentStepIndex.value] || 0;
-      return Math.round(((completedCount + currentProgress / 100) / totalSteps) * 100);
+    // Watch for step changes to update visualization
+    const visualizerStates = computed(() => {
+      return stateConfig.states.map(state => ({
+        ...state,
+        active: state.step === currentStep.value,
+        completed: state.step < currentStep.value,
+        valid: state.step <= currentStep.value ? isCurrentStepValid.value : false
+      }));
     });
     
     return {
-      steps,
-      currentStepIndex,
+      formSchema,
+      formData,
+      errors,
+      isFormValid,
       currentStep,
-      completedSteps,
-      stepProgress,
-      validationResults,
-      isMobile,
-      storage,
-      formRenderer,
-      canProceed,
-      isLastStep,
-      overallProgress,
+      totalSteps,
+      calculations,
       nextStep,
       prevStep,
-      submitApplication,
-      handleVisualizerStepClick,
-      handleVisualizerActionClick,
-      ...formRenderer,
-      ...args
+      goToStep,
+      currentSection,
+      isCurrentStepValid,
+      handleSubmit,
+      visualizerStates,
+      validateField,
+      storage
     };
   },
   template: `
     <div class="min-h-screen bg-gray-50">
-      <!-- Mobile Header -->
-      <div class="lg:hidden bg-white border-b border-gray-200 px-4 py-3">
-        <div class="flex items-center justify-between">
-          <h1 class="text-lg font-semibold text-gray-900">Personal Loan</h1>
-          <div class="text-sm text-gray-500">{{ overallProgress }}% Complete</div>
-        </div>
-        <div class="mt-2 w-full bg-gray-200 rounded-full h-2">
-          <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" :style="{ width: overallProgress + '%' }"></div>
+      <!-- Header -->
+      <div class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 py-6">
+          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h1 class="text-3xl font-bold text-gray-900">{{ formSchema.title }}</h1>
+              <p class="mt-1 text-gray-600">{{ formSchema.description }}</p>
+            </div>
+            <div class="mt-4 lg:mt-0">
+              <div class="flex items-center space-x-4">
+                <div class="text-sm text-gray-500">
+                  Step {{ currentStep }} of {{ totalSteps }}
+                </div>
+                <div class="w-32 bg-gray-200 rounded-full h-2">
+                  <div 
+                    class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                    :style="{ width: (currentStep / totalSteps * 100) + '%' }"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      
-      <div class="max-w-7xl mx-auto px-4 py-4 lg:py-8">
-        <!-- Desktop Header with Visualizer -->
-        <div class="hidden lg:block mb-8">
-          <StateTransitionVisualizer
-            :steps="steps"
-            :current-step="currentStepIndex"
-            :completed-steps="completedSteps"
-            :step-progress="stepProgress"
-            :validation-results="validationResults"
-            theme="light"
-            :compact="false"
-            animation-speed="normal"
-            @step-click="handleVisualizerStepClick"
-            @action-click="handleVisualizerActionClick"
-          />
-        </div>
-        
-        <!-- Mobile Step Indicator -->
-        <div class="lg:hidden mb-6">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-semibold text-gray-900">{{ currentStep.title }}</h2>
-            <span class="text-sm text-gray-500">Step {{ currentStepIndex + 1 }} of {{ steps.length }}</span>
-          </div>
-          <div class="flex space-x-2">
-            <div
-              v-for="(step, index) in steps"
-              :key="step.id"
-              class="flex-1 h-2 rounded-full"
-              :class="{
-                'bg-blue-600': index <= currentStepIndex,
-                'bg-gray-200': index > currentStepIndex
-              }"
-            ></div>
-          </div>
-        </div>
-        
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <!-- Main Form Area -->
+
+      <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <!-- State Visualizer -->
           <div class="lg:col-span-3">
-            <!-- Validation Alerts -->
-            <div v-if="validationResults.some(v => v.severity === 'error')" class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-              <div class="flex items-center mb-2">
-                <svg class="w-5 h-5 text-red-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                </svg>
-                <h3 class="text-red-800 font-medium">Application Issues</h3>
+            <div class="sticky top-8">
+              <StateTransitionVisualizer
+                :states="visualizerStates"
+                :current-state="currentStep"
+                layout="vertical"
+                :show-connections="true"
+                :animated="true"
+                class="mb-6"
+              />
+              
+              <!-- Qualification Preview -->
+              <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Live Qualification</h3>
+                
+                <div class="space-y-4">
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Approval Likelihood</span>
+                    <div class="flex items-center">
+                      <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                        <div 
+                          class="h-2 rounded-full transition-all duration-500"
+                          :class="{
+                            'bg-green-500': calculations.approvalLikelihood >= 70,
+                            'bg-yellow-500': calculations.approvalLikelihood >= 40 && calculations.approvalLikelihood < 70,
+                            'bg-red-500': calculations.approvalLikelihood < 40
+                          }"
+                          :style="{ width: calculations.approvalLikelihood + '%' }"
+                        ></div>
+                      </div>
+                      <span class="text-sm font-medium">{{ Math.round(calculations.approvalLikelihood) }}%</span>
+                    </div>
+                  </div>
+                  
+                  <div class="flex justify-between">
+                    <span class="text-sm text-gray-600">Monthly Payment</span>
+                    <span class="text-sm font-medium">\${{ calculations.monthlyPayment.toFixed(2) }}</span>
+                  </div>
+                  
+                  <div class="flex justify-between">
+                    <span class="text-sm text-gray-600">Payment-to-Income</span>
+                    <span class="text-sm font-medium">{{ calculations.paymentToIncomeRatio.toFixed(1) }}%</span>
+                  </div>
+                  
+                  <div class="flex justify-between">
+                    <span class="text-sm text-gray-600">Credit Rating</span>
+                    <span class="text-sm font-medium">{{ calculations.creditRating }}</span>
+                  </div>
+                </div>
               </div>
-              <ul class="text-red-700 text-sm space-y-1">
-                <li v-for="error in validationResults.filter(v => v.severity === 'error')" :key="error.id">
-                  • {{ error.message }}
-                </li>
-              </ul>
             </div>
-            
-            <!-- Form Content -->
-            <div class="bg-white rounded-lg shadow-sm p-4 lg:p-6 mb-6">
-              <div class="mb-6">
-                <h2 class="text-2xl font-semibold text-gray-900 hidden lg:block">{{ currentStep.title }}</h2>
-                <p class="text-gray-600 mt-1">{{ currentStep.schema.description }}</p>
+          </div>
+
+          <!-- Main Form -->
+          <div class="lg:col-span-6">
+            <div class="bg-white rounded-lg shadow-sm">
+              <div class="p-6 border-b">
+                <h2 class="text-xl font-semibold text-gray-900">{{ currentSection?.title }}</h2>
+                <p class="mt-1 text-gray-600">{{ currentSection?.description }}</p>
               </div>
               
-              <DynamicFormRenderer
-                :schema="schema"
-                :storage-config="{ 
-                  storageType: 'localStorage',
-                  autoSave: true,
-                  encryption: true,
-                  keyPrefix: 'personal_loan_app_'
-                }"
-                :on-submit="isLastStep ? submitApplication : nextStep"
-                class="space-y-4 lg:space-y-6"
-              />
-            </div>
-            
-            <!-- Navigation -->
-            <div class="bg-white rounded-lg shadow-sm p-4 lg:p-6">
-              <div class="flex justify-between items-center">
+              <div class="p-6">
+                <div v-if="currentSection" class="space-y-6">
+                  <div
+                    v-for="field in currentSection.fields"
+                    :key="field.id"
+                    :class="currentSection.layout === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 gap-4' : ''"
+                  >
+                    <!-- Slider Fields -->
+                    <MSlider
+                      v-if="field.type === 'slider'"
+                      v-model="formData[field.id]"
+                      :label="field.label"
+                      :min="field.min"
+                      :max="field.max"
+                      :step="field.step"
+                      :unit="field.unit"
+                      :show-tooltip="field.showTooltip"
+                      :show-markers="field.showMarkers"
+                      :markers="field.markers"
+                      :format-value="field.formatValue"
+                      :help-text="field.helpText"
+                      :error="errors[field.id]"
+                      :required="field.required"
+                      :variant="field.variant"
+                      size="large"
+                      @change="validateField(field.id)"
+                    />
+                    
+                    <!-- Text Fields -->
+                    <div v-else-if="field.type === 'text' || field.type === 'email' || field.type === 'tel'" class="space-y-2">
+                      <label :for="field.id" class="block text-sm font-medium text-gray-700">
+                        {{ field.label }}
+                        <span v-if="field.required" class="text-red-500">*</span>
+                      </label>
+                      <input
+                        :id="field.id"
+                        v-model="formData[field.id]"
+                        :type="field.type"
+                        :placeholder="field.placeholder"
+                        :required="field.required"
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        @blur="validateField(field.id)"
+                      />
+                      <div v-if="errors[field.id]" class="text-sm text-red-600">
+                        {{ errors[field.id] }}
+                      </div>
+                    </div>
+                    
+                    <!-- Date Fields -->
+                    <div v-else-if="field.type === 'date'" class="space-y-2">
+                      <label :for="field.id" class="block text-sm font-medium text-gray-700">
+                        {{ field.label }}
+                        <span v-if="field.required" class="text-red-500">*</span>
+                      </label>
+                      <input
+                        :id="field.id"
+                        v-model="formData[field.id]"
+                        type="date"
+                        :required="field.required"
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        @change="validateField(field.id)"
+                      />
+                      <div v-if="errors[field.id]" class="text-sm text-red-600">
+                        {{ errors[field.id] }}
+                      </div>
+                    </div>
+                    
+                    <!-- Select Fields -->
+                    <div v-else-if="field.type === 'select'" class="space-y-2">
+                      <label :for="field.id" class="block text-sm font-medium text-gray-700">
+                        {{ field.label }}
+                        <span v-if="field.required" class="text-red-500">*</span>
+                      </label>
+                      <select
+                        :id="field.id"
+                        v-model="formData[field.id]"
+                        :required="field.required"
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        @change="validateField(field.id)"
+                      >
+                        <option value="">Select an option</option>
+                        <option
+                          v-for="option in field.options"
+                          :key="option.value"
+                          :value="option.value"
+                        >
+                          {{ option.label }}
+                        </option>
+                      </select>
+                      <div v-if="field.helpText" class="text-sm text-gray-500">
+                        {{ field.helpText }}
+                      </div>
+                      <div v-if="errors[field.id]" class="text-sm text-red-600">
+                        {{ errors[field.id] }}
+                      </div>
+                    </div>
+                    
+                    <!-- Checkbox Fields -->
+                    <div v-else-if="field.type === 'checkbox'" class="flex items-start space-x-3">
+                      <input
+                        :id="field.id"
+                        v-model="formData[field.id]"
+                        type="checkbox"
+                        :required="field.required"
+                        class="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        @change="validateField(field.id)"
+                      />
+                      <div class="flex-1">
+                        <label :for="field.id" class="text-sm font-medium text-gray-700">
+                          {{ field.label }}
+                          <span v-if="field.required" class="text-red-500">*</span>
+                        </label>
+                        <div v-if="field.helpText" class="text-sm text-gray-500">
+                          {{ field.helpText }}
+                        </div>
+                        <div v-if="errors[field.id]" class="text-sm text-red-600">
+                          {{ errors[field.id] }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Navigation -->
+              <div class="px-6 py-4 bg-gray-50 border-t flex justify-between items-center">
                 <button
-                  v-if="currentStepIndex > 0"
+                  v-if="currentStep > 1"
                   @click="prevStep"
-                  class="flex items-center px-4 py-2 lg:px-6 lg:py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                  class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                  </svg>
-                  Back
+                  Previous
                 </button>
                 <div v-else></div>
                 
-                <button
-                  @click="isLastStep ? submitApplication() : nextStep()"
-                  :disabled="!canProceed && !isLastStep"
-                  :class="[
-                    'flex items-center px-4 py-2 lg:px-6 lg:py-3 rounded-lg transition-colors',
-                    canProceed || isLastStep
-                      ? (isLastStep ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white')
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  ]"
-                >
-                  {{ isLastStep ? 'Submit Application' : 'Continue' }}
-                  <svg v-if="!isLastStep" class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
+                <div class="flex space-x-3">
+                  <button
+                    v-if="currentStep < totalSteps"
+                    @click="nextStep"
+                    :disabled="!isCurrentStepValid"
+                    class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Next Step
+                  </button>
+                  <button
+                    v-if="currentStep === totalSteps"
+                    @click="handleSubmit"
+                    :disabled="!isFormValid"
+                    class="px-6 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Submit Application
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-          
-          <!-- Sidebar - Hidden on Mobile -->
-          <div class="hidden lg:block lg:col-span-1 space-y-6">
-            <!-- Qualification Preview -->
-            <div class="bg-white rounded-lg shadow-sm p-4">
-              <h3 class="text-lg font-medium text-gray-900 mb-3">Qualification Preview</h3>
-              <div class="space-y-3">
-                <div v-for="result in validationResults.filter(v => v.metrics)" :key="result.id" class="text-sm">
+
+          <!-- Loan Summary -->
+          <div class="lg:col-span-3">
+            <div class="sticky top-8">
+              <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Loan Summary</h3>
+                
+                <div class="space-y-3">
                   <div class="flex justify-between">
-                    <span class="text-gray-600">Monthly Payment:</span>
-                    <span class="font-medium">\${{ result.metrics?.monthlyPayment?.toLocaleString() }}</span>
+                    <span class="text-gray-600">Loan Amount</span>
+                    <span class="font-medium">\${{ (formData.loanAmount || 15000).toLocaleString() }}</span>
                   </div>
                   <div class="flex justify-between">
-                    <span class="text-gray-600">DTI Ratio:</span>
-                    <span :class="result.metrics?.newDTI <= 36 ? 'text-green-600' : result.metrics?.newDTI <= 43 ? 'text-yellow-600' : 'text-red-600'" class="font-medium">
-                      {{ result.metrics?.newDTI }}%
-                    </span>
+                    <span class="text-gray-600">Term</span>
+                    <span class="font-medium">{{ formData.loanTerm || 36 }} months</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Est. APR</span>
+                    <span class="font-medium">8.5%</span>
+                  </div>
+                  <hr class="my-3">
+                  <div class="flex justify-between text-lg">
+                    <span class="font-medium">Monthly Payment</span>
+                    <span class="font-bold text-blue-600">\${{ calculations.monthlyPayment.toFixed(2) }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Total Interest</span>
+                    <span class="font-medium text-red-600">\${{ calculations.totalInterest.toFixed(2) }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Total Amount</span>
+                    <span class="font-medium">\${{ calculations.totalAmount.toFixed(2) }}</span>
                   </div>
                 </div>
-              </div>
-            </div>
-            
-            <!-- Application Summary -->
-            <div class="bg-white rounded-lg shadow-sm p-4">
-              <h3 class="text-lg font-medium text-gray-900 mb-3">Application Summary</h3>
-              <div class="space-y-2 text-sm">
-                <div class="flex justify-between">
-                  <span class="text-gray-600">Progress:</span>
-                  <span class="font-medium">{{ overallProgress }}%</span>
+                
+                <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                  <div class="flex items-center">
+                    <svg class="w-5 h-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="text-sm font-medium text-blue-900">Rates may vary based on creditworthiness</span>
+                  </div>
                 </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-600">Validation:</span>
-                  <span :class="validationResults.some(v => v.severity === 'error') ? 'text-red-600' : 'text-green-600'" class="font-medium">
-                    {{ validationResults.some(v => v.severity === 'error') ? 'Issues Found' : 'All Good' }}
-                  </span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-600">Auto-save:</span>
-                  <span class="text-green-600 font-medium">Enabled</span>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Live Data -->
-            <div class="bg-white rounded-lg shadow-sm p-4">
-              <h3 class="text-lg font-medium text-gray-900 mb-3">Live Data</h3>
-              <div class="bg-gray-50 rounded p-3 max-h-64 overflow-y-auto">
-                <pre class="text-xs text-gray-700">{{ JSON.stringify(storage.exportData(), null, 2) }}</pre>
               </div>
             </div>
           </div>
@@ -860,10 +508,137 @@ const Template = (args) => ({
 });
 
 export const PersonalLoanApplication = Template.bind({});
-PersonalLoanApplication.args = {};
+PersonalLoanApplication.storyName = 'Complete Application Flow';
 
-export const MobileOptimized = Template.bind({});
-MobileOptimized.parameters = {
+// Mobile-optimized version
+const MobileTemplate = () => ({
+  components: { StateTransitionVisualizer, MSlider },
+  setup() {
+    const formData = reactive({
+      loanAmount: 15000,
+      monthlyIncome: 5000,
+      monthlyExpenses: 3000,
+      creditScore: 720
+    });
+    
+    const calculations = computed(() => {
+      const monthlyPayment = formData.loanAmount * 0.03; // Simplified calculation
+      const availableIncome = formData.monthlyIncome - formData.monthlyExpenses;
+      const paymentRatio = (monthlyPayment / formData.monthlyIncome) * 100;
+      
+      return {
+        monthlyPayment,
+        availableIncome,
+        paymentRatio
+      };
+    });
+    
+    return {
+      formData,
+      calculations
+    };
+  },
+  template: `
+    <div class="max-w-md mx-auto p-4 space-y-6 bg-white min-h-screen">
+      <div class="text-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Quick Loan Check</h1>
+        <p class="text-gray-600">Get instant pre-qualification</p>
+      </div>
+      
+      <MSlider
+        v-model="formData.loanAmount"
+        label="Loan Amount"
+        :min="1000"
+        :max="50000"
+        :step="500"
+        unit="$"
+        :show-tooltip="true"
+        :show-markers="true"
+        :markers="[
+          { value: 1000, label: '$1K' },
+          { value: 10000, label: '$10K' },
+          { value: 25000, label: '$25K' },
+          { value: 50000, label: '$50K' }
+        ]"
+        :format-value="(value) => \`$\${value.toLocaleString()}\`"
+        variant="primary"
+        size="large"
+      />
+      
+      <MSlider
+        v-model="formData.monthlyIncome"
+        label="Monthly Income"
+        :min="1000"
+        :max="15000"
+        :step="250"
+        unit="$"
+        :show-tooltip="true"
+        :format-value="(value) => \`$\${value.toLocaleString()}\`"
+        variant="success"
+        size="large"
+      />
+      
+      <MSlider
+        v-model="formData.monthlyExpenses"
+        label="Monthly Expenses"
+        :min="500"
+        :max="10000"
+        :step="100"
+        unit="$"
+        :show-tooltip="true"
+        :format-value="(value) => \`$\${value.toLocaleString()}\`"
+        variant="danger"
+        size="large"
+      />
+      
+      <MSlider
+        v-model="formData.creditScore"
+        label="Credit Score"
+        :min="300"
+        :max="850"
+        :step="10"
+        :show-tooltip="true"
+        :markers="[
+          { value: 300, label: 'Poor' },
+          { value: 650, label: 'Good' },
+          { value: 750, label: 'Excellent' }
+        ]"
+        :format-value="(value) => {
+          if (value >= 750) return \`\${value} (Excellent)\`;
+          if (value >= 650) return \`\${value} (Good)\`;
+          return \`\${value} (Fair)\`;
+        }"
+        variant="warning"
+        size="large"
+      />
+      
+      <div class="bg-blue-50 rounded-lg p-4">
+        <h3 class="font-medium text-blue-900 mb-3">Instant Assessment</h3>
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between">
+            <span>Est. Monthly Payment:</span>
+            <span class="font-bold">\${{ calculations.monthlyPayment.toFixed(2) }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Available Income:</span>
+            <span>\${{ calculations.availableIncome.toLocaleString() }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Payment Ratio:</span>
+            <span>{{ calculations.paymentRatio.toFixed(1) }}%</span>
+          </div>
+        </div>
+      </div>
+      
+      <button class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+        Start Full Application
+      </button>
+    </div>
+  `
+});
+
+export const MobileQuickCheck = MobileTemplate.bind({});
+MobileQuickCheck.parameters = {
   viewport: {
     defaultViewport: 'mobile1'
   }
