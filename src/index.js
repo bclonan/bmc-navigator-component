@@ -28,6 +28,9 @@ import MTable from './components/tables/MTable.vue';
 import DynamicFormRenderer from './components/dynamic/DynamicFormRenderer.vue';
 import StateTransitionVisualizer from './components/visualization/StateTransitionVisualizer.vue';
 
+// Theming Components
+import MThemeGenerator from './components/theming/MThemeGenerator.vue';
+
 // Stores and Composables
 import { useECFRStore } from './stores/ecfr';
 import { useUIStore } from './stores/ui';
@@ -38,6 +41,7 @@ import { useAdvancedValidation } from './composables/useAdvancedValidation';
 import { useStorageEngine } from './composables/useStorageEngine';
 import { useDynamicFormRenderer } from './composables/useDynamicFormRenderer';
 import { useLoanFlow } from './composables/useLoanFlow';
+import { useTheme, createThemeProvider } from './composables/useTheme';
 
 // Configurations
 import { 
