@@ -3,6 +3,7 @@ import { useDynamicFormRenderer } from '../../composables/useDynamicFormRenderer
 import { useAdvancedValidation } from '../../composables/useAdvancedValidation.js';
 import { useStorageEngine } from '../../composables/useStorageEngine.js';
 import DynamicFormRenderer from '../../components/dynamic/DynamicFormRenderer.vue';
+import StateTransitionVisualizer from '../../components/visualization/StateTransitionVisualizer.vue';
 
 export default {
   title: 'Demo/Complete Loan Application Flow',
