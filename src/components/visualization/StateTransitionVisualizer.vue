@@ -837,24 +837,124 @@ export default {
 
 /* Responsive */
 @media (max-width: 768px) {
+  .state-transition-visualizer {
+    @apply p-3;
+  }
+  
   .step-indicators {
-    @apply flex-col space-y-4;
+    @apply flex-col space-y-6;
+    min-height: auto;
+  }
+  
+  .step-indicator {
+    @apply flex-row items-center space-x-4 max-w-none;
+    flex: none;
+  }
+  
+  .step-circle {
+    @apply mb-0 flex-shrink-0;
+  }
+  
+  .step-label {
+    @apply text-left flex-1;
+  }
+  
+  .step-title {
+    @apply text-base;
+  }
+  
+  .step-subtitle {
+    @apply text-sm;
   }
   
   .connection-line {
-    @apply top-full left-8 w-0.5 h-full;
+    @apply absolute top-full left-8 w-0.5 h-6 bg-gray-200;
+    transform: translateY(-3px);
+  }
+  
+  .connection-line.active .line-progress {
+    @apply h-full w-full;
+    width: 100% !important;
+  }
+  
+  .validation-panel {
+    @apply p-3;
+  }
+  
+  .validation-details {
+    @apply space-y-2;
+  }
+  
+  .validation-item {
+    @apply p-2;
   }
   
   .floating-actions {
     @apply relative top-0 right-0 flex-row space-y-0 space-x-2 justify-center mt-4;
   }
   
+  .floating-action {
+    @apply text-sm px-2 py-1;
+  }
+  
+  .action-icon {
+    @apply w-3 h-3;
+  }
+  
   .progress-metrics {
-    @apply space-x-4;
+    @apply grid grid-cols-3 gap-2;
+  }
+  
+  .metric {
+    @apply text-center;
   }
   
   .metric-value {
-    @apply text-lg;
+    @apply text-base;
+  }
+  
+  .metric-label {
+    @apply text-xs;
+  }
+}
+
+@media (max-width: 480px) {
+  .step-indicator {
+    @apply flex-col items-center space-x-0 space-y-2;
+  }
+  
+  .step-label {
+    @apply text-center;
+  }
+  
+  .validation-header {
+    @apply flex-col space-y-2;
+  }
+  
+  .panel-toggle {
+    @apply self-start;
+  }
+  
+  .floating-actions {
+    @apply flex-col space-x-0 space-y-2;
+  }
+}
+
+/* Touch-friendly enhancements */
+@media (pointer: coarse) {
+  .step-indicator {
+    @apply p-2 -m-2;
+    min-height: 44px;
+  }
+  
+  .floating-action {
+    @apply px-4 py-3;
+    min-height: 44px;
+  }
+  
+  .panel-toggle {
+    @apply px-3 py-2;
+    min-height: 44px;
   }
 }
 </style>
