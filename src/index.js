@@ -94,6 +94,9 @@ const ECFRNavigatorPlugin = {
     // Register Dynamic Forms and Visualization
     app.component('DynamicFormRenderer', DynamicFormRenderer);
     app.component('StateTransitionVisualizer', StateTransitionVisualizer);
+    
+    // Register Theming Components
+    app.component('MThemeGenerator', MThemeGenerator);
   }
 };
 
@@ -139,13 +142,20 @@ export {
   StateTransitionVisualizer
 };
 
+// Export Theming Components
+export {
+  MThemeGenerator
+};
+
 // Export Composables
 export {
   useFormValidation,
   useAdvancedValidation,
   useStorageEngine,
   useDynamicFormRenderer,
-  useLoanFlow
+  useLoanFlow,
+  useTheme,
+  createThemeProvider
 };
 
 // Export Configurations
