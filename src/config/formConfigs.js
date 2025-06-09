@@ -445,6 +445,288 @@ export const mobileConfig = {
   }
 };
 
+// Chart configuration templates
+export const chartConfigs = {
+  loanPerformance: {
+    type: 'line',
+    title: 'Loan Performance Trends',
+    subtitle: 'Monthly application and approval rates',
+    width: 600,
+    height: 400,
+    showGrid: true,
+    showPoints: true,
+    showLegend: true,
+    colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
+    formatters: {
+      x: (value) => `Month ${value}`,
+      y: (value) => value.toLocaleString()
+    }
+  },
+  
+  revenueByType: {
+    type: 'bar',
+    title: 'Revenue by Loan Type',
+    subtitle: 'Quarterly revenue breakdown',
+    width: 500,
+    height: 350,
+    colors: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'],
+    formatters: {
+      y: (value) => `$${(value / 1000000).toFixed(1)}M`
+    }
+  },
+  
+  creditDistribution: {
+    type: 'pie',
+    title: 'Credit Score Distribution',
+    subtitle: 'Customer credit score ranges',
+    width: 500,
+    height: 400,
+    showLegend: true,
+    colors: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444']
+  },
+  
+  dashboardMetrics: {
+    type: 'line',
+    title: 'Key Performance Indicators',
+    subtitle: 'Monthly trends and targets',
+    width: 800,
+    height: 400,
+    showGrid: true,
+    showPoints: true,
+    showLegend: true,
+    colors: ['#3b82f6', '#10b981', '#f59e0b'],
+    formatters: {
+      x: (value) => `Week ${value}`,
+      y: (value) => `${value}%`
+    }
+  }
+};
+
+// Table configuration templates
+export const tableConfigs = {
+  loanApplications: {
+    title: 'Loan Applications',
+    subtitle: 'Manage and review loan applications',
+    selectable: true,
+    showSearch: true,
+    showFilters: true,
+    showPagination: true,
+    showActions: true,
+    showExport: true,
+    pageSize: 10,
+    rowClickable: true,
+    columns: [
+      { key: 'applicantName', label: 'Applicant', sortable: true },
+      { key: 'loanAmount', label: 'Loan Amount', type: 'currency', sortable: true, align: 'right' },
+      { key: 'loanType', label: 'Type', sortable: true },
+      { key: 'creditScore', label: 'Credit Score', type: 'number', sortable: true },
+      { key: 'status', label: 'Status', type: 'status', sortable: true },
+      { key: 'applicationDate', label: 'Applied', type: 'date', sortable: true },
+      { key: 'debtToIncome', label: 'DTI', sortable: true, render: (value) => `${value}%` }
+    ],
+    actions: [
+      { key: 'view', label: 'View', variant: 'primary' },
+      { key: 'approve', label: 'Approve', variant: 'success' },
+      { key: 'reject', label: 'Reject', variant: 'danger' }
+    ],
+    filterOptions: [
+      {
+        key: 'status',
+        label: 'Filter by Status',
+        options: [
+          { value: 'approved', label: 'Approved' },
+          { value: 'pending', label: 'Pending' },
+          { value: 'rejected', label: 'Rejected' }
+        ]
+      },
+      {
+        key: 'loanType',
+        label: 'Filter by Type',
+        options: [
+          { value: 'Personal', label: 'Personal' },
+          { value: 'Auto', label: 'Auto' },
+          { value: 'Mortgage', label: 'Mortgage' },
+          { value: 'Business', label: 'Business' },
+          { value: 'Student', label: 'Student' }
+        ]
+      }
+    ]
+  },
+  
+  customerPortfolio: {
+    title: 'Customer Portfolio',
+    subtitle: 'Manage customer accounts and loan portfolios',
+    selectable: true,
+    showSearch: true,
+    showFilters: true,
+    showPagination: false,
+    showActions: true,
+    showExport: true,
+    rowClickable: true,
+    columns: [
+      { key: 'customerName', label: 'Customer', sortable: true },
+      { key: 'totalLoans', label: 'Loans', type: 'number', sortable: true, align: 'center' },
+      { key: 'outstandingBalance', label: 'Outstanding', type: 'currency', sortable: true, align: 'right' },
+      { key: 'monthlyPayment', label: 'Monthly Payment', type: 'currency', sortable: true, align: 'right' },
+      { key: 'creditScore', label: 'Credit Score', type: 'number', sortable: true },
+      { key: 'riskLevel', label: 'Risk', sortable: true },
+      { key: 'status', label: 'Status', type: 'status', sortable: true },
+      { key: 'lastPayment', label: 'Last Payment', type: 'date', sortable: true }
+    ],
+    actions: [
+      { key: 'details', label: 'Details', variant: 'primary' },
+      { key: 'contact', label: 'Contact', variant: 'secondary' },
+      { key: 'restructure', label: 'Restructure', variant: 'warning' }
+    ],
+    filterOptions: [
+      {
+        key: 'status',
+        label: 'Filter by Status',
+        options: [
+          { value: 'active', label: 'Active' },
+          { value: 'delinquent', label: 'Delinquent' },
+          { value: 'inactive', label: 'Inactive' }
+        ]
+      },
+      {
+        key: 'riskLevel',
+        label: 'Filter by Risk',
+        options: [
+          { value: 'Low', label: 'Low Risk' },
+          { value: 'Medium', label: 'Medium Risk' },
+          { value: 'High', label: 'High Risk' }
+        ]
+      }
+    ]
+  },
+  
+  dashboardMetrics: {
+    title: 'Key Performance Metrics',
+    subtitle: 'Monthly performance indicators and targets',
+    selectable: false,
+    showSearch: false,
+    showFilters: false,
+    showPagination: false,
+    showActions: false,
+    showExport: true,
+    rowClickable: false,
+    columns: [
+      { key: 'metric', label: 'Metric', sortable: false },
+      { key: 'thisMonth', label: 'This Month', sortable: true, align: 'right' },
+      { key: 'lastMonth', label: 'Last Month', sortable: true, align: 'right' },
+      { key: 'change', label: 'Change', sortable: true, align: 'right' },
+      { key: 'target', label: 'Target', sortable: true, align: 'right' }
+    ]
+  }
+};
+
+// Financial dashboard configuration combining charts and tables
+export const dashboardConfig = {
+  title: 'Financial Services Dashboard',
+  description: 'Comprehensive loan portfolio management and analytics',
+  layout: 'grid',
+  sections: [
+    {
+      id: 'overview_charts',
+      title: 'Performance Overview',
+      type: 'charts',
+      layout: 'grid-2',
+      charts: [
+        {
+          id: 'monthly_revenue',
+          config: chartConfigs.revenueByType,
+          dataSource: 'monthly_revenue'
+        },
+        {
+          id: 'credit_distribution',
+          config: chartConfigs.creditDistribution,
+          dataSource: 'credit_scores'
+        }
+      ]
+    },
+    {
+      id: 'trend_analysis',
+      title: 'Trend Analysis',
+      type: 'charts',
+      layout: 'full-width',
+      charts: [
+        {
+          id: 'loan_performance',
+          config: chartConfigs.loanPerformance,
+          dataSource: 'loan_trends'
+        }
+      ]
+    },
+    {
+      id: 'applications_table',
+      title: 'Recent Applications',
+      type: 'table',
+      layout: 'full-width',
+      table: {
+        config: tableConfigs.loanApplications,
+        dataSource: 'loan_applications'
+      }
+    },
+    {
+      id: 'portfolio_management',
+      title: 'Portfolio Management',
+      type: 'table',
+      layout: 'full-width',
+      table: {
+        config: tableConfigs.customerPortfolio,
+        dataSource: 'customer_portfolio'
+      }
+    }
+  ]
+};
+
+// Loan application analytics configuration
+export const loanAnalyticsConfig = {
+  title: 'Loan Application Analytics',
+  description: 'Real-time insights and performance tracking',
+  sections: [
+    {
+      id: 'approval_metrics',
+      title: 'Approval Metrics',
+      fields: [
+        {
+          id: 'approval_rate_chart',
+          type: 'chart',
+          chartConfig: chartConfigs.dashboardMetrics,
+          label: 'Approval Rate Trends',
+          dataSource: 'approval_rates'
+        }
+      ]
+    },
+    {
+      id: 'volume_analysis',
+      title: 'Volume Analysis',
+      fields: [
+        {
+          id: 'volume_chart',
+          type: 'chart',
+          chartConfig: chartConfigs.revenueByType,
+          label: 'Loan Volume by Type',
+          dataSource: 'loan_volumes'
+        }
+      ]
+    },
+    {
+      id: 'performance_table',
+      title: 'Performance Metrics',
+      fields: [
+        {
+          id: 'metrics_table',
+          type: 'table',
+          tableConfig: tableConfigs.dashboardMetrics,
+          label: 'Key Performance Indicators',
+          dataSource: 'performance_metrics'
+        }
+      ]
+    }
+  ]
+};
+
 // Export utility function to merge configs
 export function mergeConfig(baseConfig, overrides = {}) {
   return {
@@ -459,4 +741,78 @@ export function mergeConfig(baseConfig, overrides = {}) {
       }))
     }))
   };
+}
+
+// Chart data generator utility
+export function generateChartData(type, options = {}) {
+  const { points = 12, min = 0, max = 100, categories = [] } = options;
+  
+  switch (type) {
+    case 'line':
+      return Array.from({ length: points }, (_, i) => ({
+        x: i + 1,
+        y: Math.floor(Math.random() * (max - min)) + min
+      }));
+    
+    case 'bar':
+      return categories.length > 0 
+        ? categories.map(cat => ({
+            x: cat,
+            y: Math.floor(Math.random() * (max - min)) + min
+          }))
+        : Array.from({ length: points }, (_, i) => ({
+            x: `Category ${i + 1}`,
+            y: Math.floor(Math.random() * (max - min)) + min
+          }));
+    
+    case 'pie':
+      return categories.length > 0
+        ? categories.map(cat => ({
+            x: cat,
+            y: Math.floor(Math.random() * (max - min)) + min
+          }))
+        : Array.from({ length: points }, (_, i) => ({
+            x: `Segment ${i + 1}`,
+            y: Math.floor(Math.random() * (max - min)) + min
+          }));
+    
+    default:
+      return [];
+  }
+}
+
+// Table data generator utility
+export function generateTableData(template, count = 10) {
+  const templates = {
+    loanApplications: () => ({
+      id: `APP-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
+      applicantName: ['John Smith', 'Sarah Johnson', 'Michael Brown', 'Emily Davis'][Math.floor(Math.random() * 4)],
+      email: `user${Date.now()}@email.com`,
+      loanAmount: Math.floor(Math.random() * 50000) + 5000,
+      loanType: ['Personal', 'Auto', 'Mortgage', 'Business'][Math.floor(Math.random() * 4)],
+      creditScore: Math.floor(Math.random() * 300) + 500,
+      status: ['approved', 'pending', 'rejected'][Math.floor(Math.random() * 3)],
+      applicationDate: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      monthlyIncome: Math.floor(Math.random() * 8000) + 3000,
+      debtToIncome: Math.floor(Math.random() * 40) + 20
+    }),
+    
+    customerPortfolio: () => ({
+      id: `CUST-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
+      customerName: ['Alice Johnson', 'Bob Chen', 'Carol Davis', 'Daniel Rodriguez'][Math.floor(Math.random() * 4)],
+      email: `customer${Date.now()}@email.com`,
+      totalLoans: Math.floor(Math.random() * 5) + 1,
+      outstandingBalance: Math.floor(Math.random() * 100000) + 10000,
+      monthlyPayment: Math.floor(Math.random() * 2000) + 200,
+      creditScore: Math.floor(Math.random() * 300) + 500,
+      riskLevel: ['Low', 'Medium', 'High'][Math.floor(Math.random() * 3)],
+      lastPayment: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      status: ['active', 'delinquent', 'inactive'][Math.floor(Math.random() * 3)]
+    })
+  };
+  
+  const generator = templates[template];
+  if (!generator) return [];
+  
+  return Array.from({ length: count }, generator);
 }

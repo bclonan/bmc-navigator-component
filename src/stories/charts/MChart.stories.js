@@ -362,7 +362,7 @@ const FinancialDashboardTemplate = () => ({
   `
 });
 
-export const FinancialDashboard = FinancialDashboard.bind({});
+export const FinancialDashboard = FinancialDashboardTemplate.bind({});
 FinancialDashboard.parameters = {
   layout: 'fullscreen'
 };

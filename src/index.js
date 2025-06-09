@@ -16,11 +16,38 @@ import MLayout from './components/ui/MLayout.vue';
 import MSlider from './components/ui/MSlider.vue';
 import MProgress from './components/ui/MProgress.vue';
 
+// Charts and Tables
+import MChart from './components/charts/MChart.vue';
+import MTable from './components/tables/MTable.vue';
+
+// Dynamic Forms and Visualization
+import DynamicFormRenderer from './components/dynamic/DynamicFormRenderer.vue';
+import StateTransitionVisualizer from './components/visualization/StateTransitionVisualizer.vue';
+
 // Stores and Composables
 import { useECFRStore } from './stores/ecfr';
 import { useUIStore } from './stores/ui';
 import { useECFRNavigator } from './composables/useECFRNavigator';
 import { useECFRNavigatorStore } from './composables/useECFRNavigatorStore';
+import { useFormValidation } from './composables/useFormValidation';
+import { useAdvancedValidation } from './composables/useAdvancedValidation';
+import { useStorageEngine } from './composables/useStorageEngine';
+import { useDynamicFormRenderer } from './composables/useDynamicFormRenderer';
+import { useLoanFlow } from './composables/useLoanFlow';
+
+// Configurations
+import { 
+  personalLoanFormConfig, 
+  loanApplicationStates,
+  chartConfigs,
+  tableConfigs,
+  dashboardConfig,
+  loanAnalyticsConfig,
+  mobileConfig,
+  mergeConfig,
+  generateChartData,
+  generateTableData
+} from './config/formConfigs';
 
 // Create comprehensive plugin
 const ECFRNavigatorPlugin = {
@@ -47,6 +74,14 @@ const ECFRNavigatorPlugin = {
     app.component('MLayout', MLayout);
     app.component('MSlider', MSlider);
     app.component('MProgress', MProgress);
+    
+    // Register Charts and Tables
+    app.component('MChart', MChart);
+    app.component('MTable', MTable);
+    
+    // Register Dynamic Forms and Visualization
+    app.component('DynamicFormRenderer', DynamicFormRenderer);
+    app.component('StateTransitionVisualizer', StateTransitionVisualizer);
   }
 };
 
