@@ -371,13 +371,15 @@ const crossStepValidators = [
 
 // Main template component
 const Template = (args) => ({
-  components: { DynamicFormRenderer },
+  components: { DynamicFormRenderer, StateTransitionVisualizer },
   setup() {
     const { steps } = createLoanApplicationFlow();
     const currentStepIndex = ref(0);
     const completedSteps = ref(new Set());
     const crossStepErrors = ref([]);
     const applicationMetrics = ref({});
+    const stepProgress = ref({});
+    const validationResults = ref([]);
     
     // Storage engine with comprehensive configuration
     const storage = useStorageEngine({
@@ -407,9 +409,21 @@ const Template = (args) => ({
     const validateCrossSteps = () => {
       const allData = storage.exportData();
       crossStepErrors.value = [];
+      validationResults.value = [];
       
       crossStepValidators.forEach(validator => {
         const result = validator.validate(allData);
+        const validationItem = {
+          id: validator.id,
+          name: validator.name,
+          message: result.valid ? 'Validation passed' : result.message,
+          status: result.valid ? 'valid' : 'error',
+          confidence: result.valid ? 95 : 25,
+          affectedSteps: [currentStepIndex.value]
+        };
+        
+        validationResults.value.push(validationItem);
+        
         if (!result.valid) {
           crossStepErrors.value.push({
             id: validator.id,
@@ -501,8 +515,15 @@ const Template = (args) => ({
       }
     };
     
-    // Watch for data changes
-    watch(() => storage.exportData(), validateCrossSteps, { deep: true });
+    // Watch for data changes and update progress
+    watch(() => storage.exportData(), (data) => {
+      const currentFields = steps[currentStepIndex.value].schema.fields;
+      const completedFields = currentFields.filter(field => data[field.id]).length;
+      const progress = (completedFields / currentFields.length) * 100;
+      stepProgress.value[currentStepIndex.value] = Math.round(progress);
+      
+      validateCrossSteps();
+    }, { deep: true });
     
     // Initialize
     loadCurrentStep();
@@ -527,6 +548,28 @@ const Template = (args) => ({
       return applicationMetrics.value.qualification;
     });
     
+    // Handle visualizer events
+    const handleVisualizerStepClick = (stepIndex) => {
+      if (completedSteps.value.has(stepIndex) || stepIndex <= currentStepIndex.value) {
+        goToStep(stepIndex);
+      }
+    };
+
+    const handleVisualizerActionClick = (action) => {
+      if (action.id === 'save') {
+        console.log('Saving application progress:', storage.exportData());
+      } else if (action.id === 'export') {
+        const data = storage.exportData();
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'mariner-loan-application.json';
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    };
+
     return {
       steps,
       currentStep,
@@ -534,6 +577,8 @@ const Template = (args) => ({
       completedSteps,
       crossStepErrors,
       applicationMetrics,
+      stepProgress,
+      validationResults,
       storage,
       formRenderer,
       goToStep,
@@ -546,18 +591,35 @@ const Template = (args) => ({
       allStepsCompleted,
       qualificationStatus,
       crossStepValidators,
+      handleVisualizerStepClick,
+      handleVisualizerActionClick,
       ...formRenderer
     };
   },
   template: `
     <div class="min-h-screen bg-gray-50 py-6">
-      <div class="max-w-5xl mx-auto px-4">
+      <div class="max-w-6xl mx-auto px-4">
+        <!-- Animated State Transition Visualizer -->
+        <StateTransitionVisualizer
+          :steps="steps"
+          :current-step="currentStepIndex"
+          :completed-steps="completedSteps"
+          :step-progress="stepProgress"
+          :validation-results="validationResults"
+          theme="light"
+          :compact="false"
+          animation-speed="normal"
+          @step-click="handleVisualizerStepClick"
+          @action-click="handleVisualizerActionClick"
+          class="mb-6"
+        />
+        
         <!-- Header with Progress -->
         <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
           <div class="flex justify-between items-center mb-4">
             <div>
               <h1 class="text-3xl font-bold text-gray-900">Mariner Finance Loan Application</h1>
-              <p class="text-gray-600 mt-1">Complete multi-step application with real-time validation</p>
+              <p class="text-gray-600 mt-1">Complete multi-step application with real-time validation and animated progress tracking</p>
             </div>
             <div class="text-right">
               <div class="text-2xl font-bold" :class="qualificationStatus === 'Likely Approved' ? 'text-green-600' : qualificationStatus === 'Issues Found' ? 'text-red-600' : 'text-gray-500'">
