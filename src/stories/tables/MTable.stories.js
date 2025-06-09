@@ -2,7 +2,7 @@ import { ref, reactive } from 'vue';
 import MTable from '../../components/tables/MTable.vue';
 
 export default {
-  title: 'Tables/MTable',
+  title: 'Data/Tables/Table',
   component: MTable,
   parameters: {
     layout: 'fullscreen',

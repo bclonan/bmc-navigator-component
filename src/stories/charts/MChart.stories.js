@@ -2,7 +2,7 @@ import { ref, computed } from 'vue';
 import MChart from '../../components/charts/MChart.vue';
 
 export default {
-  title: 'Charts/MChart',
+  title: 'Data/Visualization/Chart',
   component: MChart,
   parameters: {
     docs: {

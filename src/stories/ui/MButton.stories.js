@@ -1,7 +1,7 @@
 import MButton from '../../components/ui/MButton.vue';
 
 export default {
-  title: 'Material UI/MButton',
+  title: 'UI/Actions/Button',
   component: MButton,
   parameters: {
     docs: {
