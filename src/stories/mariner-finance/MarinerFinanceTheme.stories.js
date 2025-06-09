@@ -17,6 +17,39 @@ export default {
       },
     },
   },
+  argTypes: {
+    variant: {
+      control: { type: 'select' },
+      options: ['primary', 'secondary', 'outlined', 'text'],
+      description: 'Button variant style'
+    },
+    size: {
+      control: { type: 'select' },
+      options: ['small', 'medium', 'large'],
+      description: 'Button size'
+    },
+    color: {
+      control: { type: 'select' },
+      options: ['primary', 'secondary', 'success', 'warning', 'error', 'info'],
+      description: 'Button color theme'
+    },
+    disabled: {
+      control: { type: 'boolean' },
+      description: 'Disable button interaction'
+    },
+    loading: {
+      control: { type: 'boolean' },
+      description: 'Show loading state'
+    },
+    fullWidth: {
+      control: { type: 'boolean' },
+      description: 'Make button full width'
+    },
+    text: {
+      control: { type: 'text' },
+      description: 'Button text content'
+    }
+  }
 };
 
 // Brand Colors Showcase
