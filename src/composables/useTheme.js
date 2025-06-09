@@ -1,18 +1,19 @@
 import { ref, reactive, computed, watch } from 'vue';
+import marinerFinanceTheme from '../themes/mariner-finance.js';
 
-// Global theme state
+// Global theme state with Mariner Finance brand colors as default
 const themeState = reactive({
   currentTheme: {
     colors: {
-      primary: '#3b82f6',
-      secondary: '#6b7280',
-      success: '#10b981',
-      warning: '#f59e0b',
+      primary: 'rgb(56, 96, 190)', // Mariner Finance matt-blue
+      secondary: 'rgb(1, 52, 116)', // Mariner Finance tardis-blue
+      success: 'rgb(50, 174, 136)', // Mariner Finance herbal green
+      warning: 'rgb(255, 188, 35)', // Mariner Finance warning yellow
       danger: '#ef4444',
-      background: '#ffffff'
+      background: 'rgb(255, 255, 255)' // Mariner Finance white
     },
     typography: {
-      fontFamily: 'Inter, system-ui, sans-serif',
+      fontFamily: 'Muli, sans-serif', // Mariner Finance brand font
       fontSize: 16,
       lineHeight: 1.5,
       letterSpacing: 0
