@@ -1,255 +1,98 @@
 <template>
-  <div 
-    class="m-card" 
-    :class="[
-      variantClasses,
-      elevationClasses,
-      paddingClasses,
-      roundedClasses,
-      themeClasses,
-      { 'cursor-pointer': clickable },
-      { 'border': outlined },
-      customClass
-    ]"
-    @click="handleClick"
-    :style="customStyles"
-  >
-    <!-- Header Section -->
-    <header v-if="hasHeader" class="m-card-header" :class="headerClasses">
+  <div class="m-card" :class="cardClasses">
+    <!-- Card Header -->
+    <div v-if="$slots.header || title || subtitle" class="card-header" :class="headerClasses">
       <slot name="header">
-        <div v-if="title || subtitle" class="m-card-title-section">
-          <h3 v-if="title" class="m-card-title" :class="titleClasses">{{ title }}</h3>
-          <p v-if="subtitle" class="m-card-subtitle" :class="subtitleClasses">{{ subtitle }}</p>
+        <div class="card-header-content">
+          <div class="card-header-text">
+            <h3 v-if="title" class="card-title">{{ title }}</h3>
+            <p v-if="subtitle" class="card-subtitle">{{ subtitle }}</p>
+          </div>
+          <div v-if="$slots.actions" class="card-header-actions">
+            <slot name="actions"></slot>
+          </div>
         </div>
-      </slot>
-      <div v-if="hasHeaderActions" class="m-card-actions">
-        <slot name="header-actions"></slot>
-      </div>
-    </header>
-
-    <!-- Media Section -->
-    <div v-if="hasMedia" class="m-card-media" :class="mediaClasses">
-      <slot name="media">
-        <img v-if="image" :src="image" :alt="imageAlt" class="w-full h-full object-cover" />
       </slot>
     </div>
 
-    <!-- Content Section -->
-    <div v-if="hasContent" class="m-card-content" :class="contentClasses">
+    <!-- Card Body -->
+    <div class="card-body" :class="bodyClasses">
       <slot></slot>
     </div>
 
-    <!-- Actions Section -->
-    <footer v-if="hasActions" class="m-card-actions" :class="actionsClasses">
-      <slot name="actions"></slot>
-    </footer>
+    <!-- Card Footer -->
+    <div v-if="$slots.footer" class="card-footer" :class="footerClasses">
+      <slot name="footer"></slot>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: 'MCard',
-  
   props: {
+    title: {
+      type: String,
+      default: ''
+    },
+    subtitle: {
+      type: String,
+      default: ''
+    },
     variant: {
       type: String,
       default: 'default',
-      validator: value => ['default', 'outlined', 'filled', 'elevated'].includes(value)
+      validator: value => ['default', 'elevated', 'outlined', 'flat'].includes(value)
     },
-    elevation: {
-      type: [String, Number],
-      default: 1,
-      validator: value => [0, 1, 2, 3, 4, 5, 6, 8, 12, 16, 24].includes(Number(value))
+    size: {
+      type: String,
+      default: 'medium',
+      validator: value => ['small', 'medium', 'large'].includes(value)
     },
     padding: {
       type: String,
-      default: 'md',
-      validator: value => ['none', 'xs', 'sm', 'md', 'lg', 'xl'].includes(value)
-    },
-    rounded: {
-      type: String,
-      default: 'md',
-      validator: value => ['none', 'sm', 'md', 'lg', 'xl', 'full'].includes(value)
-    },
-    theme: {
-      type: String,
-      default: 'light',
-      validator: value => ['light', 'dark'].includes(value)
+      default: 'normal',
+      validator: value => ['none', 'small', 'normal', 'large'].includes(value)
     },
     clickable: {
       type: Boolean,
       default: false
     },
-    outlined: {
-      type: Boolean,
-      default: false
-    },
-    title: {
-      type: String,
-      default: null
-    },
-    subtitle: {
-      type: String,
-      default: null
-    },
-    image: {
-      type: String,
-      default: null
-    },
-    imageAlt: {
-      type: String,
-      default: ''
-    },
     loading: {
       type: Boolean,
       default: false
-    },
-    disabled: {
-      type: Boolean,
-      default: false
-    },
-    customClass: {
-      type: String,
-      default: ''
-    },
-    customStyles: {
-      type: Object,
-      default: () => ({})
     }
   },
 
+  emits: ['click'],
+
   computed: {
-    hasHeader() {
-      return this.$slots.header || this.title || this.subtitle || this.hasHeaderActions;
-    },
-    
-    hasHeaderActions() {
-      return this.$slots['header-actions'];
-    },
-    
-    hasMedia() {
-      return this.$slots.media || this.image;
-    },
-    
-    hasContent() {
-      return this.$slots.default;
-    },
-    
-    hasActions() {
-      return this.$slots.actions;
-    },
-
-    variantClasses() {
-      const variants = {
-        default: 'bg-white',
-        outlined: 'bg-white border-gray-200',
-        filled: 'bg-gray-50',
-        elevated: 'bg-white'
-      };
-      return variants[this.variant] || variants.default;
-    },
-
-    elevationClasses() {
-      if (this.variant === 'outlined') return '';
-      
-      const elevations = {
-        0: 'shadow-none',
-        1: 'shadow-sm',
-        2: 'shadow',
-        3: 'shadow-md',
-        4: 'shadow-lg',
-        5: 'shadow-xl',
-        6: 'shadow-2xl',
-        8: 'shadow-2xl',
-        12: 'shadow-2xl',
-        16: 'shadow-2xl',
-        24: 'shadow-2xl'
-      };
-      return elevations[Number(this.elevation)] || elevations[1];
-    },
-
-    paddingClasses() {
-      const paddings = {
-        none: 'p-0',
-        xs: 'p-2',
-        sm: 'p-3',
-        md: 'p-4',
-        lg: 'p-6',
-        xl: 'p-8'
-      };
-      return paddings[this.padding] || paddings.md;
-    },
-
-    roundedClasses() {
-      const rounded = {
-        none: 'rounded-none',
-        sm: 'rounded-sm',
-        md: 'rounded-md',
-        lg: 'rounded-lg',
-        xl: 'rounded-xl',
-        full: 'rounded-full'
-      };
-      return rounded[this.rounded] || rounded.md;
-    },
-
-    themeClasses() {
-      return {
-        'dark': this.theme === 'dark',
-        'opacity-60 pointer-events-none': this.disabled
-      };
+    cardClasses() {
+      return [
+        `card-${this.variant}`,
+        `card-${this.size}`,
+        {
+          'card-clickable': this.clickable,
+          'card-loading': this.loading
+        }
+      ];
     },
 
     headerClasses() {
-      return [
-        'flex justify-between items-start',
-        this.padding !== 'none' ? 'pb-2' : '',
-        this.theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-      ];
+      return [`card-header-${this.padding}`];
     },
 
-    titleClasses() {
-      return [
-        'text-lg font-semibold',
-        this.theme === 'dark' ? 'text-gray-100' : 'text-gray-900'
-      ];
+    bodyClasses() {
+      return [`card-body-${this.padding}`];
     },
 
-    subtitleClasses() {
-      return [
-        'text-sm mt-1',
-        this.theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-      ];
-    },
-
-    mediaClasses() {
-      return [
-        'overflow-hidden',
-        this.hasHeader && this.padding !== 'none' ? 'mt-2' : '',
-        this.hasContent && this.padding !== 'none' ? 'mb-2' : ''
-      ];
-    },
-
-    contentClasses() {
-      return [
-        this.theme === 'dark' ? 'text-gray-200' : 'text-gray-700',
-        this.hasHeader && this.padding !== 'none' ? 'pt-2' : '',
-        this.hasActions && this.padding !== 'none' ? 'pb-2' : ''
-      ];
-    },
-
-    actionsClasses() {
-      return [
-        'flex gap-2 items-center',
-        this.padding !== 'none' ? 'pt-3' : '',
-        this.theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
-      ];
+    footerClasses() {
+      return [`card-footer-${this.padding}`];
     }
   },
 
   methods: {
     handleClick(event) {
-      if (this.disabled || this.loading) return;
-      
       if (this.clickable) {
         this.$emit('click', event);
       }
@@ -260,34 +103,95 @@ export default {
 
 <style scoped>
 .m-card {
-  @apply transition-all duration-200 ease-in-out;
+  @apply bg-white rounded-lg overflow-hidden transition-all duration-200;
 }
 
-.m-card.cursor-pointer:hover {
-  @apply transform -translate-y-0.5;
+.card-default {
+  @apply border border-gray-200;
 }
 
-.m-card-header {
-  @apply border-b border-gray-100 last:border-0;
+.card-elevated {
+  @apply shadow-lg border-0;
 }
 
-.m-card.dark .m-card-header {
-  @apply border-gray-700;
+.card-outlined {
+  @apply border-2 border-gray-300;
 }
 
-.m-card-title-section {
+.card-flat {
+  @apply border-0 shadow-none;
+}
+
+.card-clickable {
+  @apply cursor-pointer hover:shadow-lg;
+}
+
+.card-loading {
+  @apply opacity-50 pointer-events-none;
+}
+
+/* Sizes */
+.card-small {
+  @apply text-sm;
+}
+
+.card-medium {
+  @apply text-base;
+}
+
+.card-large {
+  @apply text-lg;
+}
+
+/* Header */
+.card-header {
+  @apply border-b border-gray-200 bg-gray-50;
+}
+
+.card-header-content {
+  @apply flex items-start justify-between;
+}
+
+.card-header-text {
   @apply flex-1;
 }
 
-.m-card-actions {
-  @apply flex-shrink-0;
+.card-title {
+  @apply text-lg font-semibold text-gray-900 m-0;
 }
 
-.m-card-media {
-  @apply relative;
+.card-subtitle {
+  @apply text-sm text-gray-600 mt-1 m-0;
 }
 
-.m-card-content {
+.card-header-actions {
+  @apply ml-4 flex items-center space-x-2;
+}
+
+/* Body */
+.card-body {
   @apply flex-1;
+}
+
+/* Footer */
+.card-footer {
+  @apply border-t border-gray-200 bg-gray-50;
+}
+
+/* Padding variants */
+.card-header-none, .card-body-none, .card-footer-none {
+  @apply p-0;
+}
+
+.card-header-small, .card-body-small, .card-footer-small {
+  @apply p-3;
+}
+
+.card-header-normal, .card-body-normal, .card-footer-normal {
+  @apply p-6;
+}
+
+.card-header-large, .card-body-large, .card-footer-large {
+  @apply p-8;
 }
 </style>
