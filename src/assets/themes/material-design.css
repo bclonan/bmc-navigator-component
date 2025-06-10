@@ -1,0 +1,281 @@
+/* Material Design Theme Variables */
+:root {
+  /* colors */
+  --color-matt-blue: rgb(56, 96, 190);
+  --color-tardis-blue: rgb(1, 52, 116);
+  --color-vulcan: rgb(46, 54, 68);
+  --color-iceberg: rgb(215, 230, 237);
+  --color-way-beyond-the-blue: rgb(25, 118, 210);
+  --color-one-year-of-rain: rgb(39, 69, 92);
+  --color-herbal: rgb(50, 174, 136);
+  --color-ceramic: rgb(249, 255, 250);
+  --color-amazon: rgb(70, 130, 84);
+  --color-hulk: rgb(0, 128, 0);
+  --color-not-yo-cheese: rgb(255, 188, 35);
+  --color-white: rgb(255, 255, 255);
+  --color-doctor: rgb(248, 248, 248);
+  --color-white-smoke: rgb(246, 246, 246);
+  --color-lighthouse: rgb(244, 244, 244);
+  --color-plaster: rgb(233, 233, 233);
+  --color-jupiter: rgb(226, 226, 226);
+  --color-grey-area: rgb(221, 221, 221);
+  --color-desired-dawn: rgb(216, 216, 216);
+  --color-pinball: rgb(209, 209, 209);
+  --color-weathered-stone: rgb(196, 196, 196);
+  --color-dust-to-dust: rgb(187, 187, 187);
+  --color-pigeon: rgb(172, 172, 172);
+  --color-walrus: rgb(158, 158, 158);
+  --color-bank-vault: rgb(118, 118, 118);
+  --color-volcanic-rock: rgb(105, 105, 105);
+  --color-excalibur: rgb(101, 101, 101);
+  --color-zombie: rgb(89, 89, 89);
+  --color-zombie-2: rgb(86, 86, 86);
+  --color-trout: rgb(85, 85, 85);
+  --color-dark-void: rgb(23, 23, 23);
+  --color-black: rgba(0, 0, 0, 0);
+  --color-black-2: rgba(0, 0, 0, 0.5);
+  --color-black-3: rgba(0, 0, 0, 0.12);
+  --color-black-4: rgb(0, 0, 0);
+  --color-black-5: rgba(0, 0, 0, 0.26);
+  --color-black-6: rgba(0, 0, 0, 0.6);
+  --color-black-7: rgba(0, 0, 0, 0.87);
+  --color-black-8: rgba(0, 0, 0, 0.54);
+
+  /* typography */
+  --font-1: normal normal 400 24.608px/36.912px Muli, sans-serif;
+  --font-2: normal normal 400 24px/normal Arial;
+  --font-3: normal normal 400 24px/normal MuliBold, sans-serif;
+  --font-4: normal normal 400 24px/normal Arial;
+  --font-5: normal normal 400 24px/normal Muli, sans-serif;
+  --font-6: normal normal 700 23px/normal Muli, sans-serif;
+  --font-7: normal normal 400 20.8px/normal MuliBold, sans-serif;
+  --font-8: normal normal 400 17.248px/25.872px Muli, sans-serif;
+  --font-9: normal normal 400 17.248px/25.872px Muli, sans-serif;
+  --font-10: normal normal 400 17.248px/25.872px Muli, sans-serif;
+  --font-11: normal normal 400 16px/normal Muli, sans-serif;
+  --font-12: normal normal 400 16px/normal Muli, sans-serif;
+  --font-13: normal normal 400 16px/22px Muli, sans-serif;
+  --font-14: normal normal 400 16px/normal MuliBold, sans-serif;
+  --font-15: normal normal 400 16px/normal Muli, sans-serif;
+  --font-16: normal normal 400 16px/normal Muli, sans-serif;
+  --font-17: normal normal 400 16px/24px Roboto, Helvetica, Arial, sans-serif;
+  --font-18: normal normal 400 16px/normal Muli, sans-serif;
+  --font-19: normal normal 400 16px/normal Muli, sans-serif;
+  --font-20: normal normal 400 16px/23px Muli, sans-serif;
+  --font-21: normal normal 400 16px/normal "Times New Roman";
+  --font-22: normal normal 400 16px/24px Muli, sans-serif;
+  --font-23: normal normal 400 16px/24px Muli, sans-serif;
+  --font-24: normal normal 400 16px/normal Muli, sans-serif;
+  --font-25: normal normal 400 16px/24px Muli, sans-serif;
+  --font-26: normal normal 400 16px/normal Muli, sans-serif;
+  --font-27: normal normal 700 16px/24px Muli, sans-serif;
+  --font-28: normal normal 700 16px/20.8px Muli, sans-serif;
+  --font-29: normal normal 600 16px/normal Muli, sans-serif;
+  --font-30: normal normal 400 16px/normal Muli, sans-serif;
+  --font-31: normal normal 500 16px/normal Muli, sans-serif;
+  --font-32: normal normal 700 16px/normal Muli, sans-serif;
+  --font-33: normal normal 400 16px/17.6px Muli, sans-serif;
+  --font-34: normal normal 400 15.488px/22.264px Muli, sans-serif;
+  --font-35: normal normal 400 15.008px/22.512px Muli, sans-serif;
+  --font-36: normal normal 700 15px/normal Muli, sans-serif;
+  --font-37: normal normal 400 15px/normal MuliBold, sans-serif;
+  --font-38: normal normal 400 14.4px/21.6px Muli, sans-serif;
+  --font-39: normal normal 700 14.4px/14.4px Muli, sans-serif;
+  --font-40: normal normal 700 14.4px/14.4px Muli, sans-serif;
+  --font-41: normal normal 700 14.4px/normal Muli, sans-serif;
+  --font-42: normal normal 400 14.4px/normal Muli, sans-serif;
+  --font-43: normal normal 700 14.4px/14.4px Muli, sans-serif;
+  --font-44: normal normal 700 14px/21px Muli, sans-serif;
+  --font-45: normal normal 400 13.6px/27.2px Muli, sans-serif;
+  --font-46: normal normal 400 13.6px/normal Muli, sans-serif;
+  --font-47: normal normal 400 13.3333px/normal Muli, sans-serif;
+  --font-48: normal normal 700 13.008px/20px Muli, sans-serif;
+  --font-49: normal normal 700 13.008px/16.9104px Muli, sans-serif;
+  --font-50: normal normal 400 13.008px/18.2112px Muli, sans-serif;
+  --font-51: normal normal 400 12.992px/19.488px Muli, sans-serif;
+  --font-52: normal normal 400 12.992px/19.488px Muli, sans-serif;
+  --font-53: normal normal 400 12.992px/normal Muli, sans-serif;
+  --font-54: normal normal 400 12.8px/normal Muli, sans-serif;
+  --font-55: normal normal 400 12px/normal Muli, sans-serif;
+  --font-56: normal normal 700 12px/12px Muli, sans-serif;
+  --font-57: normal normal 400 12px/normal Muli, sans-serif;
+  --font-58: normal normal 400 11.2px/normal Muli, sans-serif;
+
+  /* vertical spacing */
+  --vspace-1: 4%;
+  --vspace-2: 7%;
+  --vspace-3: 1px;
+  --vspace-4: -1px;
+  --vspace-5: 2px;
+  --vspace-6: 3px;
+  --vspace-7: 4px;
+  --vspace-8: 5px;
+  --vspace-9: 0.35em;
+  --vspace-10: 6px;
+  --vspace-11: 7px;
+  --vspace-12: 8px;
+  --vspace-13: 0.5rem;
+  --vspace-14: 10px;
+  --vspace-15: 0.625rem;
+  --vspace-16: 0.7rem;
+  --vspace-17: 11.5px;
+  --vspace-18: 12px;
+  --vspace-19: 13px;
+  --vspace-20: 1em;
+  --vspace-21: 1rem;
+  --vspace-22: 19px;
+  --vspace-23: 5%;
+  --vspace-24: 2%;
+  --vspace-25: 15px;
+  --vspace-26: 1%;
+  --vspace-27: 16px;
+  --vspace-28: 20px;
+  --vspace-29: 24px;
+  --vspace-30: 25px;
+  --vspace-31: 40px;
+  --vspace-32: 45px;
+  --vspace-33: -74px;
+  --vspace-34: 75px;
+  --vspace-35: 250px;
+
+  /* horizontal spacing */
+  --hspace-1: 4%;
+  --hspace-2: 6%;
+  --hspace-3: 0.1ex;
+  --hspace-4: 1px;
+  --hspace-5: -1px;
+  --hspace-6: 2px;
+  --hspace-7: 3px;
+  --hspace-8: 5px;
+  --hspace-9: 7px;
+  --hspace-10: 8px;
+  --hspace-11: 0.5rem;
+  --hspace-12: 10px;
+  --hspace-13: 13px;
+  --hspace-14: 15px;
+  --hspace-15: 16px;
+  --hspace-16: 20px;
+  --hspace-17: 23px;
+  --hspace-18: 24px;
+  --hspace-19: 25px;
+  --hspace-20: 30px;
+  --hspace-21: 35px;
+
+  /* border radii */
+  --border-radius-1: 50%;
+  --border-radius-2: 4px;
+  --border-radius-3: 12px;
+  --border-radius-4: 5px;
+  --border-radius-5: 10px;
+  --border-radius-6: 50px;
+  --border-radius-7: 3px;
+  --border-radius-8: 2px;
+  --border-radius-9: 2.5px;
+  --border-radius-10: 20px;
+  --border-radius-11: 17px;
+  --border-radius-12: 1px;
+
+  /* shadows */
+  --shadow-1: rgba(0, 0, 0, 0.2) 0px 5px 5px -3px, rgba(0, 0, 0, 0.14) 0px 8px 10px 1px, rgba(0, 0, 0, 0.12) 0px 3px 14px 2px;
+  --shadow-2: rgba(0, 0, 0, 0.2) 0px 2px 1px -1px, rgba(0, 0, 0, 0.14) 0px 1px 1px 0px, rgba(0, 0, 0, 0.12) 0px 1px 3px 0px;
+  --shadow-3: rgba(0, 0, 0, 0.2) 0px 3px 1px -2px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
+  --shadow-4: rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 3px 1px -2px, rgba(0, 0, 0, 0.2) 0px 1px 5px 0px;
+  --shadow-5: 0px 0px 0px;
+  --shadow-6: rgb(153, 153, 153) 0px 2px 10px -3px;
+  --shadow-7: rgb(199, 197, 199) 0px 0px 12px 2px;
+  --shadow-8: rgb(199, 197, 199) -3px -3px 5px -2px;
+
+  /* motion */
+  --transition-1: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  --transition-2: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  --transition-3: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  --transition-4: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  --transition-5: width 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  --transition-6: bottom 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  --transition-7: height 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  --transition-8: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  --transition-9: color 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+  --transition-10: transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+  --transition-11: max-width 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+  --transition-12: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  --transition-13: box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  --transition-14: border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  --transition-15: color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  --transition-16: all 0.2s ease 0s;
+  --transition-17: all 0.5s ease 0s;
+  --transition-18: all 0.2s ease-in 0s;
+  --transition-19: all 0.1s ease 0s;
+  --transition-20: all 0.25s ease-out 0s;
+
+  /* Semantic color mappings for components */
+  --primary-color: var(--color-way-beyond-the-blue);
+  --primary-dark: var(--color-tardis-blue);
+  --primary-light: var(--color-matt-blue);
+  --secondary-color: var(--color-herbal);
+  --secondary-dark: var(--color-amazon);
+  --secondary-light: var(--color-ceramic);
+  --accent-color: var(--color-not-yo-cheese);
+  --surface-color: var(--color-white);
+  --background-color: var(--color-doctor);
+  --text-primary: var(--color-black-7);
+  --text-secondary: var(--color-black-8);
+  --text-disabled: var(--color-black-5);
+  --divider-color: var(--color-black-3);
+  --error-color: #f44336;
+  --warning-color: var(--color-not-yo-cheese);
+  --success-color: var(--color-hulk);
+}
+
+/* Material Design Typography Scale */
+.md-headline-1 { font: var(--font-1); color: var(--text-primary); }
+.md-headline-2 { font: var(--font-3); color: var(--text-primary); }
+.md-headline-3 { font: var(--font-6); color: var(--text-primary); }
+.md-headline-4 { font: var(--font-7); color: var(--text-primary); }
+.md-headline-5 { font: var(--font-14); color: var(--text-primary); }
+.md-headline-6 { font: var(--font-27); color: var(--text-primary); }
+.md-subtitle-1 { font: var(--font-17); color: var(--text-primary); }
+.md-subtitle-2 { font: var(--font-32); color: var(--text-primary); }
+.md-body-1 { font: var(--font-22); color: var(--text-primary); }
+.md-body-2 { font: var(--font-25); color: var(--text-secondary); }
+.md-caption { font: var(--font-50); color: var(--text-secondary); }
+.md-overline { font: var(--font-56); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1.25px; }
+
+/* Material Design Elevation */
+.md-elevation-0 { box-shadow: var(--shadow-5); }
+.md-elevation-1 { box-shadow: var(--shadow-2); }
+.md-elevation-2 { box-shadow: var(--shadow-3); }
+.md-elevation-3 { box-shadow: var(--shadow-4); }
+.md-elevation-8 { box-shadow: var(--shadow-1); }
+.md-elevation-12 { box-shadow: var(--shadow-6); }
+.md-elevation-16 { box-shadow: var(--shadow-7); }
+
+/* Utility Classes */
+.md-surface {
+  background-color: var(--surface-color);
+  color: var(--text-primary);
+}
+
+.md-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.md-secondary {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.md-spacing-xs { margin: var(--vspace-8); }
+.md-spacing-sm { margin: var(--vspace-14); }
+.md-spacing-md { margin: var(--vspace-18); }
+.md-spacing-lg { margin: var(--vspace-28); }
+.md-spacing-xl { margin: var(--vspace-31); }
+
+.md-rounded-sm { border-radius: var(--border-radius-8); }
+.md-rounded-md { border-radius: var(--border-radius-2); }
+.md-rounded-lg { border-radius: var(--border-radius-3); }
+.md-rounded-xl { border-radius: var(--border-radius-10); }
+
+.md-transition-fast { transition: var(--transition-19); }
+.md-transition-normal { transition: var(--transition-16); }
+.md-transition-slow { transition: var(--transition-17); }

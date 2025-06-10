@@ -305,86 +305,82 @@ export default {
       if (Array.isArray(this.data) && this.data[0]?.data) {
         return this.data;
       }
+      // If data is not an array or is empty, return empty array
+      if (!Array.isArray(this.data) || !this.data.length) return [];
       return [{ data: this.data, label: 'Data' }];
     },
     
     xExtent() {
-      const allXValues = this.dataSeries.flatMap(series => 
-        series.data.map(d => d.x)
-      );
+      const allXValues = (Array.isArray(this.dataSeries) ? this.dataSeries : [])
+        .flatMap(series => Array.isArray(series.data) ? series.data.map(d => d.x) : []);
+      if (!allXValues.length || allXValues.some(v => typeof v !== 'number' || isNaN(v))) return [0, 1];
       return [Math.min(...allXValues), Math.max(...allXValues)];
     },
     
     yExtent() {
-      const allYValues = this.dataSeries.flatMap(series => 
-        series.data.map(d => d.y)
-      );
+      const allYValues = (Array.isArray(this.dataSeries) ? this.dataSeries : [])
+        .flatMap(series => Array.isArray(series.data) ? series.data.map(d => d.y) : []);
+      if (!allYValues.length || allYValues.some(v => typeof v !== 'number' || isNaN(v))) return [0, 1];
       const min = Math.min(...allYValues);
       const max = Math.max(...allYValues);
-      const padding = (max - min) * 0.1;
+      const padding = (max - min) * 0.1 || 1;
       return [min - padding, max + padding];
     },
     
     xTicks() {
       const [min, max] = this.xExtent;
-      const tickCount = Math.min(8, this.chartData.length);
-      const step = (max - min) / (tickCount - 1);
-      
+      const dataLen = Array.isArray(this.chartData) ? this.chartData.length : 0;
+      const tickCount = Math.max(2, Math.min(8, dataLen));
+      const step = (max - min) / (tickCount - 1 || 1);
       return Array.from({ length: tickCount }, (_, i) => ({
         value: min + i * step,
-        x: (i * step / (max - min)) * this.chartWidth
+        x: (max - min) ? (i * step / (max - min)) * this.chartWidth : 0
       }));
     },
     
     yTicks() {
       const [min, max] = this.yExtent;
       const tickCount = 6;
-      const step = (max - min) / (tickCount - 1);
-      
+      const step = (max - min) / (tickCount - 1 || 1);
       return Array.from({ length: tickCount }, (_, i) => ({
         value: min + i * step,
-        y: this.chartHeight - (i * step / (max - min)) * this.chartHeight
+        y: (max - min) ? this.chartHeight - (i * step / (max - min)) * this.chartHeight : this.chartHeight
       }));
     },
     
     barWidth() {
-      return this.chartWidth / this.chartData.length * 0.8;
+      const dataLen = Array.isArray(this.chartData) ? this.chartData.length : 1;
+      return dataLen ? this.chartWidth / dataLen * 0.8 : 0;
     },
     
     pieSlices() {
       if (this.type !== 'pie') return [];
-      
-      const total = this.chartData.reduce((sum, item) => sum + item.y, 0);
-      let currentAngle = -Math.PI / 2; // Start at top
+      const dataArr = Array.isArray(this.chartData) ? this.chartData : [];
+      const total = dataArr.reduce((sum, item) => sum + (typeof item.y === 'number' ? item.y : 0), 0) || 1;
+      let currentAngle = -Math.PI / 2;
       const radius = Math.min(this.width, this.height) / 2 - 20;
-      
-      return this.chartData.map((item, index) => {
-        const percentage = (item.y / total) * 100;
-        const angle = (item.y / total) * 2 * Math.PI;
+      return dataArr.map((item, index) => {
+        const yVal = typeof item.y === 'number' ? item.y : 0;
+        const percentage = (yVal / total) * 100;
+        const angle = (yVal / total) * 2 * Math.PI;
         const startAngle = currentAngle;
         const endAngle = currentAngle + angle;
-        
         const x1 = Math.cos(startAngle) * radius;
         const y1 = Math.sin(startAngle) * radius;
         const x2 = Math.cos(endAngle) * radius;
         const y2 = Math.sin(endAngle) * radius;
-        
         const largeArcFlag = angle > Math.PI ? 1 : 0;
-        
         const path = [
           'M', 0, 0,
           'L', x1, y1,
           'A', radius, radius, 0, largeArcFlag, 1, x2, y2,
           'Z'
         ].join(' ');
-        
         const labelAngle = startAngle + angle / 2;
         const labelRadius = radius * 0.7;
         const labelX = Math.cos(labelAngle) * labelRadius;
         const labelY = Math.sin(labelAngle) * labelRadius;
-        
         currentAngle = endAngle;
-        
         return {
           path,
           percentage,

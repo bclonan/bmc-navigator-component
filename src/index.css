@@ -3,6 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import Material Design Theme */
+@import './assets/themes/material-design.css';
+
 /* Custom styles for ECFRNavigator components */
 @layer components {
   .ecfr-section {
