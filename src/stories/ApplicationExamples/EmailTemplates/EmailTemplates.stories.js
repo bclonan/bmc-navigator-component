@@ -178,6 +178,33 @@ MarketingPromotionEmail.args = {
   customerName: 'Valued Customer',
 };
 
+EmailTemplateComparison.parameters = {
+  layout: 'fullscreen',
+  docs: {
+    source: {
+      code: `
+<div class="templates-grid">
+  <EmailTemplates
+    template-type="approval"
+    customer-name="Alice Johnson"
+    :loan-amount="25000"
+    :apr="8.99"
+    :monthly-payment="515"
+  />
+  <EmailTemplates
+    template-type="payment-reminder"
+    customer-name="Robert Chen"
+    :payment-amount="485"
+  />
+  <EmailTemplates
+    template-type="marketing"
+    customer-name="Valued Customer"
+  />
+</div>`,
+    },
+  },
+};
+
 export const EmailTemplateComparison = () => ({
   components: { EmailTemplates },
   setup() {
