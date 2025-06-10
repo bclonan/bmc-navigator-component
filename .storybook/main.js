@@ -8,6 +8,9 @@ const config = {
     '@storybook/addon-links',
     '@storybook/addon-essentials', // Includes docs, controls, actions, viewport, backgrounds
     '@storybook/addon-interactions',
+    '@storybook/addon-storysource',
+    'storybook-addon-designs',
+    'storybook-addon-figma',
     {
       name: '@storybook/addon-docs',
       options: {
