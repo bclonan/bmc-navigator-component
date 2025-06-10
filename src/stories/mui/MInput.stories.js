@@ -4,7 +4,7 @@ import MInputLabel from '../../components/mui/MInputLabel.vue';
 import MFormHelperText from '../../components/mui/MFormHelperText.vue';
 
 export default {
-  title: 'MUI Components/Inputs/Input',
+  title: 'Core Components/Form Controls/Input',
   component: MInput,
   parameters: {
     docs: {

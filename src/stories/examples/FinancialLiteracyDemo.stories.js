@@ -8,7 +8,7 @@ import MToolbar from '../../components/mui/MToolbar.vue';
 import MLinearProgress from '../../components/mui/MLinearProgress.vue';
 
 export default {
-  title: 'Examples/Financial Literacy Demo',
+  title: 'Financial Components/Financial Literacy/Educational Tooltips',
   parameters: {
     layout: 'fullscreen',
     docs: {
