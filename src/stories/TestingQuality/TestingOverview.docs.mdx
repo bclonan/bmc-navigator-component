@@ -1,0 +1,124 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Testing & Quality/Testing Overview" />
+
+# Testing & Quality Framework
+
+Comprehensive testing framework for the Mariner Finance component library ensuring accessibility, performance, and reliability across all financial application interfaces.
+
+## Testing Categories
+
+### Accessibility Testing
+- **WCAG 2.1 AA Compliance** - Automated validation with comprehensive coverage
+- **Keyboard Navigation** - Tab order, focus management, and interaction testing
+- **Screen Reader Support** - ARIA labels, live regions, and semantic HTML validation
+- **Color Contrast** - Automated contrast ratio testing for all color combinations
+- **Touch Target Size** - Minimum 44px requirements for mobile accessibility
+
+### Visual Regression Testing
+- **Component Snapshots** - Automated visual comparison across story variations
+- **Responsive Layout** - Testing across mobile, tablet, and desktop viewports
+- **Brand Consistency** - Mariner Finance color and typography validation
+- **State Management** - Visual verification of loading, error, and success states
+
+### Interaction Testing
+- **User Flow Validation** - Complete loan application workflows
+- **Form Validation** - Real-time validation and error handling
+- **Loading States** - Processing indicators and async operation handling
+- **Error Recovery** - Graceful error handling and user guidance
+
+### Performance Testing
+- **Bundle Size Analysis** - Tree-shaking and optimization validation
+- **Rendering Performance** - Component load times and interaction responsiveness
+- **Memory Usage** - Memory leak detection and resource management
+- **Network Efficiency** - Asset loading and caching strategies
+
+## Testing Tools Integration
+
+### Storybook Addons
+- **@storybook/addon-essentials** - Core testing utilities and documentation
+- **@storybook/addon-interactions** - User interaction simulation and testing
+- **@storybook/addon-storysource** - Source code viewing and debugging
+- **@storybook/addon-links** - Navigation and component linking
+
+### Built-in Testing Features
+- **Interactive Controls** - Real-time prop modification and testing
+- **Viewport Testing** - Responsive design validation across device sizes
+- **Background Testing** - Component behavior on different backgrounds
+- **Actions Panel** - Event monitoring and interaction tracking
+
+## Financial Application Testing
+
+### Loan Application Workflows
+- **Multi-step Form Validation** - Progressive disclosure and validation
+- **Financial Calculations** - APR calculations and payment estimations
+- **Risk Assessment** - Debt-to-income ratio calculations and warnings
+- **Data Security** - Secure input handling for sensitive financial information
+
+### Educational Content Testing
+- **Tooltip Integration** - Financial literacy content accessibility
+- **Context Matching** - Appropriate educational content for form fields
+- **Usage Analytics** - Educational engagement tracking and optimization
+- **Content Accuracy** - Financial information validation and updates
+
+### Compliance Testing
+- **PCI DSS Considerations** - Secure payment information handling
+- **Regulatory Compliance** - Financial services regulation adherence
+- **Data Privacy** - GDPR and CCPA compliance validation
+- **Security Standards** - Input sanitization and data protection
+
+## Testing Workflow
+
+### Component Development
+1. **Story Creation** - Comprehensive stories covering all component states
+2. **Accessibility Validation** - Automated WCAG compliance checking
+3. **Visual Testing** - Screenshot comparison and regression detection
+4. **Interaction Testing** - User workflow simulation and validation
+
+### Quality Assurance
+1. **Cross-browser Testing** - Chrome, Firefox, Safari, and Edge compatibility
+2. **Device Testing** - Mobile, tablet, and desktop responsiveness
+3. **Performance Profiling** - Load time and interaction optimization
+4. **Security Review** - Vulnerability scanning and secure coding practices
+
+### Continuous Integration
+1. **Automated Testing** - CI/CD pipeline integration with comprehensive test suites
+2. **Build Validation** - Bundle analysis and optimization verification
+3. **Deployment Testing** - Production environment validation
+4. **Monitoring** - Real-time performance and error tracking
+
+## Testing Best Practices
+
+### Accessibility Standards
+- Test with keyboard-only navigation
+- Validate screen reader compatibility
+- Ensure proper color contrast ratios
+- Verify touch target sizes and spacing
+
+### Financial Context
+- Validate financial calculations and formulas
+- Test secure data handling and encryption
+- Verify regulatory compliance requirements
+- Ensure educational content accuracy
+
+### User Experience
+- Test complete user workflows end-to-end
+- Validate error handling and recovery paths
+- Ensure consistent brand experience
+- Optimize for performance and reliability
+
+## Testing Metrics
+
+### Coverage Targets
+- **Accessibility**: 100% WCAG 2.1 AA compliance
+- **Visual Regression**: 95% automated coverage
+- **Interaction Testing**: All critical user paths validated
+- **Performance**: Sub-3-second load times across all components
+
+### Quality Gates
+- Zero accessibility violations in production
+- 100% visual regression test pass rate
+- Sub-100ms component interaction response times
+- 99.9% uptime for critical financial workflows
+
+This comprehensive testing framework ensures the Mariner Finance component library meets the highest standards for accessibility, performance, and reliability in financial service applications.
