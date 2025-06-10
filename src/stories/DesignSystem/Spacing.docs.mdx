@@ -1,0 +1,199 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Design System/Spacing" />
+
+# Spacing System
+
+The Mariner Finance spacing system provides consistent rhythm and visual hierarchy across all financial application interfaces. Our spacing scale is based on a 4px base unit to ensure precise alignment and optimal usability.
+
+## Base Unit System
+
+**Base Unit**: 4px
+**Scale**: Multiples of 4px for consistent spacing relationships
+
+## Spacing Scale
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+  <div style={{ padding: '1rem', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
+    <div style={{ width: '4px', height: '20px', backgroundColor: 'rgb(56, 96, 190)', marginBottom: '0.5rem' }}></div>
+    <strong>XS - 4px</strong>
+    <p style={{ fontSize: '0.875rem', color: '#666' }}>Micro spacing, fine adjustments</p>
+  </div>
+  
+  <div style={{ padding: '1rem', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
+    <div style={{ width: '8px', height: '20px', backgroundColor: 'rgb(56, 96, 190)', marginBottom: '0.5rem' }}></div>
+    <strong>SM - 8px</strong>
+    <p style={{ fontSize: '0.875rem', color: '#666' }}>Small gaps, icon spacing</p>
+  </div>
+  
+  <div style={{ padding: '1rem', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
+    <div style={{ width: '16px', height: '20px', backgroundColor: 'rgb(56, 96, 190)', marginBottom: '0.5rem' }}></div>
+    <strong>MD - 16px</strong>
+    <p style={{ fontSize: '0.875rem', color: '#666' }}>Default spacing, component padding</p>
+  </div>
+  
+  <div style={{ padding: '1rem', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
+    <div style={{ width: '24px', height: '20px', backgroundColor: 'rgb(56, 96, 190)', marginBottom: '0.5rem' }}></div>
+    <strong>LG - 24px</strong>
+    <p style={{ fontSize: '0.875rem', color: '#666' }}>Section spacing, card padding</p>
+  </div>
+  
+  <div style={{ padding: '1rem', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
+    <div style={{ width: '32px', height: '20px', backgroundColor: 'rgb(56, 96, 190)', marginBottom: '0.5rem' }}></div>
+    <strong>XL - 32px</strong>
+    <p style={{ fontSize: '0.875rem', color: '#666' }}>Large spacing, page margins</p>
+  </div>
+  
+  <div style={{ padding: '1rem', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
+    <div style={{ width: '40px', height: '20px', backgroundColor: 'rgb(56, 96, 190)', marginBottom: '0.5rem' }}></div>
+    <strong>XXL - 40px</strong>
+    <p style={{ fontSize: '0.875rem', color: '#666' }}>Extra large spacing, major sections</p>
+  </div>
+</div>
+
+## Component Spacing Examples
+
+### Form Elements
+<div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', padding: '24px', marginBottom: '2rem', backgroundColor: '#f9f9f9' }}>
+  <div style={{ marginBottom: '16px' }}>
+    <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>Loan Amount</label>
+    <div style={{ border: '2px solid rgb(56, 96, 190)', borderRadius: '4px', padding: '12px 16px', backgroundColor: 'white' }}>
+      $15,000
+    </div>
+    <small style={{ display: 'block', marginTop: '4px', color: '#666' }}>Enter amount between $1,000 - $100,000</small>
+  </div>
+  
+  <div style={{ marginBottom: '16px' }}>
+    <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>Annual Income</label>
+    <div style={{ border: '1px solid #ccc', borderRadius: '4px', padding: '12px 16px', backgroundColor: 'white' }}>
+      $50,000
+    </div>
+  </div>
+</div>
+
+**Spacing Breakdown:**
+- Label to input: 8px (SM)
+- Input padding: 12px vertical, 16px horizontal (MD)
+- Helper text: 4px top margin (XS)
+- Between form fields: 16px (MD)
+
+### Card Layout
+<div style={{ border: '1px solid #e0e0e0', borderRadius: '12px', padding: '24px', marginBottom: '2rem', backgroundColor: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+  <h3 style={{ margin: '0 0 16px 0', color: 'rgb(56, 96, 190)' }}>Loan Application Status</h3>
+  <div style={{ marginBottom: '24px' }}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+      <span>Application Progress</span>
+      <span style={{ fontWeight: 600 }}>75%</span>
+    </div>
+    <div style={{ height: '8px', backgroundColor: '#e0e0e0', borderRadius: '4px' }}>
+      <div style={{ height: '100%', width: '75%', backgroundColor: 'rgb(50, 174, 136)', borderRadius: '4px' }}></div>
+    </div>
+  </div>
+  
+  <div style={{ display: 'flex', gap: '16px' }}>
+    <button style={{ padding: '12px 24px', backgroundColor: 'rgb(56, 96, 190)', color: 'white', border: 'none', borderRadius: '4px' }}>
+      Continue Application
+    </button>
+    <button style={{ padding: '12px 24px', backgroundColor: 'transparent', color: 'rgb(56, 96, 190)', border: '2px solid rgb(56, 96, 190)', borderRadius: '4px' }}>
+      Save for Later
+    </button>
+  </div>
+</div>
+
+**Spacing Breakdown:**
+- Card padding: 24px (LG)
+- Title margin: 16px bottom (MD)
+- Section spacing: 24px (LG)
+- Button gap: 16px (MD)
+- Button padding: 12px vertical, 24px horizontal
+
+### Navigation Spacing
+<div style={{ backgroundColor: 'rgb(56, 96, 190)', color: 'white', padding: '16px 24px', marginBottom: '2rem', borderRadius: '8px' }}>
+  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+      <strong>Mariner Finance</strong>
+      <span style={{ padding: '4px 8px', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: '4px', fontSize: '0.875rem' }}>
+        Dashboard
+      </span>
+    </div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+      <span style={{ padding: '8px', backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        🔔
+      </span>
+      <div style={{ width: '32px', height: '32px', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        JD
+      </div>
+    </div>
+  </div>
+</div>
+
+**Spacing Breakdown:**
+- Navigation padding: 16px vertical, 24px horizontal
+- Element gap: 16px (MD)
+- Icon padding: 8px (SM)
+
+## Financial Application Patterns
+
+### Loan Information Display
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '2rem' }}>
+  <div style={{ textAlign: 'center', padding: '24px', backgroundColor: 'white', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
+    <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'rgb(56, 96, 190)', marginBottom: '8px' }}>$15,000</div>
+    <div style={{ fontSize: '0.875rem', color: '#666' }}>Loan Amount</div>
+  </div>
+  
+  <div style={{ textAlign: 'center', padding: '24px', backgroundColor: 'white', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
+    <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'rgb(50, 174, 136)', marginBottom: '8px' }}>8.99%</div>
+    <div style={{ fontSize: '0.875rem', color: '#666' }}>APR</div>
+  </div>
+  
+  <div style={{ textAlign: 'center', padding: '24px', backgroundColor: 'white', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
+    <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'rgb(1, 52, 116)', marginBottom: '8px' }}>$187</div>
+    <div style={{ fontSize: '0.875rem', color: '#666' }}>Monthly Payment</div>
+  </div>
+</div>
+
+## CSS Custom Properties
+
+```css
+:root {
+  /* Spacing Variables */
+  --mf-spacing-xs: 4px;
+  --mf-spacing-sm: 8px;
+  --mf-spacing-md: 16px;
+  --mf-spacing-lg: 24px;
+  --mf-spacing-xl: 32px;
+  --mf-spacing-xxl: 40px;
+  
+  /* Component Specific Spacing */
+  --mf-component-padding: var(--mf-spacing-md);
+  --mf-section-spacing: var(--mf-spacing-lg);
+  --mf-page-margin: var(--mf-spacing-xl);
+}
+```
+
+## Usage Guidelines
+
+### Consistency Rules
+1. **Always use multiples of 4px** for spacing values
+2. **Maintain visual rhythm** by using consistent spacing patterns
+3. **Scale spacing with component size** - larger components get more padding
+4. **Group related elements** with smaller spacing, separate unrelated elements with larger spacing
+
+### Financial Application Context
+- **Form sections**: 24px spacing between major sections
+- **Input fields**: 16px spacing between fields, 8px for label-to-input
+- **Cards and panels**: 24px internal padding for comfortable reading
+- **Action buttons**: 16px gap between related actions
+- **Navigation elements**: 16px gap for optimal touch targets
+
+### Responsive Considerations
+- **Mobile**: Reduce spacing by 25% for compact layouts
+- **Tablet**: Use standard spacing values
+- **Desktop**: Use standard or increase by 25% for larger screens
+
+### Accessibility
+- **Touch targets**: Minimum 44px for interactive elements
+- **Reading comfort**: 24px line height for optimal readability
+- **Visual separation**: Sufficient spacing to distinguish between sections
+
+This spacing system ensures consistent, professional layouts that enhance the user experience in financial applications while maintaining Mariner Finance's brand standards.

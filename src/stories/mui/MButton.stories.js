@@ -4,10 +4,29 @@ export default {
   title: 'MUI Components/Inputs/Button',
   component: MButton,
   parameters: {
+    layout: 'centered',
     docs: {
       description: {
-        component: 'Material-UI Button component with Mariner Finance brand styling. Supports various variants, sizes, and states for comprehensive user interactions.',
+        component: 'Material-UI Button component with Mariner Finance brand styling. Optimized for financial applications with comprehensive accessibility support, loading states, and interactive controls for testing all variants.',
       },
+      canvas: { sourceState: 'shown' },
+    },
+    a11y: {
+      config: {
+        rules: [
+          { id: 'color-contrast', enabled: true },
+          { id: 'button-name', enabled: true },
+          { id: 'focus-order-semantics', enabled: true },
+          { id: 'keyboard', enabled: true },
+        ],
+      },
+    },
+    backgrounds: {
+      values: [
+        { name: 'mariner-light', value: '#ffffff' },
+        { name: 'mariner-surface', value: '#f4f4f4' },
+        { name: 'financial-green', value: 'rgb(249, 255, 250)' },
+      ],
     },
   },
   argTypes: {

@@ -1,0 +1,112 @@
+import { Meta, ColorPalette, ColorItem } from '@storybook/blocks';
+
+<Meta title="Design System/Colors" />
+
+# Color System
+
+The Mariner Finance color system is built around accessibility, brand consistency, and financial application requirements. Our palette includes primary brand colors, semantic colors for status indication, and neutral tones for optimal readability.
+
+## Brand Colors
+
+<ColorPalette>
+  <ColorItem
+    title="Matt Blue"
+    subtitle="Primary Brand Color"
+    colors={['rgb(56, 96, 190)']}
+  />
+  <ColorItem
+    title="Tardis Blue"
+    subtitle="Secondary Brand Color"
+    colors={['rgb(1, 52, 116)']}
+  />
+  <ColorItem
+    title="Way Beyond Blue"
+    subtitle="Primary Light Variant"
+    colors={['rgb(25, 118, 210)']}
+  />
+  <ColorItem
+    title="One Year of Rain"
+    subtitle="Secondary Light Variant"
+    colors={['rgb(39, 69, 92)']}
+  />
+  <ColorItem
+    title="Vulcan"
+    subtitle="Dark Accent"
+    colors={['rgb(46, 54, 68)']}
+  />
+</ColorPalette>
+
+## Semantic Colors
+
+<ColorPalette>
+  <ColorItem
+    title="Success"
+    subtitle="Herbal Green - Approvals, positive actions"
+    colors={[
+      'rgb(50, 174, 136)',  // Main
+      'rgb(70, 130, 84)',   // Light
+      'rgb(0, 128, 0)'      // Dark
+    ]}
+  />
+  <ColorItem
+    title="Warning"
+    subtitle="Not Yo Cheese - Alerts, attention needed"
+    colors={[
+      'rgb(255, 188, 35)',  // Main
+      'rgb(255, 205, 70)',  // Light
+      'rgb(235, 168, 15)'   // Dark
+    ]}
+  />
+  <ColorItem
+    title="Error"
+    subtitle="Error states, validation failures"
+    colors={[
+      '#f44336',  // Main
+      '#e57373',  // Light
+      '#d32f2f'   // Dark
+    ]}
+  />
+  <ColorItem
+    title="Info"
+    subtitle="Iceberg - Information, neutral states"
+    colors={[
+      'rgb(215, 230, 237)',  // Main
+      'rgb(235, 245, 250)',  // Light
+      'rgb(195, 210, 217)'   // Dark
+    ]}
+  />
+</ColorPalette>
+
+## Background Colors
+
+<ColorPalette>
+  <ColorItem
+    title="Background System"
+    subtitle="Page and component backgrounds"
+    colors={[
+      'rgb(255, 255, 255)',  // White - Default
+      'rgb(248, 248, 248)',  // Doctor - Paper
+      'rgb(246, 246, 246)',  // White Smoke - Subtle
+      'rgb(244, 244, 244)',  // Lighthouse - Surface
+      'rgb(249, 255, 250)'   // Ceramic - Success BG
+    ]}
+  />
+</ColorPalette>
+
+## Usage Guidelines
+
+### Primary Brand Colors
+- **Matt Blue** (`rgb(56, 96, 190)`) - Primary buttons, links, and key UI elements
+- **Tardis Blue** (`rgb(1, 52, 116)`) - Secondary actions, headers, and supporting elements
+
+### Semantic Colors
+- **Herbal Green** - Loan approvals, successful transactions, positive status indicators
+- **Warning Yellow** - Payment due notices, important alerts, caution states
+- **Error Red** - Validation errors, failed transactions, critical alerts
+- **Info Blue** - General information, neutral notifications, help content
+
+### Accessibility Standards
+All color combinations meet WCAG 2.1 AA standards with proper contrast ratios for financial applications.
+
+### Implementation
+Colors are available as CSS custom properties for consistent usage across components.
