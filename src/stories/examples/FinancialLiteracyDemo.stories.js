@@ -13,7 +13,70 @@ export default {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: 'Complete loan application with contextual financial literacy tooltips providing expert insights and educational resources.',
+        component: 'Complete loan application with contextual financial literacy tooltips providing expert insights and educational resources optimized for accessibility and user engagement.',
+      },
+      canvas: { sourceState: 'shown' },
+    },
+    a11y: {
+      config: {
+        rules: [
+          { id: 'color-contrast', enabled: true },
+          { id: 'heading-order', enabled: true },
+          { id: 'landmark-one-main', enabled: true },
+          { id: 'region', enabled: true },
+          { id: 'aria-tooltip-name', enabled: true },
+          { id: 'form-field-multiple-labels', enabled: true },
+        ],
+      },
+    },
+    backgrounds: {
+      default: 'mariner-light',
+      values: [
+        { name: 'mariner-light', value: '#ffffff' },
+        { name: 'mariner-surface', value: '#f4f4f4' },
+        { name: 'financial-green', value: 'rgb(249, 255, 250)' },
+      ],
+    },
+    viewport: {
+      defaultViewport: 'desktop',
+    },
+  },
+  argTypes: {
+    showAnalytics: {
+      control: { type: 'boolean' },
+      description: 'Display usage analytics for educational content engagement',
+      defaultValue: true,
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'true' },
+      },
+    },
+    interactiveMode: {
+      control: { type: 'boolean' },
+      description: 'Enable interactive tooltips with expandable content',
+      defaultValue: true,
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'true' },
+      },
+    },
+    educationLevel: {
+      control: { type: 'select' },
+      options: ['beginner', 'intermediate', 'advanced'],
+      description: 'Adjust content complexity for user education level',
+      defaultValue: 'intermediate',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'intermediate' },
+      },
+    },
+    accessibilityMode: {
+      control: { type: 'boolean' },
+      description: 'Enhanced accessibility features for screen readers',
+      defaultValue: false,
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
       },
     },
   },

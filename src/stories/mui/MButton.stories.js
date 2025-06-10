@@ -32,52 +32,102 @@ export default {
   argTypes: {
     text: {
       control: { type: 'text' },
-      description: 'Button text content',
-      defaultValue: 'Button'
+      description: 'Button text content - should be descriptive for accessibility',
+      defaultValue: 'Button',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'Button' },
+      },
     },
     variant: {
       control: { type: 'select' },
       options: ['filled', 'outlined', 'text'],
-      description: 'Button variant style',
-      defaultValue: 'filled'
+      description: 'Visual style variant - filled for primary actions, outlined for secondary',
+      defaultValue: 'filled',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'filled' },
+      },
     },
     color: {
       control: { type: 'select' },
       options: ['default', 'primary', 'secondary', 'success', 'warning', 'error', 'info'],
-      description: 'Button color theme',
-      defaultValue: 'primary'
+      description: 'Color scheme - primary/secondary use Mariner Finance brand colors',
+      defaultValue: 'primary',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'primary' },
+      },
     },
     size: {
       control: { type: 'select' },
       options: ['small', 'medium', 'large'],
-      description: 'Button size',
-      defaultValue: 'medium'
+      description: 'Button size - affects padding, font size, and touch target',
+      defaultValue: 'medium',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'medium' },
+      },
     },
     disabled: {
       control: { type: 'boolean' },
-      description: 'Disable button interaction',
-      defaultValue: false
+      description: 'Disables interaction and reduces opacity for visual feedback',
+      defaultValue: false,
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
     },
     loading: {
       control: { type: 'boolean' },
-      description: 'Show loading state',
-      defaultValue: false
+      description: 'Shows loading spinner and prevents interaction during async operations',
+      defaultValue: false,
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
     },
     loadingText: {
       control: { type: 'text' },
-      description: 'Text to show when loading',
-      defaultValue: ''
+      description: 'Alternative text to display during loading state',
+      defaultValue: '',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: '""' },
+      },
     },
     icon: {
       control: { type: 'text' },
-      description: 'Icon class (e.g., fas fa-star)',
-      defaultValue: ''
+      description: 'Icon class for visual enhancement (e.g., "fas fa-star")',
+      defaultValue: '',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: '""' },
+      },
     },
     fullWidth: {
       control: { type: 'boolean' },
-      description: 'Make button full width',
-      defaultValue: false
-    }
+      description: 'Makes button expand to full container width',
+      defaultValue: false,
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    'aria-label': {
+      control: { type: 'text' },
+      description: 'Accessible label for screen readers when text is not descriptive enough',
+      table: {
+        type: { summary: 'string' },
+      },
+    },
+    'aria-describedby': {
+      control: { type: 'text' },
+      description: 'ID of element that describes the button for accessibility',
+      table: {
+        type: { summary: 'string' },
+      },
+    },
   }
 };
 
