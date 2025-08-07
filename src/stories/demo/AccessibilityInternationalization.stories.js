@@ -108,10 +108,5 @@ export const AccessibilityAndInternationalizationButton = () => {
     }, t('demo.button.text'));
 };
 
-    return (
-        <MButton variant="contained" color="primary" aria-label={t('demo.button.label')}>
-            {t('demo.button.text')}
-        </MButton>
-    );
-};
+
 
