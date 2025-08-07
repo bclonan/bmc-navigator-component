@@ -1,7 +1,6 @@
 {
   "name": "ecfr-navigator",
   "version": "1.0.0",
-
   "description": "A lightweight, reusable Vue 3 component with Pinia integration for navigating hierarchical eCFR-style content in existing Vue applications.",
   "main": "dist/ecfr-navigator.umd.js",
   "scripts": {
@@ -51,7 +50,8 @@
     "storybook-addon-figma": "^0.1.0",
     "uuid": "^11.1.0",
     "vitest": "^3.2.3",
-    "vue": "^3.0.0"
+    "vue": "^3.0.0",
+    "vue-i18n": "^11.1.11"
   },
   "module": "dist/ecfr-navigator.es.js",
   "types": "dist/types/index.d.ts",

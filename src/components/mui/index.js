@@ -19,6 +19,8 @@ export { default as MInputWithTooltip } from './MInputWithTooltip.vue';
 export { default as MInputLabel } from './MInputLabel.vue';
 export { default as MIconButton } from './MIconButton.vue';
 export { default as MTooltip } from './MTooltip.vue';
+// Re-export MSelect from ui directory
+export { default as MSelect } from '../ui/MSelect.vue';
 
 // Layout Components
 export { default as MAppBar } from './MAppBar.vue';

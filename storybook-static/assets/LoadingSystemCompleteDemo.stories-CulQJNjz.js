@@ -1,0 +1,1 @@
+const e={title:"Loading/Skeleton Components",parameters:{docs:{description:{component:"Showcases all skeleton loading components and their variants."}}}},o=[];export{o as __namedExportsOrder,e as default};
