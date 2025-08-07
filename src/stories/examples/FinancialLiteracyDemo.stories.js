@@ -30,10 +30,10 @@ export default {
       },
     },
     backgrounds: {
-      default: 'mariner-light',
+      default: 'yourtownfinance-light',
       values: [
-        { name: 'mariner-light', value: '#ffffff' },
-        { name: 'mariner-surface', value: '#f4f4f4' },
+        { name: 'yourtownfinance-light', value: '#ffffff' },
+        { name: 'yourtownfinance-surface', value: '#f4f4f4' },
         { name: 'financial-green', value: 'rgb(249, 255, 250)' },
       ],
     },

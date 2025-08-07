@@ -26,7 +26,7 @@ export default {
 };
 
 const defaultBrand = {
-  text: 'Mariner Finance',
+  text: 'Your Town Finance',
   logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iIzM2ODNmNiIvPgo8cGF0aCBkPSJNOCAyMEwxNiAxMkwyNCAyMCIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+',
   description: 'Providing trusted financial solutions since 1927. We help people achieve their financial goals with competitive rates and personalized service.'
 };
@@ -65,10 +65,10 @@ const linkSections = [
 ];
 
 const socialLinks = [
-  { id: 'facebook', platform: 'facebook', url: 'https://facebook.com/marinerfinance', label: 'Facebook' },
-  { id: 'twitter', platform: 'twitter', url: 'https://twitter.com/marinerfinance', label: 'Twitter' },
-  { id: 'linkedin', platform: 'linkedin', url: 'https://linkedin.com/company/marinerfinance', label: 'LinkedIn' },
-  { id: 'instagram', platform: 'instagram', url: 'https://instagram.com/marinerfinance', label: 'Instagram' }
+  { id: 'facebook', platform: 'facebook', url: 'https://facebook.com/yourtownfinance', label: 'Facebook' },
+  { id: 'twitter', platform: 'twitter', url: 'https://twitter.com/yourtownfinance', label: 'Twitter' },
+  { id: 'linkedin', platform: 'linkedin', url: 'https://linkedin.com/company/yourtownfinance', label: 'LinkedIn' },
+  { id: 'instagram', platform: 'instagram', url: 'https://instagram.com/yourtownfinance', label: 'Instagram' }
 ];
 
 const legalLinks = [
@@ -89,7 +89,7 @@ export const Default = {
     showNewsletter: true,
     newsletterTitle: 'Stay Updated',
     newsletterText: 'Get the latest financial insights and loan offers delivered to your inbox.',
-    copyrightText: '© 2024 Mariner Finance. All rights reserved. NMLS #1417840',
+    copyrightText: '© 2024 Your Town Finance. All rights reserved. NMLS #1417840',
     additionalInfo: 'Licensed by the Department of Financial Protection and Innovation under the California Financing Law.'
   }
 };
@@ -111,7 +111,7 @@ export const Minimal = {
       { id: 'privacy', label: 'Privacy Policy', href: '#privacy' },
       { id: 'terms', label: 'Terms of Service', href: '#terms' }
     ],
-    copyrightText: '© 2024 Mariner Finance. All rights reserved.',
+    copyrightText: '© 2024 Your Town Finance. All rights reserved.',
     fluid: false,
     showNewsletter: false
   }
@@ -140,7 +140,7 @@ export const CompanyFocus = {
     linkSections: [
       {
         id: 'about',
-        title: 'About Mariner Finance',
+        title: 'About Your Town Finance',
         links: [
           { id: 'our-story', label: 'Our Story', href: '#our-story' },
           { id: 'leadership', label: 'Leadership Team', href: '#leadership' },
@@ -179,7 +179,7 @@ export const CompanyFocus = {
     showNewsletter: true,
     newsletterTitle: 'Financial Insights Newsletter',
     newsletterText: 'Expert advice, market trends, and exclusive offers for our valued customers.',
-    copyrightText: '© 2024 Mariner Finance LLC. All rights reserved. NMLS #1417840',
+    copyrightText: '© 2024 Your Town Finance LLC. All rights reserved. NMLS #1417840',
     additionalInfo: 'Equal Housing Lender. Licensed by state banking departments and regulatory agencies.'
   }
 };

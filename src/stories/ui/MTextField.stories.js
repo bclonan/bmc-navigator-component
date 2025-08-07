@@ -424,7 +424,7 @@ export const WrapExtendFunctionality = {
   }
 };
 
-export const MarinerFinanceForm = {
+export const YourTownFinanceForm = {
   render: () => ({
     components: { MTextField },
     data() {

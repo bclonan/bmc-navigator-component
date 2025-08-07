@@ -7,7 +7,7 @@ export default {
     layout: 'centered',
     docs: {
       description: {
-        component: 'Material-UI Input component with Mariner Finance styling. Supports validation, various input types, and accessibility features optimized for financial data entry.',
+        component: 'Material-UI Input component with Your Town Finance styling. Supports validation, various input types, and accessibility features optimized for financial data entry.',
       },
     },
   },

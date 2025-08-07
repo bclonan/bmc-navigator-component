@@ -109,7 +109,7 @@ export const FullLoanApplication = {
       }
     },
     template: `
-      <MLayout app-title="Mariner Finance" :drawer="false">
+      <MLayout app-title="Your Town Finance" :drawer="false">
         <LoanFlowStepper
           :steps="steps"
           :current-step="currentStep"

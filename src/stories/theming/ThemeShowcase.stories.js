@@ -177,7 +177,7 @@ export const FinancialDashboard = {
           <!-- Header -->
           <header style="margin-bottom: 3rem; text-align: center;">
             <h1 style="color: var(--theme-primary, #3b82f6); font-size: 2.5rem; font-weight: 700; margin: 0 0 0.5rem 0;">
-              Mariner Finance Dashboard
+              Your Town Finance Dashboard
             </h1>
             <p style="color: #6b7280; font-size: 1.125rem; margin: 0;">
               Comprehensive loan management and application system

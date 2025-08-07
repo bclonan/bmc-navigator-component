@@ -24,13 +24,13 @@ const preview = {
     },
     layout: 'centered',
     backgrounds: {
-      default: 'mariner-light',
+      default: 'yourtownfinance-light',
       values: [
-        { name: 'mariner-light', value: '#ffffff' },
-        { name: 'mariner-bg', value: '#f8f8f8' },
-        { name: 'mariner-surface', value: '#f4f4f4' },
-        { name: 'mariner-primary', value: 'rgb(56, 96, 190)' },
-        { name: 'mariner-secondary', value: 'rgb(1, 52, 116)' },
+        { name: 'yourtownfinance-light', value: '#ffffff' },
+        { name: 'yourtownfinance-bg', value: '#f8f8f8' },
+        { name: 'yourtownfinance-surface', value: '#f4f4f4' },
+        { name: 'yourtownfinance-primary', value: 'rgb(56, 96, 190)' },
+        { name: 'yourtownfinance-secondary', value: 'rgb(1, 52, 116)' },
         { name: 'dark', value: '#1a1a1a' },
         { name: 'financial-green', value: 'rgb(249, 255, 250)' },
       ],
@@ -92,7 +92,7 @@ const preview = {
       storySort: {
         order: [
           'Welcome',
-          'Mariner Finance Design System',
+          'Your Town Finance Design System',
           [
             'Overview',
             'Brand Guidelines',
@@ -148,12 +148,12 @@ const preview = {
   globalTypes: {
     theme: {
       description: 'Global theme for components',
-      defaultValue: 'mariner',
+      defaultValue: 'yourtownfinance',
       toolbar: {
         title: 'Theme',
         icon: 'paintbrush',
         items: [
-          { value: 'mariner', title: 'Mariner Finance', left: '🏦' },
+          { value: 'yourtownfinance', title: 'Your Town Finance', left: '🏦' },
           { value: 'default', title: 'Default Material', left: '⚪' },
           { value: 'dark', title: 'Dark Mode', left: '🌙' },
         ],
@@ -194,14 +194,14 @@ const preview = {
         </div>
       `,
       setup() {
-        const theme = context.globals.theme || 'mariner';
+        const theme = context.globals.theme || 'yourtownfinance';
         const density = context.globals.density || 'medium';
         
         const decoratorClasses = {
           'p-2': density === 'compact',
           'p-4': density === 'medium',
           'p-6': density === 'comfortable',
-          'mariner-theme': theme === 'mariner',
+          'yourtownfinance-theme': theme === 'yourtownfinance',
           'default-theme': theme === 'default',
           'dark-theme': theme === 'dark',
         };

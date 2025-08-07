@@ -350,7 +350,7 @@ export const FinancialServicesForms = {
     },
     template: `
       <div class="max-w-6xl mx-auto space-y-8">
-        <h1 class="text-3xl font-bold text-center mb-8">Mariner Finance - Loan Application</h1>
+        <h1 class="text-3xl font-bold text-center mb-8">Your Town Finance - Loan Application</h1>
         
         <!-- Personal Information - High Security Section -->
         <MCard title="Personal Information" subtitle="Secure and confidential">
@@ -557,7 +557,7 @@ export const FinancialServicesForms = {
               wrapper-class="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg"
               extended-class="shadow-md border border-red-300"
             >
-              I authorize Mariner Finance to check my credit and verify my information
+              I authorize Your Town Finance to check my credit and verify my information
             </MCheckbox>
             
             <MCheckbox 

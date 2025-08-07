@@ -9,7 +9,7 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: 'Material-UI Input component for text input with Mariner Finance brand styling, validation states, and form integration.',
+        component: 'Material-UI Input component for text input with Your Town Finance brand styling, validation states, and form integration.',
       },
     },
   },
@@ -343,7 +343,7 @@ export const InputStates = () => ({
         <MFormControl class="max-w-md">
           <MInputLabel>Focused Input</MInputLabel>
           <MInput variant="outlined" placeholder="This input appears focused" class="mf-input-focused" />
-          <MFormHelperText>Mariner Finance brand focus styling</MFormHelperText>
+          <MFormHelperText>Your Town Finance brand focus styling</MFormHelperText>
         </MFormControl>
       </div>
       

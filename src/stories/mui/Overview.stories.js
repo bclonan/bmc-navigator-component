@@ -22,7 +22,7 @@ export default {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: 'Complete overview of Material-UI components with Mariner Finance brand theme integration. All components feature authentic brand colors, Muli typography, and consistent styling.',
+        component: 'Complete overview of Material-UI components with Your Town Finance brand theme integration. All components feature authentic brand colors, Muli typography, and consistent styling.',
       },
     },
   },
@@ -57,12 +57,12 @@ export const ComponentLibrary = () => ({
   },
   template: `
     <div class="min-h-screen bg-gray-50">
-      <!-- Header with Mariner Finance Branding -->
+      <!-- Header with Your Town Finance Branding -->
       <MAppBar class="mf-app-bar">
         <MToolbar class="justify-between">
           <div class="flex items-center space-x-4">
             <MTypography variant="h6" class="text-white font-bold">
-              Mariner Finance Material-UI Components
+              Your Town Finance Material-UI Components
             </MTypography>
             <MChip text="Complete Library" color="primary" variant="outlined" class="bg-white bg-opacity-20 text-white border-white border-opacity-30" />
           </div>
@@ -436,10 +436,10 @@ export const ComponentCategories = () => ({
       
       <div class="mt-12 bg-gradient-to-r from-blue-50 to-blue-100 p-8 rounded-lg">
         <MTypography variant="h4" class="mb-4" style="color: var(--mf-primary);">
-          Mariner Finance Brand Integration
+          Your Town Finance Brand Integration
         </MTypography>
         <MTypography variant="body1" class="mb-4" style="color: var(--mf-text-primary);">
-          Every component in this library has been carefully crafted to reflect Mariner Finance's brand identity:
+          Every component in this library has been carefully crafted to reflect Your Town Finance's brand identity:
         </MTypography>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <div>
@@ -456,7 +456,7 @@ export const ComponentCategories = () => ({
               Typography
             </MTypography>
             <MTypography variant="body2" style="color: var(--mf-text-secondary);">
-              Muli font family throughout the component library, matching Mariner Finance's 
+              Muli font family throughout the component library, matching Your Town Finance's
               official website typography for brand consistency.
             </MTypography>
           </div>
@@ -469,7 +469,7 @@ export const ComponentCategories = () => ({
 ComponentLibrary.parameters = {
   docs: {
     description: {
-      story: 'Complete showcase of all Material-UI components integrated with Mariner Finance brand theme, demonstrating real-world usage scenarios.',
+      story: 'Complete showcase of all Material-UI components integrated with Your Town Finance brand theme, demonstrating real-world usage scenarios.',
     },
   },
 };

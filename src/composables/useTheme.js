@@ -1,19 +1,19 @@
 import { ref, reactive, computed, watch } from 'vue';
-import marinerFinanceTheme from '../themes/mariner-finance.js';
+import yourtownfinanceFinanceTheme from '../themes/your-town-finance.js';
 
-// Global theme state with Mariner Finance brand colors as default
+// Global theme state with Your Town Finance brand colors as default
 const themeState = reactive({
   currentTheme: {
     colors: {
-      primary: 'rgb(56, 96, 190)', // Mariner Finance matt-blue
-      secondary: 'rgb(1, 52, 116)', // Mariner Finance tardis-blue
-      success: 'rgb(50, 174, 136)', // Mariner Finance herbal green
-      warning: 'rgb(255, 188, 35)', // Mariner Finance warning yellow
+      primary: 'rgb(56, 96, 190)', // Your Town Finance matt-blue
+      secondary: 'rgb(1, 52, 116)', // Your Town Finance tardis-blue
+      success: 'rgb(50, 174, 136)', // Your Town Finance herbal green
+      warning: 'rgb(255, 188, 35)', // Your Town Finance warning yellow
       danger: '#ef4444',
-      background: 'rgb(255, 255, 255)' // Mariner Finance white
+      background: 'rgb(255, 255, 255)' // Your Town Finance white
     },
     typography: {
-      fontFamily: 'Muli, sans-serif', // Mariner Finance brand font
+      fontFamily: 'Muli, sans-serif', // Your Town Finance brand font
       fontSize: 16,
       lineHeight: 1.5,
       letterSpacing: 0

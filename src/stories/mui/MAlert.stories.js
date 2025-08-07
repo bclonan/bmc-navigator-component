@@ -6,7 +6,7 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: 'Material-UI Alert component for displaying important messages with Mariner Finance brand styling.',
+        component: 'Material-UI Alert component for displaying important messages with Your Town Finance brand styling.',
       },
     },
   },
@@ -61,7 +61,7 @@ Default.args = {
   icon: true
 };
 
-export const MarinerFinanceAlerts = () => ({
+export const YourTownFinanceAlerts = () => ({
   components: { MAlert },
   template: `
     <div class="space-y-4">

@@ -110,7 +110,7 @@ export const WithDrawer = {
         
         <template #footer>
           <div class="p-4 text-center text-sm text-gray-600">
-            © 2024 Mariner Finance. All rights reserved.
+            © 2024 Your Town Finance. All rights reserved.
           </div>
         </template>
       </MLayout>
@@ -133,7 +133,7 @@ export const MobileResponsive = {
     },
     template: `
       <MLayout 
-        app-title="Mariner Mobile" 
+        app-title="YourTown Mobile"
         :drawer="true"
         drawer-width="280px"
       >

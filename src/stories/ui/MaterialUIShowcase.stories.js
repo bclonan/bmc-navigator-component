@@ -19,7 +19,7 @@ export default {
   }
 };
 
-export const MarinerFinanceDashboard = {
+export const YourTownFinanceDashboard = {
   render: () => ({
     components: { 
       MLayout, MCard, MButton, MTextField, MSelect, MCheckbox, MSlider, MProgress 
@@ -121,7 +121,7 @@ export const MarinerFinanceDashboard = {
     },
     template: `
       <MLayout 
-        app-title="Mariner Finance Portal" 
+        app-title="Your Town Finance Portal"
         :drawer="true"
         :permanent="true"
         drawer-width="280px"
@@ -135,7 +135,7 @@ export const MarinerFinanceDashboard = {
                   MF
                 </div>
                 <div>
-                  <div class="font-semibold text-gray-900">Mariner Finance</div>
+                  <div class="font-semibold text-gray-900">Your Town Finance</div>
                   <div class="text-sm text-gray-600">Admin Portal</div>
                 </div>
               </div>
@@ -395,7 +395,7 @@ export const MarinerFinanceDashboard = {
         <template #footer>
           <div class="p-4 bg-gray-50 border-t border-gray-200">
             <div class="flex justify-between items-center text-sm text-gray-600">
-              <div>© 2024 Mariner Finance. All rights reserved.</div>
+              <div>© 2024 Your Town Finance. All rights reserved.</div>
               <div class="flex space-x-4">
                 <a href="#" class="hover:text-blue-600">Privacy Policy</a>
                 <a href="#" class="hover:text-blue-600">Terms of Service</a>

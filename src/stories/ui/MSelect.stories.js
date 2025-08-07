@@ -338,7 +338,7 @@ export const WrapExtendFunctionality = {
   }
 };
 
-export const MarinerFinanceExample = {
+export const YourTownFinanceExample = {
   render: () => ({
     components: { MSelect },
     data() {

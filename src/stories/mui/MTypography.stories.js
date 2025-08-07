@@ -6,7 +6,7 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: 'Material-UI Typography component with Mariner Finance Muli font family and brand styling for consistent text presentation.',
+        component: 'Material-UI Typography component with Your Town Finance Muli font family and brand styling for consistent text presentation.',
       },
     },
   },
@@ -69,7 +69,7 @@ Default.args = {
   content: 'Sample typography text'
 };
 
-export const MarinerFinanceHeadings = () => ({
+export const YourTownFinanceHeadings = () => ({
   components: { MTypography },
   template: `
     <div class="space-y-8" style="font-family: var(--mf-font-family);">
@@ -118,7 +118,7 @@ export const BodyText = () => ({
     <div class="space-y-6" style="font-family: var(--mf-font-family);">
       <div>
         <MTypography variant="body1" class="mb-4" style="color: var(--mf-text-primary);">
-          At Mariner Finance, we understand that life can present unexpected financial challenges. 
+          At Your Town Finance, we understand that life can present unexpected financial challenges.
           Whether you need funds for home improvements, debt consolidation, or unexpected expenses, 
           our personal loans are designed to help you achieve your financial goals.
         </MTypography>
@@ -139,7 +139,7 @@ export const BodyText = () => ({
       
       <div>
         <MTypography variant="subtitle1" class="mb-4" style="color: var(--mf-primary);">
-          Why Choose Mariner Finance?
+          Why Choose Your Town Finance?
         </MTypography>
         <MTypography variant="body2" color="textSecondary">
           Subtitle1 - Muli, 1.125rem, Weight 500
@@ -361,7 +361,7 @@ export const Playground = (args) => ({
     getTypographyStyles(args) {
       const styles = {};
       
-      // Apply Mariner Finance font family
+      // Apply Your Town Finance font family
       if (args.variant && ['h1', 'h2'].includes(args.variant)) {
         styles.fontFamily = 'var(--mf-font-family-bold)';
       } else {
@@ -391,5 +391,5 @@ Playground.args = {
   component: '',
   gutterBottom: false,
   noWrap: false,
-  content: 'Personal Loans Made Simple with Mariner Finance'
+  content: 'Personal Loans Made Simple with Your Town Finance'
 };

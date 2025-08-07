@@ -1,6 +1,7 @@
 {
   "name": "ecfr-navigator",
   "version": "1.0.0",
+
   "description": "A lightweight, reusable Vue 3 component with Pinia integration for navigating hierarchical eCFR-style content in existing Vue applications.",
   "main": "dist/ecfr-navigator.umd.js",
   "scripts": {
@@ -11,7 +12,8 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
     "typecheck": "vue-tsc --noEmit",
     "lib": "vite build --config vite.lib.config.js",
-    "pack": "npm run lib && npm pack"
+    "pack": "npm run lib && npm pack",
+    "build-storybook": "storybook build"
   },
   "keywords": [
     "vue",
@@ -27,7 +29,15 @@
     "pinia",
     "tailwindcss"
   ],
-  "author": "",
+  "author": "Bradley Clonan",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bradl/bmc-navigator-component"
+  },
+  "bugs": {
+    "url": "https://github.com/bradl/bmc-navigator-component/issues"
+  },
+  "homepage": "https://github.com/bradl/bmc-navigator-component#readme",
   "license": "ISC",
   "dependencies": {
     "@storybook/addon-storysource": "^8.6.14",

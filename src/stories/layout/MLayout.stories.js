@@ -41,7 +41,7 @@ export default {
 
 const navbarConfig = {
   brand: {
-    text: 'Mariner Finance',
+    text: 'Your Town Finance',
     logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iIzM2ODNmNiIvPgo8cGF0aCBkPSJNOCAyMEwxNiAxMkwyNCAyMCIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+'
   },
   navigationItems: [
@@ -55,7 +55,7 @@ const navbarConfig = {
       id: 'user',
       type: 'user',
       name: 'John Admin',
-      email: 'admin@marinerfinance.com',
+      email: 'admin@yourtownfinance.com',
       showName: true,
       menuItems: [
         { id: 'profile', label: 'Profile', href: '#profile' },

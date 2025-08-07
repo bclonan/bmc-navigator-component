@@ -6,7 +6,7 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: 'Material-UI Progress components for indicating loading states and completion status with Mariner Finance brand styling.',
+        component: 'Material-UI Progress components for indicating loading states and completion status with Your Town Finance brand styling.',
       },
     },
   },

@@ -402,7 +402,7 @@ export const WrapExtendFunctionality = {
   }
 };
 
-export const MarinerFinanceExample = {
+export const YourTownFinanceExample = {
   render: () => ({
     components: { MCheckbox },
     data() {
@@ -464,7 +464,7 @@ export const MarinerFinanceExample = {
               color="error"
               :error-message="submitted && !application.creditCheck ? 'Credit check authorization is required' : ''"
             >
-              I authorize Mariner Finance to check my credit and verify my information
+              I authorize Your Town Finance to check my credit and verify my information
             </MCheckbox>
           </div>
         </div>

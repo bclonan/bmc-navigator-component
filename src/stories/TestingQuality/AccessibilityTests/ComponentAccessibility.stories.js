@@ -10,7 +10,7 @@ export default {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Comprehensive accessibility testing scenarios for all Mariner Finance components. Use the A11y addon to validate WCAG 2.1 AA compliance.',
+        component: 'Comprehensive accessibility testing scenarios for all Your Town Finance components. Use the A11y addon to validate WCAG 2.1 AA compliance.',
       },
     },
   },
@@ -173,7 +173,7 @@ export const KeyboardNavigationTest = (args) => ({
         <MAlert severity="info" class="mt-4">
           If you need assistance completing this form, please contact our accessibility support team at 
           <a href="tel:1-800-555-0199" class="text-blue-600 hover:text-blue-800">1-800-555-0199</a> 
-          or email <a href="mailto:accessibility@marinerfinance.com" class="text-blue-600 hover:text-blue-800">accessibility@marinerfinance.com</a>
+          or email <a href="mailto:accessibility@yourtownfinance.com" class="text-blue-600 hover:text-blue-800">accessibility@yourtownfinance.com</a>
         </MAlert>
       </aside>
     </div>
@@ -399,7 +399,7 @@ export const ColorContrastTest = (args) => ({
       <div class="space-y-8">
         <section>
           <MTypography variant="h2" component="h2" class="mb-6">
-            Mariner Finance Brand Colors
+            Your Town Finance Brand Colors
           </MTypography>
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

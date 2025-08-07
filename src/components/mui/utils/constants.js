@@ -23,7 +23,7 @@ export const VARIANTS = {
   text: 'text'
 };
 
-// Mariner Finance brand color mappings for consistent styling
+// Your Town Finance brand color mappings for consistent styling
 export const COLOR_CLASSES = {
   filled: {
     default: 'bg-gray-200 text-gray-800 hover:bg-gray-300',

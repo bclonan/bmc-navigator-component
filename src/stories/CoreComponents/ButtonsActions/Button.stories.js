@@ -7,15 +7,15 @@ export default {
     layout: 'centered',
     docs: {
       description: {
-        component: 'Material-UI Button component with Mariner Finance brand styling. Optimized for financial applications with comprehensive accessibility support, loading states, and interactive controls for testing all variants.',
+        component: 'Material-UI Button component with Your Town Finance brand styling. Optimized for financial applications with comprehensive accessibility support, loading states, and interactive controls for testing all variants.',
       },
       canvas: { sourceState: 'shown' },
     },
     backgrounds: {
-      default: 'mariner-light',
+      default: 'yourtownfinance-light',
       values: [
-        { name: 'mariner-light', value: '#ffffff' },
-        { name: 'mariner-surface', value: '#f4f4f4' },
+        { name: 'yourtownfinance-light', value: '#ffffff' },
+        { name: 'yourtownfinance-surface', value: '#f4f4f4' },
         { name: 'financial-green', value: 'rgb(249, 255, 250)' },
         { name: 'contrast-test', value: '#000000' },
       ],
@@ -44,7 +44,7 @@ export default {
     color: {
       control: { type: 'select' },
       options: ['default', 'primary', 'secondary', 'success', 'warning', 'error', 'info'],
-      description: 'Color scheme - primary/secondary use Mariner Finance brand colors',
+      description: 'Color scheme - primary/secondary use Your Town Finance brand colors',
       defaultValue: 'primary',
       table: {
         type: { summary: 'string' },
@@ -129,8 +129,8 @@ Interactive.args = {
   fullWidth: false
 };
 
-// Mariner Finance Brand Showcase
-export const MarinerFinanceBrand = () => ({
+// Your Town Finance Brand Showcase
+export const YourTownFinanceBrand = () => ({
   components: { MButton },
   template: `
     <div class="space-y-8">

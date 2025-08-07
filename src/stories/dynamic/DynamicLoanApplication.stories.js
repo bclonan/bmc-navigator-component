@@ -701,7 +701,7 @@ export const FullDynamicLoanApplication = {
       };
     },
     template: `
-      <MLayout app-title="Mariner Finance - Dynamic Loan Application" :drawer="false">
+      <MLayout app-title="Your Town Finance - Dynamic Loan Application" :drawer="false">
         <DynamicFormRenderer
           :schema="formSchema"
           storage-key="dynamic_loan_application"

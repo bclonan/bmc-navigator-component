@@ -36,4 +36,4 @@ export { default as MDialogContent } from './MDialogContent.vue';
 export { default as MDialogActions } from './MDialogActions.vue';
 
 // Theme exports
-export { default as marinerFinanceTheme } from '../../themes/mariner-finance.js';
+export { default as yourtownfinanceFinanceTheme } from '../../themes/your-town-finance.js';

@@ -4,7 +4,7 @@
     :disabled="disabled || loading"
     @click="handleClick"
     v-bind="$attrs"
-    :style="marinerFinanceStyles"
+    :style="yourtownfinanceFinanceStyles"
   >
     <span v-if="loading" class="inline-flex items-center">
       <svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -114,10 +114,10 @@ export default {
       return baseClasses;
     });
 
-    const marinerFinanceStyles = computed(() => {
+    const yourtownfinanceFinanceStyles = computed(() => {
       const styles = {};
       
-      // Apply Mariner Finance brand colors based on variant and color
+      // Apply Your Town Finance brand colors based on variant and color
       if (props.variant === 'filled' || props.variant === 'primary') {
         if (props.color === 'primary') {
           styles.backgroundColor = 'var(--mf-primary)';
@@ -155,7 +155,7 @@ export default {
 
     return {
       buttonClasses,
-      marinerFinanceStyles,
+      yourtownfinanceFinanceStyles,
       handleClick
     };
   }
@@ -176,7 +176,7 @@ export default {
   box-shadow: var(--mf-shadow-focus, 0 0 0 3px rgba(56, 96, 190, 0.2));
 }
 
-/* Mariner Finance specific hover states */
+/* Your Town Finance specific hover states */
 .m-button[style*="--mf-primary"]:hover:not(:disabled) {
   background-color: var(--mf-primary-dark) !important;
 }

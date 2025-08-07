@@ -6,7 +6,7 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: 'Material-UI Avatar component for displaying user profile pictures, initials, or icons with Mariner Finance styling.',
+        component: 'Material-UI Avatar component for displaying user profile pictures, initials, or icons with Your Town Finance styling.',
       },
     },
   },

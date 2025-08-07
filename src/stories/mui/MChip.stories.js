@@ -6,7 +6,7 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: 'Material-UI Chip component for displaying compact elements like tags, status indicators, and filters with Mariner Finance styling.',
+        component: 'Material-UI Chip component for displaying compact elements like tags, status indicators, and filters with Your Town Finance styling.',
       },
     },
   },

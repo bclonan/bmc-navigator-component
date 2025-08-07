@@ -465,7 +465,7 @@ export default {
           }
         },
         {
-          name: 'Mariner',
+          name: 'YourTown',
           colors: ['#2563eb', '#0891b2', '#7c3aed'],
           theme: {
             colors: {

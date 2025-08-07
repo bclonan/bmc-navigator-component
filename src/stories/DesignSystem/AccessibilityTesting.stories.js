@@ -10,7 +10,7 @@ export default {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Comprehensive accessibility testing scenarios for Mariner Finance components. Use the A11y addon to validate WCAG 2.1 AA compliance across all interactive elements.',
+        component: 'Comprehensive accessibility testing scenarios for Your Town Finance components. Use the A11y addon to validate WCAG 2.1 AA compliance across all interactive elements.',
       },
       canvas: { sourceState: 'shown' },
     },
@@ -30,9 +30,9 @@ export default {
       },
     },
     backgrounds: {
-      default: 'mariner-light',
+      default: 'yourtownfinance-light',
       values: [
-        { name: 'mariner-light', value: '#ffffff' },
+        { name: 'yourtownfinance-light', value: '#ffffff' },
         { name: 'high-contrast', value: '#000000' },
         { name: 'medium-contrast', value: '#666666' },
       ],
@@ -41,9 +41,9 @@ export default {
   argTypes: {
     theme: {
       control: { type: 'select' },
-      options: ['mariner', 'high-contrast', 'default'],
+      options: ['yourtownfinance', 'high-contrast', 'default'],
       description: 'Test different themes for accessibility compliance',
-      defaultValue: 'mariner',
+      defaultValue: 'yourtownfinance',
     },
     fontSize: {
       control: { type: 'range', min: 12, max: 24, step: 2 },
@@ -132,7 +132,7 @@ export const KeyboardNavigation = (args) => ({
 });
 
 KeyboardNavigation.args = {
-  theme: 'mariner',
+  theme: 'yourtownfinance',
   fontSize: 16,
   testMode: 'keyboard-only',
 };
@@ -212,7 +212,7 @@ export const ColorContrastTest = (args) => ({
 });
 
 ColorContrastTest.args = {
-  theme: 'mariner',
+  theme: 'yourtownfinance',
   fontSize: 16,
   testMode: 'all',
 };
@@ -363,8 +363,8 @@ export const ScreenReaderTest = (args) => ({
               1-800-555-0199
             </a> 
             or email 
-            <a href="mailto:accessibility@marinerfinance.com" aria-label="Email accessibility support">
-              accessibility@marinerfinance.com
+            <a href="mailto:accessibility@yourtownfinance.com" aria-label="Email accessibility support">
+              accessibility@yourtownfinance.com
             </a>
           </MAlert>
         </aside>
@@ -374,7 +374,7 @@ export const ScreenReaderTest = (args) => ({
 });
 
 ScreenReaderTest.args = {
-  theme: 'mariner',
+  theme: 'yourtownfinance',
   fontSize: 16,
   testMode: 'screen-reader',
 };
@@ -480,7 +480,7 @@ export const MotorImpairmentTest = (args) => ({
 });
 
 MotorImpairmentTest.args = {
-  theme: 'mariner',
+  theme: 'yourtownfinance',
   fontSize: 18,
   testMode: 'motor-impaired',
 };

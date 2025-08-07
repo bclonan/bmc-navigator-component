@@ -188,7 +188,7 @@ export const FullWidth = {
   })
 };
 
-export const MarinerFinanceExample = {
+export const YourTownFinanceExample = {
   render: () => ({
     components: { MButton },
     template: `
@@ -240,7 +240,7 @@ export const MarinerFinanceExample = {
   parameters: {
     docs: {
       description: {
-        story: 'Example implementation showing how buttons might be used in a Mariner Finance loan application interface.'
+        story: 'Example implementation showing how buttons might be used in a Your Town Finance loan application interface.'
       }
     }
   }

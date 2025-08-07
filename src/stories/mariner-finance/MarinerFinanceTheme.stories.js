@@ -8,12 +8,12 @@ import MBadge from '../../components/mui/MBadge.vue';
 import MTypography from '../../components/mui/MTypography.vue';
 
 export default {
-  title: 'Mariner Finance/Brand Theme',
+  title: 'Your Town Finance/Brand Theme',
   parameters: {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: 'Complete Mariner Finance brand theme implementation with authentic colors and typography from https://loans.marinerfinance.com/select-amount and https://www.marinerfinance.com/',
+        component: 'Complete Your Town Finance brand theme implementation with authentic colors and typography from https://loans.yourtownfinance.com/select-amount and https://www.yourtownfinance.com/',
       },
     },
   },
@@ -59,7 +59,7 @@ export const BrandColors = () => ({
   },
   template: `
     <div class="p-8 space-y-8">
-      <MTypography variant="h3" class="mb-6">Mariner Finance Brand Colors</MTypography>
+      <MTypography variant="h3" class="mb-6">Your Town Finance Brand Colors</MTypography>
       
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
         <div>
@@ -102,7 +102,7 @@ export const BrandButtons = () => ({
   },
   template: `
     <div class="p-8 space-y-8">
-      <MTypography variant="h3" class="mb-6">Mariner Finance Buttons</MTypography>
+      <MTypography variant="h3" class="mb-6">Your Town Finance Buttons</MTypography>
       
       <div class="space-y-6">
         <div>
@@ -158,12 +158,12 @@ export const FinancialDashboard = () => ({
   },
   template: `
     <div class="min-h-screen bg-gray-50">
-      <!-- Mariner Finance App Bar -->
+      <!-- Your Town Finance App Bar -->
       <MAppBar class="mf-app-bar">
         <MToolbar class="justify-between">
           <div class="flex items-center space-x-4">
             <MTypography variant="h6" class="text-white font-bold">
-              Mariner Finance
+              Your Town Finance
             </MTypography>
             <MChip 
               text="Dashboard" 
@@ -283,7 +283,7 @@ export const BrandTypography = () => ({
   },
   template: `
     <div class="p-8 space-y-8" style="font-family: var(--mf-font-family);">
-      <MTypography variant="h3" class="mb-6">Mariner Finance Typography</MTypography>
+      <MTypography variant="h3" class="mb-6">Your Town Finance Typography</MTypography>
       
       <div class="space-y-6">
         <div>
@@ -306,7 +306,7 @@ export const BrandTypography = () => ({
         
         <div>
           <MTypography variant="body1" class="mb-2">
-            At Mariner Finance, we understand that life can present unexpected financial challenges. 
+            At Your Town Finance, we understand that life can present unexpected financial challenges.
             Whether you need funds for home improvements, debt consolidation, or unexpected expenses, 
             our personal loans are designed to help you achieve your financial goals.
           </MTypography>
@@ -330,7 +330,7 @@ export const ComponentShowcase = () => ({
   },
   template: `
     <div class="p-8 space-y-8">
-      <MTypography variant="h3" class="mb-6">Mariner Finance Components</MTypography>
+      <MTypography variant="h3" class="mb-6">Your Town Finance Components</MTypography>
       
       <!-- Alerts -->
       <div>

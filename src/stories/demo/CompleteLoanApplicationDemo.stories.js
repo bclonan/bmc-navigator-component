@@ -389,7 +389,7 @@ const Template = (args) => ({
       encryption: true,
       versioning: true,
       maxVersions: 10,
-      keyPrefix: 'mariner_loan_app_'
+      keyPrefix: 'yourtownfinance_loan_app_'
     });
     
     // Form renderer for current step
@@ -564,7 +564,7 @@ const Template = (args) => ({
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'mariner-loan-application.json';
+        a.download = 'yourtownfinance-loan-application.json';
         a.click();
         URL.revokeObjectURL(url);
       }
@@ -618,7 +618,7 @@ const Template = (args) => ({
         <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
           <div class="flex justify-between items-center mb-4">
             <div>
-              <h1 class="text-3xl font-bold text-gray-900">Mariner Finance Loan Application</h1>
+              <h1 class="text-3xl font-bold text-gray-900">Your Town Finance Loan Application</h1>
               <p class="text-gray-600 mt-1">Complete multi-step application with real-time validation and animated progress tracking</p>
             </div>
             <div class="text-right">
@@ -724,7 +724,7 @@ const Template = (args) => ({
                   autoSave: true,
                   encryption: true,
                   versioning: true,
-                  keyPrefix: 'mariner_loan_app_'
+                  keyPrefix: 'yourtownfinance_loan_app_'
                 }"
                 :on-submit="isLastStep ? submitApplication : nextStep"
                 class="space-y-6"
